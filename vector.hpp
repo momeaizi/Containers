@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/14 18:52:51 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/18 12:16:40 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define VECTOR_HPP
 
 #include <memory>
+#include <stdexcept>
 #include <iostream>
 #include "iterator.hpp"
 #include "iterator_traits.hpp"
@@ -39,17 +40,41 @@ class vector
         size_type       __size;
         size_type       __capacity;
         allocator_type  __allocator;
+
+        void    __reserve(size_type n)
+        {
+            T   *data = __allocator.allocate(n);
+
+
+            for (size_type i = __size; i < n; i++)
+                __allocator.construct(data + i);
+            for (size_type i = 0; i < __size; i++)
+                __allocator.construct(data + i, __data[i]);
+            clear();
+            __allocator.deallocate(__data, __capacity);
+            __data = data;
+            __size = n;
+            __capacity = n;
+        }
+
     public:
 
         /* *************************************************************************** */
         /*                                 constructors                                */
         /* *************************************************************************** */
-        explicit vector() : __size(0), __capacity (1)
+        explicit vector () : __size(0), __capacity (0)
         {
-            __data = __allocator.allocate(1);
+            __data = nullptr;
         }
         
-        explicit vector (size_type n, const value_type& val = value_type()) : __size(n), __capacity (n)
+        explicit vector (size_type n) : __size(n), __capacity (n)
+        {
+            __data = __allocator.allocate(__capacity);
+            for (size_type i = 0; i < __size; i++)
+                __allocator.construct(__data + i);
+        }
+        
+        explicit vector (size_type n, const value_type& val) : __size(n), __capacity (n)
         {
             __data = __allocator.allocate(__capacity);
             for (size_type i = 0; i < __size; i++)
@@ -59,6 +84,9 @@ class vector
         template <class InputIterator>
         vector (InputIterator first, InputIterator last) : __size(last - first), __capacity (__size)
         {
+            if (first > last)
+                throw std::length_error("vector");
+
             __data = __allocator.allocate(__capacity);
             for (size_type i = 0; i < __size; ++i)
                 __allocator.construct(__data + i, *(first + i));
@@ -71,24 +99,68 @@ class vector
                 __allocator.construct(__data + i, x.__data[i]);
         }
 
+        ~vector ()
+        {
+            clear();
+            __allocator.deallocate(__data, __capacity);
+        }
         
-        iterator                                            begin() { return iterator(__data); }
-        iterator                                            end() { return iterator(__data + __size); }
-        reverse_iterator                                    rend() { return reverse_iterator(__data); }
-        reverse_iterator                                    rbegin() { return reverse_iterator(__data + __size - 1); }
-        size_type                                           size() const { return __size; }
-        size_type                                           capacity() const { return __capacity; }
-        bool                                                empty() const {__size == 0; }
-        allocator_type                                      get_allocator() const { return __allocator; }
-        size_type                                           max_size() const;
-        void                                                clear()
+        // template <class InputIterator>
+        // void assign (InputIterator first, InputIterator last)
+        // {
+            
+        // }
+
+        void    assign (size_type n, const value_type& val)
+        {
+            if (n > __capacity)
+                reserve(n);
+            for (size_type i = 0; i < n; i++)
+                __data[i] = val;
+            for (size_type i = n; i < __size; i++)
+                __allocator.destroy(__data + i);
+            __size = n;
+        }
+        
+        iterator                                            begin () { return iterator(__data); }
+        iterator                                            end () { return iterator(__data + __size); }
+        reverse_iterator                                    rend () { return reverse_iterator(__data); }
+        reverse_iterator                                    rbegin () { return reverse_iterator(__data + __size - 1); }
+        reference                                           back () { return __data[__size - 1]; }
+        const_reference                                     back () const { return __data[__size - 1]; }
+        size_type                                           size () const { return __size; }
+        size_type                                           capacity () const { return __capacity; }
+        bool                                                empty () const {__size == 0; }
+        allocator_type                                      get_allocator () const { return __allocator; }
+        size_type                                           max_size () const;
+
+        reference operator[] (size_type n) { return __data[n]; }
+        const_reference operator[] (size_type n) const { return __data[n]; }
+        
+        reference at (size_type n)
+        {
+            if (n >= __size)
+                throw std::out_of_range("vector");
+            return __data[n];
+        }
+        const_reference at (size_type n) const
+        {
+            if (n >= __size)
+                throw std::out_of_range("vector");
+            return __data[n];
+        }
+
+        
+
+        
+        void    clear ()
         {
             for (size_type i = 0; i < __size; i++)
                 __allocator.destroy(__data + i);
             __size = 0;
         }
         
-        void                                                reserve (size_type n)
+        void    reserve (size_type n)
         {
             if (n <= __capacity)
                 return ;
@@ -96,13 +168,14 @@ class vector
             T   *data = __allocator.allocate(n);
             for (size_type i = 0; i < __size; i++)
                 __allocator.construct(data + i, __data[i]);
-            
+
             clear();
+            __allocator.deallocate(__data, __capacity);
             __data = data;
             __capacity = n;
         }
         
-        void                                                resize (size_type n, value_type val = value_type())
+        void    resize (size_type n, value_type val = value_type())
         {
             if (n < __size)
             {
@@ -113,16 +186,14 @@ class vector
             else if (n > __size)
             {
                 if (n > (__capacity * 2))
-                    reserve(n);
+                    __reserve(n);
                 else
-                    reserve(__capacity * 2);
+                    __reserve(__capacity * 2);
                 for (size_type i = __size; i < n; i++)
                     __allocator.construct(__data + i, val);
                     
             }
         }
-        reference                                           back() { return __data[__size - 1]; }
-        const_reference                                     back() const { return __data[__size - 1]; }
     
 };
 
