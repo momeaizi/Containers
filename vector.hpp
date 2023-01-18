@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/18 12:16:40 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/18 22:19:31 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,23 +102,85 @@ class vector
         ~vector ()
         {
             clear();
-            __allocator.deallocate(__data, __capacity);
+            if (__capacity)
+                __allocator.deallocate(__data, __capacity);
         }
         
-        // template <class InputIterator>
-        // void assign (InputIterator first, InputIterator last)
-        // {
-            
-        // }
 
-        void    assign (size_type n, const value_type& val)
+        void    __assign_at_begin (size_type __n, const value_type &val)
         {
-            if (n > __capacity)
-                reserve(n);
-            for (size_type i = 0; i < n; i++)
-                __data[i] = val;
-            for (size_type i = n; i < __size; i++)
+            for (size_type i = 0; i < __n; i++)
+                    __data[i] = val;
+        }
+        
+        void    __destruct_at_end (size_type __n)
+        {
+            for (size_type i = __n; i < __size; i++)
                 __allocator.destroy(__data + i);
+        }
+        
+        void    __construct_at_end (size_type __first, size_type __last, const value_type &val)
+        {
+            for (size_type i = __first; i < __last; i++)
+                    __allocator.construct(__data + i, val);
+        }
+        
+        void    assign (size_type n, const value_type &val)
+        {
+            if (n <= __capacity)
+            {
+                size_type   min = std::min(n, __size);
+                
+                __assign_at_begin(min, val);
+                __construct_at_end(min, n, val);
+                __destruct_at_end(n);
+            }
+            else
+            {
+                __destruct_at_end(0);
+                __allocator.deallocate(__data, __capacity);
+                __data = __allocator.allocate(n);
+                __construct_at_end(0, n, val);
+
+                __capacity = n;
+            }
+            __size = n;
+            
+        }
+        
+        template <class InputIterator>
+        void assign (InputIterator first, InputIterator last)
+        {
+            if (first > last)
+            {
+                clear();
+                __allocator.deallocate(__data, __capacity);
+                __capacity = 0;
+                throw std::length_error("vector");
+            }
+
+            size_type   n = last - first;
+
+            if (n <= __capacity)
+            {
+                size_type   min = std::min(n, __size);
+        
+                for (size_type i = 0; i < min; i++)
+                    __data[i] = *(first + i);    
+                for (size_type i = min; i < n; i++)
+                    __allocator.construct(__data + i, *(first + i));
+                __destruct_at_end(n);
+                __size = n;
+            }
+            else
+            {
+                __destruct_at_end(0);
+                __allocator.deallocate(__data, __capacity);
+                __data = __allocator.allocate(n);
+                __capacity = n;
+                for (size_type i = 0; i < n; i++)
+                    __allocator.construct(__data + i, *(first + i));       
+            }
             __size = n;
         }
         
