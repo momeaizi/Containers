@@ -7,12 +7,20 @@ sed -i.bak 's/ std::vector/ vector/g' main.cpp
 make > /dev/null
 ./Containers > ft
 
+# echo "your container tooks " 
+# time ./Containers
+# echo "\n"
+
 sed -i.bak 's/ vector/ std::vector/g' main.cpp
 make re > /dev/null
 ./Containers > std
 
+# echo "STL container tooks " 
+# time ./Containers
+
 SUCCESS=$(diff std ft | wc -c)
 
+make fclean > /dev/null
 
 
 if [ $SUCCESS == 0 ]; then
