@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/19 21:43:08 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/20 18:54:01 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,8 @@ class vector
         void                    swap (vector& x);
         void                    push_back (const value_type& val);
         void                    pop_back();
+        void                    reserve (size_type n);
+        void                    resize (size_type n, value_type val = value_type());
         
 
 
@@ -102,7 +104,7 @@ class vector
             size_type       __capacity;
             allocator_type  __allocator;
     
-            void    __reserve(size_type n);
+            void    __resize(size_type n);
             void    __assign_at_begin (size_type __n, const value_type &val);
             void    __destruct_at_end (size_type __n);
             void    __construct_at_end (size_type __first, size_type __last, const value_type &val);
@@ -294,14 +296,26 @@ void            vector<T>::swap (vector<T>& x)
 template <class T>
 void    vector<T>::push_back (const value_type& val)
 {
-    if (__size == __capacity)
+    if (__size < __capacity)
     {
-        reserve(__capacity * 2);
-        if (!__capacity)
-            __reserve(1);
+        __allocator.construct(__data + __size, val);
+        ++__size;
+        return ;
     }
-    __allocator.construct(__data + __size, val);
-    __size++;
+    
+    size_type n = (!__capacity) ? 1 : __capacity * 2;
+
+    T   *data = __allocator.allocate(n);
+
+    __allocator.construct(data + __size, val);
+    for (size_type i = 0; i < __size; ++i)
+        __allocator.construct(data + (__size -i - 1), __data[(__size -i - 1)]);
+
+    __destruct_at_end(0);
+    __allocator.deallocate(__data, __capacity);
+    __data = data;
+    __capacity = n;
+    ++__size;
 }
 
 template <class T>
@@ -311,6 +325,27 @@ void    vector<T>::pop_back()
     __size--;
 }
 
+template <class T>
+void    vector<T>::reserve (size_type n)
+{
+    if (n <= __capacity)
+        return ;
+            
+    T   *data = __allocator.allocate(n);
+    for (size_type i = 0; i < __size; ++i)
+        __allocator.construct(data + (__size -i - 1), __data[(__size -i - 1)]);
+
+    __destruct_at_end(0);
+    __allocator.deallocate(__data, __capacity);
+    __data = data;
+    __capacity = n;
+}
+
+// template <class T>
+// void    vector<T>::resize (size_type n, value_type val = value_type())
+// {
+    
+// }
 
 
 
@@ -333,7 +368,7 @@ void    vector<T>::pop_back()
 
 
 template <class T>
-void    vector<T>::__reserve(size_type n)
+void    vector<T>::__resize(size_type n)
 {
     T   *data = __allocator.allocate(n);
     
@@ -342,7 +377,7 @@ void    vector<T>::__reserve(size_type n)
         __allocator.construct(data + i);
     for (size_type i = 0; i < __size; i++)
         __allocator.construct(data + i, __data[i]);
-    clear();
+    __destruct_at_end(0);
     __allocator.deallocate(__data, __capacity);
     __data = data;
     __size = n;
@@ -361,10 +396,9 @@ void    vector<T>::__destruct_at_end (size_type __n)
 {
     reverse_iterator    it = rbegin();
 
-    for (; it != rend() && __size > __n; ++it)
+    for (; it != rend() && ++__n <= __size; ++it)
     {
         __allocator.destroy(&(*it));
-        --__size;
     }
 }
 
@@ -374,4 +408,5 @@ void    vector<T>::__construct_at_end (size_type __first, size_type __last, cons
     for (size_type i = __first; i < __last; i++)
         __allocator.construct(__data + i, val);
 }
+
 #endif

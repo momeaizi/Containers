@@ -4,19 +4,19 @@ NORMAL=$(tput sgr0)
 
 
 sed -i.bak 's/ std::vector/ vector/g' main.cpp
-make > /dev/null
+make re> /dev/null
 ./Containers > ft
 
-# echo "your container tooks " 
-# time ./Containers
-# echo "\n"
+echo "your container tooks " 
+time ./Containers > /dev/null
+echo "\n"
 
 sed -i.bak 's/ vector/ std::vector/g' main.cpp
 make re > /dev/null
 ./Containers > std
 
-# echo "STL container tooks " 
-# time ./Containers
+echo "STL container tooks " 
+time ./Containers > /dev/null
 
 SUCCESS=$(diff std ft | wc -c)
 
