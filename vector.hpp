@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/20 18:54:01 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/21 20:21:22 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ class vector
                 throw std::out_of_range("vector");
             return __data[n];
         }
-        reference back()
+        reference   back()
         {
             return __data[__size - 1];
         }
@@ -86,13 +86,78 @@ class vector
         const_reference         front() const { return __data[0]; }
         size_type               size () const { return __size; }
         allocator_type          get_allocator() const { return __allocator; };
+        size_type               max_size() const { return __allocator.max_size(); };
         reference               operator[] (size_type n) { return __data[n]; }
         const_reference         operator[] (size_type n) const { return __data[n]; }
         void                    swap (vector& x);
         void                    push_back (const value_type& val);
         void                    pop_back();
         void                    reserve (size_type n);
-        void                    resize (size_type n, value_type val = value_type());
+        void                    resize (size_type n);
+        void                    resize (size_type n, value_type val);
+        iterator                erase (iterator pos)
+        {
+            iterator    it = pos;
+            while (++it != end())
+                *(it - 1) = *it;
+            --__size;
+            __allocator.destroy(__data + __size);
+
+            return pos;
+        }
+        iterator                erase (iterator first, iterator last)
+        {
+            iterator    it_first = first;
+            iterator    it_last = last;
+
+            while (it_last != end())
+                *(it_first++) = *(it_last++);
+
+            size_type n = last - first;
+
+            for (size_type i = 1; i <= n; ++i)
+                __allocator.destroy(__data + __size - i);
+
+            __size -= n;
+            return first;
+        }
+        iterator    insert (iterator pos, const value_type &val)
+        {
+            size_type   p = pos - begin();
+            if (__size < __capacity)
+            {
+                if (pos >= end())
+                    __allocator.construct(__data + __size, val);
+                else
+                {
+                    iterator    it = end() - 1;
+    
+                    __allocator.construct(__data + __size, *it);
+                    for (; it > pos; --it)
+                        *it = *(it - 1);
+                    *pos = val;
+                }
+            }
+            else
+            {
+                size_type   n = (!__capacity) ? 1 : __capacity * 2;
+                T   *data = __allocator.allocate(n);
+    
+                __allocator.construct(data + p, val);
+
+                for (size_type i = p - 1; i >= 0 && i + 1 != 0; --i)
+                    __allocator.construct(data + i, __data[i]);
+    
+                for (size_type i = p; i < __size; ++i)
+                    __allocator.construct(data + i + 1, __data[i]);
+    
+                __destruct_at_end(0);
+                __data = data;
+                __capacity = n;
+            }
+            ++__size;
+            return __data + p;
+        }
         
 
 
@@ -205,6 +270,8 @@ vector<T>::~vector ()
 
 
 
+
+
 template <class T>
 void    vector<T>::assign (size_type n, const value_type &val)
 {
@@ -268,10 +335,7 @@ void vector<T>::assign (InputIterator first, InputIterator last)
 template <class T>
 void    vector<T>::clear ()
 {
-    reverse_iterator    it = rbegin();
-
-    for (; it != rend(); ++it)
-        __allocator.destroy(&(*it));
+    __destruct_at_end(0);
     __size = 0;
 }
 
@@ -333,7 +397,7 @@ void    vector<T>::reserve (size_type n)
             
     T   *data = __allocator.allocate(n);
     for (size_type i = 0; i < __size; ++i)
-        __allocator.construct(data + (__size -i - 1), __data[(__size -i - 1)]);
+        __allocator.construct(data + (__size - i - 1), __data[(__size - i - 1)]);
 
     __destruct_at_end(0);
     __allocator.deallocate(__data, __capacity);
@@ -341,11 +405,69 @@ void    vector<T>::reserve (size_type n)
     __capacity = n;
 }
 
-// template <class T>
-// void    vector<T>::resize (size_type n, value_type val = value_type())
-// {
+template <class T>
+void    vector<T>::resize (size_type n, value_type val)
+{
+    if (n <= __size)
+    {
+        __destruct_at_end(n);
+        __size = n;
+        return ;
+    }
     
-// }
+    size_type   capacity = (n > __capacity * 2) ? n : __capacity * 2;
+
+    T   *data = __allocator.allocate(capacity);
+
+
+    for (size_type i = __size; i < n; ++i)
+        __allocator.construct(data + i, val);
+
+    for (size_type i = 0; i < __size; ++i)
+        __allocator.construct(data + (__size -i - 1), __data[(__size - i - 1)]);
+
+    __destruct_at_end(0);
+    __allocator.deallocate(__data, __capacity);
+    __data = data;
+    __capacity = capacity;
+    __size = n;
+}
+
+template <class T>
+void    vector<T>::resize (size_type n)
+{
+    if (n <= __size)
+    {
+        __destruct_at_end(n);
+        __size = n;
+        return ;
+    }
+    
+    size_type   capacity = (n > __capacity * 2) ? n : __capacity * 2;
+
+    T   *data = __allocator.allocate(capacity);
+
+
+    for (size_type i = __size; i < n; ++i)
+        __allocator.construct(data + i);
+
+    for (size_type i = 0; i < __size; ++i)
+        __allocator.construct(data + (__size -i - 1), __data[(__size - i - 1)]);
+
+    __destruct_at_end(0);
+    __allocator.deallocate(__data, __capacity);
+    __data = data;
+    __capacity = capacity;
+    __size = n;
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -397,9 +519,7 @@ void    vector<T>::__destruct_at_end (size_type __n)
     reverse_iterator    it = rbegin();
 
     for (; it != rend() && ++__n <= __size; ++it)
-    {
         __allocator.destroy(&(*it));
-    }
 }
 
 template <class T>
@@ -408,5 +528,7 @@ void    vector<T>::__construct_at_end (size_type __first, size_type __last, cons
     for (size_type i = __first; i < __last; i++)
         __allocator.construct(__data + i, val);
 }
+
+
 
 #endif

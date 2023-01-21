@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 11:01:43 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/14 17:48:58 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/21 18:33:12 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ class Iterator
         T*                                          operator->() const { return m_ptr; }
         Iterator&                                   operator++() { ++m_ptr; return *this; }
         Iterator                                    operator++(int) { Iterator temp = *this; ++*this; return temp; }
+        Iterator&                                   operator--() { --m_ptr; return *this; }
+        Iterator                                    operator--(int) { Iterator temp = *this; --*this; return temp; }
         bool                                        operator==(const Iterator& it) const { return m_ptr == it.m_ptr; }
         bool                                        operator!=(const Iterator& it) const { return !(*this == it); }
         Iterator                                    operator+(difference_type n) const { return Iterator(m_ptr + n); }
@@ -77,6 +79,8 @@ class Reverse_iterator
         T*                                          operator->() const { return m_ptr; }
         Reverse_iterator&                           operator++() { --m_ptr; return *this; }
         Reverse_iterator                            operator++(int) { Reverse_iterator temp = *this; --*this; return temp; }
+        Reverse_iterator&                           operator--() { ++m_ptr; return *this; }
+        Reverse_iterator                            operator--(int) { Reverse_iterator temp = *this; ++*this; return temp; }
         bool                                        operator==(const Reverse_iterator& it) const { return m_ptr == it.m_ptr; }
         bool                                        operator!=(const Reverse_iterator& it) const { return !(*this == it); }
         Reverse_iterator                            operator+(difference_type n) const { return Reverse_iterator(m_ptr - n); }

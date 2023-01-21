@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 11:27:34 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/20 18:52:28 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/21 19:49:00 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ class   A
         static  int i;
         int id;
         A() {
-            std::cout << "default constructor" << std::endl;
             id = i++;
+            std::cout << "default constructor -> " << id<< std::endl;
         }
         ~A() {
             std::cout << "destructor -> " << id << std::endl; 
@@ -42,6 +42,41 @@ class   A
 int A::i = 0;
 
 int main()
+{
+    
+    {
+        vector<A> vec (6);
+    
+        A a;
+            std::cout << "\n\n*****************************\n" << std::endl;
+        // vec.insert(vec.begin() + 3, a);
+        // vec.insert(vec.begin() - 1, a);
+        vec.insert(vec.begin() + 6, a);
+            std::cout << "\n\n*****************************\n" << std::endl;
+            std::cout << vec.capacity() << std::endl;
+    }
+    // {
+    //     vector<A> vec (4);
+    
+    //     A a;
+    //         std::cout << "\n\n*****************************\n" << std::endl;
+    //     vec.insert(vec.begin() + 4, a);
+    //         std::cout << "\n\n*****************************\n" << std::endl;
+    //         std::cout << vec.capacity() << std::endl;
+    // }
+    // {
+    //     vector<A> vec (4);
+    
+    //     A a;
+    //         std::cout << "\n\n*****************************\n" << std::endl;
+    //     vec.insert(vec.begin(), a);
+    //         std::cout << "\n\n*****************************\n" << std::endl;
+    //         std::cout << vec.capacity() << std::endl;
+    // }
+    return 0;
+}
+
+int main1()
 {
     {
         std::cout << "\n\nfill constructor without a value\n" << std::endl;
@@ -388,6 +423,102 @@ int main()
             }
         }
     }
-        return 0;
+    {
+        std::cout << "\n\nresize function\n" << std::endl;
+        {
+            vector<A>  vec(7);
+    
+            vec.resize(2);
+            std::cout << "capacity -> " << vec.capacity() << std::endl;
+            std::cout << "size     -> " << vec.size()  << std::endl;
+        }
+        {
+            vector<A>  vec(7);
+    
+            vec.resize(2, A());
+            std::cout << "capacity -> " << vec.capacity() << std::endl;
+            std::cout << "size     -> " << vec.size()  << std::endl;
+        }
+        {
+            vector<A>  vec(2);
+            vec.resize(7);
+            std::cout << "capacity -> " << vec.capacity() << std::endl;
+            std::cout << "size     -> " << vec.size()  << std::endl;
+        }
+        {
+        
+            vector<A>  vec(2);
+            vec.resize(7, A());
+            std::cout << "capacity -> " << vec.capacity() << std::endl;
+            std::cout << "size     -> " << vec.size()  << std::endl;
+        }
+        {
+            vector<A>  vec(2);
+            vec.resize(2);
+            std::cout << "capacity -> " << vec.capacity() << std::endl;
+            std::cout << "size     -> " << vec.size()  << std::endl;
+        }
+        {
+        
+            vector<A>  vec(2);
+            vec.resize(2, A());
+            std::cout << "capacity -> " << vec.capacity() << std::endl;
+            std::cout << "size     -> " << vec.size()  << std::endl;
+        }
+    }
+    {
+        std::cout << "\n\nerase function\n" << std::endl;
+        {
+            vector<A> myvector(6);
+        
+            myvector.erase (myvector.begin());
+            myvector.erase (myvector.begin() + 2);
+            // myvector.erase (myvector.begin() + 5);
+            // myvector.erase (myvector.begin() - 1);
+        }
+        {
+            vector<A> myvector(6);
+    
+            std::cout << "::::::::::::::::::::::" << std::endl;
+        
+            myvector.erase (myvector.begin() + 4, myvector.begin() + 5);
+        
+            std::cout << "::::::::::::::::::::::" << std::endl;
+        }
+    }
+    {
+        std::cout << "\n\nINSERT function\n" << std::endl;
+        {
+            vector<A> vec (4);
+            vec.reserve(6);
+
+            A a;
+                std::cout << "\n\n*****************************\n" << std::endl;
+            vec.insert(vec.begin() + 3, a);
+                std::cout << "\n\n*****************************\n" << std::endl;
+                std::cout << vec.capacity() << std::endl;
+        }
+        {
+            vector<A> vec (4);
+            vec.reserve(6);
+
+            A a;
+                std::cout << "\n\n*****************************\n" << std::endl;
+            vec.insert(vec.begin() + 4, a);
+                std::cout << "\n\n*****************************\n" << std::endl;
+                std::cout << vec.capacity() << std::endl;
+        }
+        {
+            vector<A> vec (4);
+            vec.reserve(6);
+
+            A a;
+                std::cout << "\n\n*****************************\n" << std::endl;
+            vec.insert(vec.begin(), a);
+                std::cout << "\n\n*****************************\n" << std::endl;
+                std::cout << vec.capacity() << std::endl;
+        }
+    }
+    return 0;
 }
 
