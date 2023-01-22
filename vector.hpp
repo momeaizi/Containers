@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/21 20:21:22 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/22 13:33:42 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,25 +49,25 @@ class vector
 
 
         template <class InputIterator>
-        void            assign (InputIterator first, InputIterator last);
-        void            assign (size_type n, const value_type &val);
-        reference       at (size_type n)
+        void                    assign (InputIterator first, InputIterator last);
+        void                    assign (size_type n, const value_type &val);
+        reference               at (size_type n)
         {
             if (n >= __size)
                 throw std::out_of_range("vector");
             return __data[n];
         }
-        const_reference at (size_type n) const
+        const_reference         at (size_type n) const
         {
             if (n >= __size)
                 throw std::out_of_range("vector");
             return __data[n];
         }
-        reference   back()
+        reference               back()
         {
             return __data[__size - 1];
         }
-        const_reference back() const
+        const_reference         back() const
         {
             return __data[__size - 1];
         }
@@ -121,7 +121,7 @@ class vector
             __size -= n;
             return first;
         }
-        iterator    insert (iterator pos, const value_type &val)
+        iterator                insert (iterator pos, const value_type &val)
         {
             size_type   p = pos - begin();
             if (__size < __capacity)
@@ -158,6 +158,8 @@ class vector
             ++__size;
             return __data + p;
         }
+        void                    insert (iterator pos, size_type n, const value_type& val);
+        void                    swap (vector& x, vector& y); 
         
 
 
@@ -460,6 +462,115 @@ void    vector<T>::resize (size_type n)
     __capacity = capacity;
     __size = n;
 }
+
+template <class T>
+void             swap (vector<T>& x, vector<T>& y)
+{
+    x.swap(y);
+}
+
+
+
+
+
+
+template <class T>
+  bool operator== (const vector<T>& lhs, const vector<T>& rhs);
+
+template <class T>
+  bool operator!= (const vector<T>& lhs, const vector<T>& rhs);
+
+template <class T>
+  bool operator<  (const vector<T>& lhs, const vector<T>& rhs);
+
+template <class T>
+  bool operator<= (const vector<T>& lhs, const vector<T>& rhs);
+
+template <class T>
+  bool operator>  (const vector<T>& lhs, const vector<T>& rhs);
+
+template <class T>
+  bool operator>= (const vector<T>& lhs, const vector<T>& rhs);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

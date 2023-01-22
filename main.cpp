@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 11:27:34 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/21 19:49:00 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/22 13:32:32 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,20 +44,22 @@ int A::i = 0;
 int main()
 {
     
+    std::cout << "\n\nINSERT function\n" << std::endl;
     {
         std::vector<A> vec (6);
-    
-        A a;
+        
+        vec.reserve(60);
+
+        A   a;
             std::cout << "\n\n*****************************\n" << std::endl;
-        // vec.insert(vec.begin() + 3, a);
-        // vec.insert(vec.begin() - 1, a);
-        vec.insert(vec.begin() + 6, a);
+        vec.insert(vec.begin() + 5, 2, a);
             std::cout << "\n\n*****************************\n" << std::endl;
             std::cout << vec.capacity() << std::endl;
     }
     // {
     //     std::vector<A> vec (4);
-    
+    //     vec.reserve(6);
+
     //     A a;
     //         std::cout << "\n\n*****************************\n" << std::endl;
     //     vec.insert(vec.begin() + 4, a);
@@ -66,7 +68,8 @@ int main()
     // }
     // {
     //     std::vector<A> vec (4);
-    
+    //     vec.reserve(6);
+
     //     A a;
     //         std::cout << "\n\n*****************************\n" << std::endl;
     //     vec.insert(vec.begin(), a);
