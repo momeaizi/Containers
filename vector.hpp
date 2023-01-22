@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/22 13:33:42 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/22 23:24:33 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ class vector
         typedef T*                                          pointer;
         typedef const T*                                    const_pointer;
         typedef Iterator<T>                                 iterator;
-        typedef Iterator<const T>                           const_iterator;
+        typedef const Iterator<T>                           const_iterator;
         typedef Reverse_iterator<T>                         reverse_iterator;
         typedef Reverse_iterator<const T>                   const_reverse_iterator;
         typedef std::ptrdiff_t                              difference_type;
@@ -165,16 +165,16 @@ class vector
 
         
         
-        private:
-            T               *__data;
-            size_type       __size;
-            size_type       __capacity;
-            allocator_type  __allocator;
-    
-            void    __resize(size_type n);
-            void    __assign_at_begin (size_type __n, const value_type &val);
-            void    __destruct_at_end (size_type __n);
-            void    __construct_at_end (size_type __first, size_type __last, const value_type &val);
+    private:
+        T               *__data;
+        size_type       __size;
+        size_type       __capacity;
+        allocator_type  __allocator;
+
+        void    __resize(size_type n);
+        void    __assign_at_begin (size_type __n, const value_type &val);
+        void    __destruct_at_end (size_type __n);
+        void    __construct_at_end (size_type __first, size_type __last, const value_type &val);
     
 };
 /* *************************************************************************** */
@@ -463,34 +463,98 @@ void    vector<T>::resize (size_type n)
     __size = n;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 template <class T>
 void             swap (vector<T>& x, vector<T>& y)
 {
     x.swap(y);
 }
 
+template <class T>
+bool    operator== (const vector<T>& lhs, const vector<T>& rhs)
+{
+    if (lhs.size() != rhs.size())
+        for (size_t i = 0; i < lhs.size(); i++)
+            if (lhs[i] != rhs[i])
+                return false;
+    return false;
+}
 
-
-
+template <class T>
+bool operator!= (const vector<T>& lhs, const vector<T>& rhs)
+{
+    if (lhs.size() != rhs.size())
+        return true;
+        
+    for (size_t i = 0; i < lhs.size(); i++)
+        if (lhs[i] != rhs[i])
+            return true;
+    return false;
+}
 
 
 template <class T>
-  bool operator== (const vector<T>& lhs, const vector<T>& rhs);
+bool operator<  (const vector<T>& lhs, const vector<T>& rhs)
+{
+    size_t    minSize = std::min(lhs.size(), rhs.size());
+    for (size_t i = 0; i < minSize; i++)
+        if (!(lhs[i] < rhs[i]))
+            return false;
+    if (lhs.size() < rhs.size())
+        return true;
+    return false;
+}
 
 template <class T>
-  bool operator!= (const vector<T>& lhs, const vector<T>& rhs);
+bool operator<= (const vector<T>& lhs, const vector<T>& rhs)
+{
+    size_t    minSize = std::min(lhs.size(), rhs.size());
+    for (size_t i = 0; i < minSize; i++)
+        if (!(lhs[i] <= rhs[i]))
+            return false;
+    if (lhs.size() <= rhs.size())
+        return true;
+    return false;
+}
 
 template <class T>
-  bool operator<  (const vector<T>& lhs, const vector<T>& rhs);
+bool operator>  (const vector<T>& lhs, const vector<T>& rhs)
+{
+    size_t    minSize = std::min(lhs.size(), rhs.size());
+    for (size_t i = 0; i < minSize; i++)
+        if (!(lhs[i] > rhs[i]))
+            return false;
+    if (lhs.size() > rhs.size())
+        return true;
+    return false;
+    
+}
 
 template <class T>
-  bool operator<= (const vector<T>& lhs, const vector<T>& rhs);
-
-template <class T>
-  bool operator>  (const vector<T>& lhs, const vector<T>& rhs);
-
-template <class T>
-  bool operator>= (const vector<T>& lhs, const vector<T>& rhs);
+bool operator>= (const vector<T>& lhs, const vector<T>& rhs)
+{
+    size_t    minSize = std::min(lhs.size(), rhs.size());
+    for (size_t i = 0; i < minSize; i++)
+        if (!(lhs[i] >= rhs[i]))
+            return false;
+    if (lhs.size() >= rhs.size())
+        return true;
+    return false;
+}
 
 
 

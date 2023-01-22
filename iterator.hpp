@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 11:01:43 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/21 18:33:12 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/22 23:06:01 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,20 @@ class Iterator
         typedef  std::ptrdiff_t                     difference_type;
         typedef  std::random_access_iterator_tag    iterator_category;
 
+        Iterator() : m_ptr(nullptr) {}
         Iterator(T *ptr) : m_ptr(ptr) {}
+        Iterator(const Iterator &it) : m_ptr(it.m_ptr) {}
+        T   &operator=(const Iterator &it) const { m_ptr = it.m_ptr; return *this; }
 
-        T&                                          operator*() const { return *m_ptr; }
-        T*                                          operator->() const { return m_ptr; }
         Iterator&                                   operator++() { ++m_ptr; return *this; }
         Iterator                                    operator++(int) { Iterator temp = *this; ++*this; return temp; }
         Iterator&                                   operator--() { --m_ptr; return *this; }
         Iterator                                    operator--(int) { Iterator temp = *this; --*this; return temp; }
-        bool                                        operator==(const Iterator& it) const { return m_ptr == it.m_ptr; }
-        bool                                        operator!=(const Iterator& it) const { return !(*this == it); }
+        bool                                        operator==(const Iterator &it) const { return m_ptr == it.m_ptr; }
+        bool                                        operator!=(const Iterator &it) const { return !(*this == it); }
+        T&                                          operator*() const { return *m_ptr; }
+        T*                                          operator->() const { return m_ptr; }
+        
         Iterator                                    operator+(difference_type n) const { return Iterator(m_ptr + n); }
         Iterator                                    operator-(difference_type n) const { return Iterator(m_ptr - n); }
         difference_type                             operator-(const Iterator& it) const { return m_ptr - it.m_ptr; }
@@ -55,6 +59,11 @@ class Iterator
         bool                                        operator>=(const Iterator& it) const { return m_ptr >= it.m_ptr; }
 };
 
+template <class T>
+Iterator<T>    operator+(std::ptrdiff_t n, const Iterator<T> &it) { return it + n; }
+
+template <class T>
+Iterator<T>    operator-(std::ptrdiff_t n, const Iterator<T> &it) { return it - n; }
 
 
 /* *************************************************************************** */
@@ -95,5 +104,12 @@ class Reverse_iterator
         bool                                        operator>=(const Reverse_iterator& it) const { return m_ptr >= it.m_ptr; }
 
 };
+
+template <class T>
+Reverse_iterator<T>    operator+(std::ptrdiff_t n, const Reverse_iterator<T> &it) { return it + n; }
+
+template <class T>
+Reverse_iterator<T>    operator-(std::ptrdiff_t n, const Reverse_iterator<T> &it) { return it - n; }
+
 
 #endif

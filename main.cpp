@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 11:27:34 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/22 13:32:32 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/22 23:29:33 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,40 +43,11 @@ int A::i = 0;
 
 int main()
 {
-    
-    std::cout << "\n\nINSERT function\n" << std::endl;
-    {
-        std::vector<A> vec (6);
-        
-        vec.reserve(60);
+    std::vector<const std::string> vec(3, "hello world!");
 
-        A   a;
-            std::cout << "\n\n*****************************\n" << std::endl;
-        vec.insert(vec.begin() + 5, 2, a);
-            std::cout << "\n\n*****************************\n" << std::endl;
-            std::cout << vec.capacity() << std::endl;
-    }
-    // {
-    //     std::vector<A> vec (4);
-    //     vec.reserve(6);
+    std::vector<const std::string>::const_iterator  it = vec.begin();
 
-    //     A a;
-    //         std::cout << "\n\n*****************************\n" << std::endl;
-    //     vec.insert(vec.begin() + 4, a);
-    //         std::cout << "\n\n*****************************\n" << std::endl;
-    //         std::cout << vec.capacity() << std::endl;
-    // }
-    // {
-    //     std::vector<A> vec (4);
-    //     vec.reserve(6);
-
-    //     A a;
-    //         std::cout << "\n\n*****************************\n" << std::endl;
-    //     vec.insert(vec.begin(), a);
-    //         std::cout << "\n\n*****************************\n" << std::endl;
-    //         std::cout << vec.capacity() << std::endl;
-    // }
-    return 0;
+    std::cout << *it << std::endl;
 }
 
 int main1()
@@ -520,6 +491,75 @@ int main1()
             vec.insert(vec.begin(), a);
                 std::cout << "\n\n*****************************\n" << std::endl;
                 std::cout << vec.capacity() << std::endl;
+        }
+    }
+    {
+        std::cout << "\n\nnon member overloads\n" << std::endl;
+        {
+            std::vector<std::string> foo (3, "abc");
+            std::vector<std::string> bar (4, "abc");
+
+            if (foo==bar) std::cout << "foo and bar are equal\n";
+            if (foo!=bar) std::cout << "foo and bar are not equal\n";
+            if (foo< bar) std::cout << "foo is less than bar\n";
+            if (foo> bar) std::cout << "foo is greater than bar\n";
+            if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+            if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+        }
+        {
+            std::vector<std::string> foo (4, "abc");
+            std::vector<std::string> bar (4, "abc");
+
+            if (foo==bar) std::cout << "foo and bar are equal\n";
+            if (foo!=bar) std::cout << "foo and bar are not equal\n";
+            if (foo< bar) std::cout << "foo is less than bar\n";
+            if (foo> bar) std::cout << "foo is greater than bar\n";
+            if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+            if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+        }
+        {
+            std::vector<std::string> foo (4, "abc");
+            std::vector<std::string> bar (3, "abc");
+
+            if (foo==bar) std::cout << "foo and bar are equal\n";
+            if (foo!=bar) std::cout << "foo and bar are not equal\n";
+            if (foo< bar) std::cout << "foo is less than bar\n";
+            if (foo> bar) std::cout << "foo is greater than bar\n";
+            if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+            if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+        }
+        {
+            std::vector<std::string> foo (3, "abd");
+            std::vector<std::string> bar (4, "abc");
+
+            if (foo==bar) std::cout << "foo and bar are equal\n";
+            if (foo!=bar) std::cout << "foo and bar are not equal\n";
+            if (foo< bar) std::cout << "foo is less than bar\n";
+            if (foo> bar) std::cout << "foo is greater than bar\n";
+            if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+            if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+        }
+        {
+            std::vector<std::string> foo (4, "abd");
+            std::vector<std::string> bar (4, "abc");
+
+            if (foo==bar) std::cout << "foo and bar are equal\n";
+            if (foo!=bar) std::cout << "foo and bar are not equal\n";
+            if (foo< bar) std::cout << "foo is less than bar\n";
+            if (foo> bar) std::cout << "foo is greater than bar\n";
+            if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+            if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+        }
+        {
+            std::vector<std::string> foo (4, "abd");
+            std::vector<std::string> bar (3, "abc");
+
+            if (foo==bar) std::cout << "foo and bar are equal\n";
+            if (foo!=bar) std::cout << "foo and bar are not equal\n";
+            if (foo< bar) std::cout << "foo is less than bar\n";
+            if (foo> bar) std::cout << "foo is greater than bar\n";
+            if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+            if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
         }
     }
     return 0;
