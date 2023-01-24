@@ -176,7 +176,7 @@ class vector
 template <class T>
 vector<T>::vector () : __size(0), __capacity (0)
 {
-    __data = nullptr;
+    __data = NULL;
 }
 
 

@@ -3,17 +3,17 @@ GREEN="\033[32m"
 NORMAL=$(tput sgr0)
 
 
-sed -i.bak 's/ std::vector/ vector/g' main.cpp
+sed -i.bak 's/ vector/ std::vector/g' main.cpp
 make re> /dev/null
-./Containers > ft
+./Containers > std
 
 echo "your container tooks " 
 time ./Containers > /dev/null
 echo "\n"
 
-sed -i.bak 's/ vector/ std::vector/g' main.cpp
+sed -i.bak 's/ std::vector/ vector/g' main.cpp
 make re > /dev/null
-./Containers > std
+./Containers > ft
 
 echo "STL container tooks " 
 time ./Containers > /dev/null

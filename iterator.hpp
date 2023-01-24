@@ -33,10 +33,11 @@ class Iterator
         typedef  std::ptrdiff_t                     difference_type;
         typedef  std::random_access_iterator_tag    iterator_category;
 
-        Iterator() : m_ptr(nullptr) {}
+        Iterator() : m_ptr(NULL) {}
         Iterator(T *ptr) : m_ptr(ptr) {}
         Iterator(const Iterator &it) : m_ptr(it.m_ptr) {}
-        T   &operator=(const Iterator &it) const { m_ptr = it.m_ptr; return *this; }
+        template <class _Tp>
+        T   &operator=(const _Tp &it) const { m_ptr = it.m_ptr; return *this; }
 
         Iterator&                                   operator++() { ++m_ptr; return *this; }
         Iterator                                    operator++(int) { Iterator temp = *this; ++*this; return temp; }

@@ -43,9 +43,9 @@ int A::i = 0;
 
 // int main1()
 // {
-//     vector<int>    vec(3);
+//     std::vector<int>    vec(3);
 
-//     vector<int>::const_iterator it = vec.begin();
+//     std::vector<int>::const_iterator it = vec.begin();
 //     (void)it;
 //     //std::cout << *(++it) << std::endl;
 // }
@@ -54,18 +54,18 @@ int main()
 {
     {
         std::cout << "\n\nfill constructor without a value\n" << std::endl;
-        vector<A> vec(10);
+        std::vector<A> vec(10);
         std::cout << "\n\ncopy constructor\n" << std::endl;
-        vector<A> vec_copy(vec);
+        std::vector<A> vec_copy(vec);
         std::cout << "capacity -> " << vec.capacity() << std::endl;
         std::cout << "size     -> " << vec.size()  << std::endl;
     }
     std::cout << "********************" << std::endl;
     {
         std::cout << "\n\nfill constructor with a value\n" << std::endl;
-        vector<A> vec(100, A());
+        std::vector<A> vec(100, A());
         std::cout << "\n\ncopy constructor\n" << std::endl;
-        vector<A> vec_copy(vec);
+        std::vector<A> vec_copy(vec);
         std::cout << "capacity -> " << vec.capacity() << std::endl;
         std::cout << "size     -> " << vec.size()  << std::endl;
     }
@@ -75,15 +75,15 @@ int main()
         std::cout << "\n\nfill range constructor\n" << std::endl;
         try
         {
-            vector<A> vec(range, range - 8);
+            std::vector<A> vec(range, range - 8);
         }
         catch (const std::length_error &e)
         {
             std::cout << e.what() << std::endl;
         }
-        vector<A> vec(range, range + 8);
+        std::vector<A> vec(range, range + 8);
         std::cout << "\n\ncopy constructor\n" << std::endl;
-        vector<A> vec_copy(vec);
+        std::vector<A> vec_copy(vec);
         std::cout << "capacity -> " << vec.capacity() << std::endl;
         std::cout << "size     -> " << vec.size()  << std::endl;
     }
@@ -91,21 +91,21 @@ int main()
     {
         {
             std::cout << "\n\nassign capacity >= n\n" << std::endl;
-            vector<A> vec(10);
+            std::vector<A> vec(10);
             vec.assign(5, A());
             std::cout << "capacity -> " << vec.capacity() << std::endl;
             std::cout << "size     -> " << vec.size()  << std::endl;
         }
         {
             std::cout << "\n\nassign capacity < n\n" << std::endl;
-            vector<A> vec(5);
+            std::vector<A> vec(5);
             vec.assign(10, A());
             std::cout << "capacity -> " << vec.capacity() << std::endl;
             std::cout << "size     -> " << vec.size()  << std::endl;
         }
         {
             std::cout << "\n\nassign  n = 0\n" << std::endl;
-            vector<A> vec(5);
+            std::vector<A> vec(5);
             std::cout << "capacity -> " << vec.capacity() << std::endl;
             std::cout << "size     -> " << vec.size()  << std::endl;
             vec.assign(0, A());
@@ -116,7 +116,7 @@ int main()
     std::cout << "********************" << std::endl;
     {
         {
-                vector<A> vec(8);
+                std::vector<A> vec(8);
                 A   range[] = {A(), A(), A(), A()};
                 std::cout << "\n\nassign capacity >= n\n" << std::endl;
 
@@ -125,7 +125,7 @@ int main()
                 std::cout << "size     -> " << vec.size()  << std::endl;
         }
         {
-                vector<A> vec(2);
+                std::vector<A> vec(2);
                 A   range[] = {A(), A(), A(), A()};
                 std::cout << "\n\nassign capacity < n\n" << std::endl;
                 vec.assign(range, range + 4);
@@ -134,7 +134,7 @@ int main()
         }
                 
         {
-                vector<A> vec(1);
+                std::vector<A> vec(1);
                 A   range[] = {A(), A(), A(), A()};
                 std::cout << "\n\nassign 1\n" << std::endl;
                 vec.assign(range, range);
@@ -142,7 +142,7 @@ int main()
                 std::cout << "size     -> " << vec.size()  << std::endl;
         }
         {
-                vector<A> vec(2);
+                std::vector<A> vec(2);
                 A   range[] = {A(), A(), A(), A()};
                 std::cout << "\n\nassign exception\n" << std::endl;
                 try
@@ -158,7 +158,7 @@ int main()
         }
         {
             int arr[] = {3, 6};
-                vector<int> vec(arr, arr + 2);
+                std::vector<int> vec(arr, arr + 2);
                 std::cout << "\n\nat function\n" << std::endl;
                 try
                 {
@@ -174,7 +174,7 @@ int main()
                 std::cout << "size     -> " << vec.size()  << std::endl;
         }
         {
-                vector<A> vec(4);
+                std::vector<A> vec(4);
                 std::cout << "\n\nat function\n" << std::endl;
                 try
                 {
@@ -189,7 +189,7 @@ int main()
                 std::cout << "size     -> " << vec.size()  << std::endl;
         }
         {
-                vector<int> vec(4);
+                std::vector<int> vec(4);
                 std::cout << "\n\nback function\n" << std::endl;
                 
                 std::cout << vec.back() << std::endl;
@@ -198,7 +198,7 @@ int main()
                 std::cout << "size     -> " << vec.size()  << std::endl;
         }
         {
-                vector<int> vec;
+                std::vector<int> vec;
                 std::cout << "\n\nback function\n" << std::endl;
                 
                 // std::cout << vec.back() << std::endl;
@@ -210,20 +210,20 @@ int main()
             std::cout << "\n\begin and end  functions\n" << std::endl;
             {
                 int arr[] = {1, 2, 3, 4, 5};
-                vector<int>    myvector(arr, arr + 5);
+                std::vector<int>    myvector(arr, arr + 5);
 
                 std::cout << "myvector contains:";
-                for ( vector<int>::iterator it = myvector.begin() ; it != myvector.end(); ++it)
+                for ( std::vector<int>::iterator it = myvector.begin() ; it != myvector.end(); ++it)
                 std::cout << ' ' << *it;
                 std::cout << std::endl;
                 std::cout << "capacity -> " << myvector.capacity() << std::endl;
                 std::cout << "size     -> " << myvector.size()  << std::endl;
             }
             {
-                vector<int>    myvector;
+                std::vector<int>    myvector;
 
                 std::cout << "myvector contains:";
-                for ( vector<int>::iterator it = myvector.begin() ; it != myvector.end(); ++it)
+                for ( std::vector<int>::iterator it = myvector.begin() ; it != myvector.end(); ++it)
                 std::cout << ' ' << *it;
                 std::cout << std::endl;
                 std::cout << "capacity -> " << myvector.capacity() << std::endl;
@@ -232,10 +232,10 @@ int main()
         }
         {
             std::cout << "\n\nempty  functions\n" << std::endl;
-            vector<int> vec;
+            std::vector<int> vec;
             std::cout << vec.empty() << std::endl;
             
-            vector<int> vec1(2);
+            std::vector<int> vec1(2);
             std::cout << vec1.empty() << std::endl;
             std::cout << "capacity -> " << vec.capacity() << std::endl;
                 std::cout << "size     -> " << vec.size()  << std::endl;
@@ -243,7 +243,7 @@ int main()
         {
             std::cout << "\n\nfront  functions\n" << std::endl;
             int arr[] = {78, 16};
-            vector<int> myvector(arr, arr + 2);
+            std::vector<int> myvector(arr, arr + 2);
 
             myvector.front() -= myvector.back();
 
@@ -253,14 +253,14 @@ int main()
         }
         {
             std::cout << "\n\n[]  functions\n" << std::endl;
-            vector<int> myvector (10);   // 10 zero-initialized elements
+            std::vector<int> myvector (10);   // 10 zero-initialized elements
 
-            vector<int>::size_type sz = myvector.size();
+            std::vector<int>::size_type sz = myvector.size();
 
             // assign some values:
             for (unsigned i=0; i<sz; i++) myvector[i]=i;
 
-            // reverse vector using operator[]:
+            // reverse std::vector using operator[]:
             for (unsigned i=0; i<sz/2; i++)
             {
                 int temp;
@@ -279,32 +279,32 @@ int main()
         {
             std::cout << "\n\n= operator \n" << std::endl;
             {
-                vector<A>  vec(4);
-                vector<A>  vec1(2);
+                std::vector<A>  vec(4);
+                std::vector<A>  vec1(2);
 
                 vec = vec1;
                 std::cout << "capacity -> " << vec.capacity() << std::endl;
                 std::cout << "size     -> " << vec.size()  << std::endl;
             }
             {
-                vector<A>  vec(2);
-                vector<A>  vec1(4);
+                std::vector<A>  vec(2);
+                std::vector<A>  vec1(4);
 
                 vec = vec1;
                 std::cout << "capacity -> " << vec.capacity() << std::endl;
                 std::cout << "size     -> " << vec.size()  << std::endl;
             }
             {
-                vector<A>  vec;
-                vector<A>  vec1(4);
+                std::vector<A>  vec;
+                std::vector<A>  vec1(4);
 
                 vec = vec1;
                 std::cout << "capacity -> " << vec.capacity() << std::endl;
                 std::cout << "size     -> " << vec.size()  << std::endl;
             }
             {
-                vector<A>  vec(4);
-                vector<A>  vec1;
+                std::vector<A>  vec(4);
+                std::vector<A>  vec1;
 
                 vec = vec1;
                 std::cout << "capacity -> " << vec.capacity() << std::endl;
@@ -315,8 +315,8 @@ int main()
         {
             std::cout << "\n\nswap function \n" << std::endl;
             {
-                vector<A>  vec(4);
-                vector<A>  vec1(2);
+                std::vector<A>  vec(4);
+                std::vector<A>  vec1(2);
             
                 std::cout << "capacity -> " << vec.capacity() << std::endl;
                 std::cout << "size     -> " << vec.size()  << std::endl;
@@ -331,8 +331,8 @@ int main()
                 std::cout << "size     -> " << vec1.size()  << std::endl;
             }
             {
-                vector<std::string> foo (3,"foo");   // three std::strings with a value of foo
-                vector<std::string> bar (5,"bar");
+                std::vector<std::string> foo (3,"foo");   // three std::strings with a value of foo
+                std::vector<std::string> bar (5,"bar");
                 
                 foo.swap(bar);
                 for (unsigned i=0; i<foo.size(); i++)
@@ -349,30 +349,30 @@ int main()
             std::cout << "\n\nrbegin & rend functions \n" << std::endl;
             
             {
-                vector<int> myvector (5);  // 5 default-constructed ints
+                std::vector<int> myvector (5);  // 5 default-constructed ints
     
                 int i=0;
     
-                vector<int>::reverse_iterator rit = myvector.rbegin();
+                std::vector<int>::reverse_iterator rit = myvector.rbegin();
                 for (; rit!= myvector.rend(); ++rit)
                     *rit = ++i;
     
                 std::cout << "myvector contains:";
-                for ( vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
+                for ( std::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
                     std::cout << ' ' << *it;
                 std::cout << std::endl;
             }
             {
-                vector<int> myvector (5);  // 5 default-constructed ints
+                std::vector<int> myvector (5);  // 5 default-constructed ints
 
-                vector<int>::reverse_iterator rit = myvector.rbegin();
+                std::vector<int>::reverse_iterator rit = myvector.rbegin();
 
                 int i=0;
                 for (rit = myvector.rbegin(); rit!= myvector.rend(); ++rit)
                     *rit = ++i;
 
                 std::cout << "myvector contains:";
-                for ( vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
+                for ( std::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
                     std::cout << ' ' << *it;
                 std::cout << std::endl;
             }
@@ -380,14 +380,14 @@ int main()
         {
             std::cout << "\n\npush bach & pop back functions\n" << std::endl;
             {
-                vector<A> myvector;
+                std::vector<A> myvector;
     
                 for (int i = 0; i < 3; i++)
                     myvector.push_back (A());
             }
             {
                 A   range[] = {A(),A(),A(),A(),A()};
-                vector<A> myvector(range, range + 5);
+                std::vector<A> myvector(range, range + 5);
     
                 for (int i = 0; i < 5; i++)
                     myvector.push_back (A());
@@ -400,41 +400,41 @@ int main()
     {
         std::cout << "\n\nresize function\n" << std::endl;
         {
-            vector<A>  vec(7);
+            std::vector<A>  vec(7);
     
             vec.resize(2);
             std::cout << "capacity -> " << vec.capacity() << std::endl;
             std::cout << "size     -> " << vec.size()  << std::endl;
         }
         {
-            vector<A>  vec(7);
+            std::vector<A>  vec(7);
     
             vec.resize(2, A());
             std::cout << "capacity -> " << vec.capacity() << std::endl;
             std::cout << "size     -> " << vec.size()  << std::endl;
         }
         {
-            vector<A>  vec(2);
+            std::vector<A>  vec(2);
             vec.resize(7);
             std::cout << "capacity -> " << vec.capacity() << std::endl;
             std::cout << "size     -> " << vec.size()  << std::endl;
         }
         {
         
-            vector<A>  vec(2);
+            std::vector<A>  vec(2);
             vec.resize(7, A());
             std::cout << "capacity -> " << vec.capacity() << std::endl;
             std::cout << "size     -> " << vec.size()  << std::endl;
         }
         {
-            vector<A>  vec(2);
+            std::vector<A>  vec(2);
             vec.resize(2);
             std::cout << "capacity -> " << vec.capacity() << std::endl;
             std::cout << "size     -> " << vec.size()  << std::endl;
         }
         {
         
-            vector<A>  vec(2);
+            std::vector<A>  vec(2);
             vec.resize(2, A());
             std::cout << "capacity -> " << vec.capacity() << std::endl;
             std::cout << "size     -> " << vec.size()  << std::endl;
@@ -443,7 +443,7 @@ int main()
     {
         std::cout << "\n\nerase function\n" << std::endl;
         {
-            vector<A> myvector(6);
+            std::vector<A> myvector(6);
         
             myvector.erase (myvector.begin());
             myvector.erase (myvector.begin() + 2);
@@ -451,7 +451,7 @@ int main()
             // myvector.erase (myvector.begin() - 1);
         }
         {
-            vector<A> myvector(6);
+            std::vector<A> myvector(6);
     
             std::cout << "::::::::::::::::::::::" << std::endl;
         
@@ -463,7 +463,7 @@ int main()
     {
         std::cout << "\n\nINSERT function\n" << std::endl;
         {
-            vector<A> vec (4);
+            std::vector<A> vec (4);
             vec.reserve(6);
 
             A a;
@@ -473,7 +473,7 @@ int main()
                 std::cout << vec.capacity() << std::endl;
         }
         {
-            vector<A> vec (4);
+            std::vector<A> vec (4);
             vec.reserve(6);
 
             A a;
@@ -483,7 +483,7 @@ int main()
                 std::cout << vec.capacity() << std::endl;
         }
         {
-            vector<A> vec (4);
+            std::vector<A> vec (4);
             vec.reserve(6);
 
             A a;
@@ -496,8 +496,8 @@ int main()
     // {
     //     std::cout << "\n\nnon member overloads\n" << std::endl;
     //     {
-    //         vector<std::string> foo (3, "abc");
-    //         vector<std::string> bar (4, "abc");
+    //         std::vector<std::string> foo (3, "abc");
+    //         std::vector<std::string> bar (4, "abc");
 
     //         if (foo==bar) std::cout << "foo and bar are equal\n";
     //         if (foo!=bar) std::cout << "foo and bar are not equal\n";
@@ -507,8 +507,8 @@ int main()
     //         if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
     //     }
     //     {
-    //         vector<std::string> foo (4, "abc");
-    //         vector<std::string> bar (4, "abc");
+    //         std::vector<std::string> foo (4, "abc");
+    //         std::vector<std::string> bar (4, "abc");
 
     //         if (foo==bar) std::cout << "foo and bar are equal\n";
     //         if (foo!=bar) std::cout << "foo and bar are not equal\n";
@@ -518,8 +518,8 @@ int main()
     //         if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
     //     }
     //     {
-    //         vector<std::string> foo (4, "abc");
-    //         vector<std::string> bar (3, "abc");
+    //         std::vector<std::string> foo (4, "abc");
+    //         std::vector<std::string> bar (3, "abc");
 
     //         if (foo==bar) std::cout << "foo and bar are equal\n";
     //         if (foo!=bar) std::cout << "foo and bar are not equal\n";
@@ -529,8 +529,8 @@ int main()
     //         if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
     //     }
     //     {
-    //         vector<std::string> foo (3, "abd");
-    //         vector<std::string> bar (4, "abc");
+    //         std::vector<std::string> foo (3, "abd");
+    //         std::vector<std::string> bar (4, "abc");
 
     //         if (foo==bar) std::cout << "foo and bar are equal\n";
     //         if (foo!=bar) std::cout << "foo and bar are not equal\n";
@@ -540,8 +540,8 @@ int main()
     //         if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
     //     }
     //     {
-    //         vector<std::string> foo (4, "abd");
-    //         vector<std::string> bar (4, "abc");
+    //         std::vector<std::string> foo (4, "abd");
+    //         std::vector<std::string> bar (4, "abc");
 
     //         if (foo==bar) std::cout << "foo and bar are equal\n";
     //         if (foo!=bar) std::cout << "foo and bar are not equal\n";
@@ -551,8 +551,8 @@ int main()
     //         if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
     //     }
     //     {
-    //         vector<std::string> foo (4, "abd");
-    //         vector<std::string> bar (3, "abc");
+    //         std::vector<std::string> foo (4, "abd");
+    //         std::vector<std::string> bar (3, "abc");
 
     //         if (foo==bar) std::cout << "foo and bar are equal\n";
     //         if (foo!=bar) std::cout << "foo and bar are not equal\n";
