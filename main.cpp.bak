@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 11:27:34 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/25 12:38:53 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/26 12:34:27 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,18 +41,39 @@ class   A
 
 int A::i = 0;
 
-// int main1()
-// {
-//     std::vector<A>  vec(4);
-
-//     vec.reserve(60);
-    
-//     A   a;
-//     // vec.insert(vec.begin() + 2, 4, a);
-//     return 1;
-// }
-
 int main()
+{
+    // std::cout << "\n\ninsert n function\n" << std::endl;
+    // {
+    //     std::cout << "\nsize + n > capacity\n" << std::endl;
+    //     std::vector<A>  vec(4);
+    //     A   a;
+
+    //     vec.insert(vec.begin(), 4, a);
+    //     vec.insert(vec.begin() + 2, 5, a);
+    //     vec.insert(vec.end(), 9, a);
+    //     std::cout << "capacity -> " << vec.capacity() << std::endl;
+    //     std::cout << "size     -> " << vec.size()  << std::endl;
+    // }
+    {
+        std::cout << "\nsize + n <= capacity\n" << std::endl;
+        std::vector<A>  vec(10);
+        vec.reserve(50);
+        A   a;
+
+        std::cout << "\n*******************************************\n" << std::endl;
+        vec.insert(vec.end() - 3, 4, a);
+        // vec.insert(vec.begin() + 2, 4, a);
+        std::cout << "capacity -> " << vec.capacity() << std::endl;
+        std::cout << "size     -> " << vec.size()  << std::endl;
+        std::cout << "\n*******************************************\n" << std::endl;
+        
+    }
+
+    return 1;
+}
+
+int main1()
 {
     {
         std::cout << "\n\nfill constructor without a value\n" << std::endl;

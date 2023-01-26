@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/25 13:35:52 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/26 12:34:11 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ class vector
         void                    resize (size_type n, value_type val);
         iterator                erase (iterator pos)
         {
-            __shift_left(pos, end());
+            __shift_left(pos, end(), 1);
             --__size;
             __allocator.destroy(__data + __size);
 
@@ -123,7 +123,7 @@ class vector
                     iterator    it = end() - 1;
     
                     __allocator.construct(__data + __size, *it);
-                    __shift_right(pos);
+                    __shift_right(pos, it, 1);
                     *pos = val;
                 }
             }
@@ -134,8 +134,8 @@ class vector
     
                 __allocator.construct(data + p, val);
 
-                __reverse_copy_construct(p, data); // construt             0 <- (p - 1)
-                __copy_construct(p, __size, data);             // construt             p <- end
+                __reverse_copy_construct(p, data);
+                __copy_construct(p, __size, data + 1);
                 __destruct(0);
                 
                 __data = data;
@@ -144,11 +144,42 @@ class vector
             ++__size;
             return __data + p;
         }
-        // void                    insert (iterator pos, size_type n, const value_type& val)
-        // {
-            
-        // }
-        void                    swap (vector& x, vector& y); 
+        void                    insert (iterator pos, size_type n, const value_type& val)
+        {
+            size_type   p = pos - begin();
+            if (__size + n > __capacity)
+            {
+                size_type   capacity = (!__capacity) ? n : __capacity * 2;;
+                T   *data = __allocator.allocate(capacity);
+
+
+                __construct_at_end(p, p + n, val, data);
+                __reverse_copy_construct(p, data);
+                __copy_construct(p, __size, data + n);
+                __destruct(0);
+                __allocator.deallocate(__data, __capacity);
+                __data = data;
+                __capacity = capacity;
+            }
+            else
+            {
+                if (pos + n > end())
+                {
+                    std::cout << "under construction!" << std::endl;
+                }
+                else
+                {
+                    __copy_construct(__size - n, __size, __data + n);
+                    __shift_right(pos + n - 1, end() - 1, n);
+                    __assign(p, p + n, val);
+                }
+                
+            }
+            __size += n;
+        }
+        
+        // template <class InputIterator>
+        // void insert (iterator pos, InputIterator first, InputIterator last);
         
 
 
@@ -161,15 +192,15 @@ class vector
         allocator_type  __allocator;
 
         void    __resize(size_type n);
-        void    __assign (size_type __n, const value_type &val);
+        void    __assign (size_type __start, size_type __end, const value_type &val);
         template <class InputIterator>
         void    __assign_range (size_type __start, size_type __end, const InputIterator range);
         void    __destruct (size_type __n);
         void    __destruct_at_end (size_type __n);
-        void    __construct_at_end (size_type __first, size_type __last, const value_type &val);
+        void    __construct_at_end (size_type __first, size_type __last, const value_type &val, value_type *data);
         void    __range_shift_left (iterator first, iterator last);
-        void    __shift_left (iterator first, iterator last);
-        void    __shift_right (iterator pos);
+        void    __shift_left (iterator first, iterator last, size_type n);
+        void    __shift_right (iterator first, iterator last, size_type n);
         void    __copy_construct (size_type __start, size_type __end, value_type *data);
         void    __reverse_copy_construct (size_type i, value_type *data);
     
@@ -179,14 +210,11 @@ class vector
 /* *************************************************************************** */
 
 template <class T>
-vector<T>::vector () : __size(0), __capacity (0)
-{
-    __data = NULL;
-}
+vector<T>::vector () : __data(nullptr), __size(0), __capacity (0) {}
 
 
 template <class T>
-vector<T>::vector (size_type n) : __size(n), __capacity (n)
+vector<T>::vector (size_type n) : __data(nullptr), __size(n), __capacity (n)
 {
     __data = __allocator.allocate(__capacity);
     for (size_type i = 0; i < __size; i++)
@@ -195,7 +223,7 @@ vector<T>::vector (size_type n) : __size(n), __capacity (n)
 
 
 template <class T>
-vector<T>::vector (size_type n, const value_type& val) : __size(n), __capacity (n)
+vector<T>::vector (size_type n, const value_type& val) : __data(nullptr), __size(n), __capacity (n)
 {
     __data = __allocator.allocate(__capacity);
     for (size_type i = 0; i < __size; i++)
@@ -205,7 +233,7 @@ vector<T>::vector (size_type n, const value_type& val) : __size(n), __capacity (
 
 template <class T>
 template <class InputIterator>
-vector<T>::vector (InputIterator first, InputIterator last) : __size(last - first), __capacity (__size)
+vector<T>::vector (InputIterator first, InputIterator last) : __data(nullptr), __size(last - first), __capacity (__size)
 {
     if (first > last)
         throw std::length_error("vector");
@@ -217,7 +245,7 @@ vector<T>::vector (InputIterator first, InputIterator last) : __size(last - firs
 
 
 template <class T>
-vector<T>::vector (const vector& x) : __size(x.__size), __capacity (x.__capacity)
+vector<T>::vector (const vector& x) : __data(nullptr), __size(x.__size), __capacity (x.__capacity)
 {
     __data = __allocator.allocate(__capacity);
     for (size_type i = 0; i < __size; i++)
@@ -254,6 +282,10 @@ vector<T>   &vector<T>::operator= (const vector<T> &x)
 }
 
 
+/* *************************************************************************** */
+/*                                  destructor                                 */
+/* *************************************************************************** */
+
 template <class T>
 vector<T>::~vector ()
 {
@@ -269,7 +301,9 @@ vector<T>::~vector ()
 
 
 
-
+/* *************************************************************************** */
+/*                               member functions                              */
+/* *************************************************************************** */
 
 template <class T>
 void    vector<T>::assign (size_type n, const value_type &val)
@@ -278,8 +312,8 @@ void    vector<T>::assign (size_type n, const value_type &val)
     {
         size_type   min = std::min(n, __size);
         
-        __assign(min, val);
-        __construct_at_end(min, n, val);
+        __assign(0, min, val);
+        __construct_at_end(min, n, val, __data);
         __destruct(n);
     }
     else
@@ -287,7 +321,7 @@ void    vector<T>::assign (size_type n, const value_type &val)
         clear();
         __allocator.deallocate(__data, __capacity);
         __data = __allocator.allocate(n);
-        __construct_at_end(0, n, val);
+        __construct_at_end(0, n, val, __data);
     }
 
     __capacity = std::max(__capacity, n);
@@ -471,7 +505,9 @@ void    vector<T>::resize (size_type n)
 
 
 
-
+/* *************************************************************************** */
+/*                             non-member overloads                            */
+/* *************************************************************************** */
 
 template <class T>
 void             swap (vector<T>& x, vector<T>& y)
@@ -562,102 +598,9 @@ bool operator>= (const vector<T>& lhs, const vector<T>& rhs)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* *************************************************************************** */
+/*                           private-member overloads                          */
+/* *************************************************************************** */
 
 template <class T>
 void    vector<T>::__resize(size_type n)
@@ -677,9 +620,9 @@ void    vector<T>::__resize(size_type n)
 }
 
 template <class T>
-void    vector<T>::__assign (size_type __n, const value_type &val)
+void    vector<T>::__assign (size_type __start, size_type __end, const value_type &val)
 {
-    for (size_type i = 0; i < __n; i++)
+    for (size_type i = __start; i < __end; ++i)
         __data[i] = val;
 }
 
@@ -708,17 +651,17 @@ void    vector<T>::__destruct_at_end (size_type __n)
 }
 
 template <class T>
-void    vector<T>::__construct_at_end (size_type __first, size_type __last, const value_type &val)
+void    vector<T>::__construct_at_end (size_type __first, size_type __last, const value_type &val, value_type *data)
 {
     for (size_type i = __first; i < __last; i++)
-        __allocator.construct(__data + i, val);
+        __allocator.construct(data + i, val);
 }
 
 template <class T>
 void    vector<T>::__copy_construct (size_type __start, size_type __end, value_type *data)
 {
     for (size_type i = __start; i < __end; ++i)
-        __allocator.construct(data + i + 1, __data[i]);
+        __allocator.construct(data + i, __data[i]);
 }
 
 template <class T>
@@ -732,10 +675,10 @@ void    vector<T>::__reverse_copy_construct (size_type i, value_type *data)
 }
 
 template <class T>
-void    vector<T>::__shift_left (iterator first, iterator last)
+void    vector<T>::__shift_left (iterator first, iterator last, size_type n)
 {
     while (++first != last)
-        *(first - 1) = *first;
+        *(first - n) = *first;
 }
 
 template <class T>
@@ -746,10 +689,10 @@ void    vector<T>::__range_shift_left (iterator first, iterator last)
 }
 
 template <class T>
-void    vector<T>::__shift_right (iterator pos)
+void    vector<T>::__shift_right (iterator first, iterator last, size_type n)
 {
-    for (iterator it = end() - 1; it > pos; --it)
-        *it = *(it - 1);
+    for (iterator it = last; it > first; --it)
+        *it = *(it - n);
 }
 
 

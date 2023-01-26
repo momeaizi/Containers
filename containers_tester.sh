@@ -9,7 +9,7 @@ make re> /dev/null
 
 echo "your container tooks " 
 time ./Containers > /dev/null
-echo "\n"
+echo 
 
 sed -i.bak 's/ std::vector/ vector/g' main.cpp
 make re > /dev/null
