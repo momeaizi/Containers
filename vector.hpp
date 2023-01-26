@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/26 12:34:11 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/26 23:47:53 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,11 +149,11 @@ class vector
             size_type   p = pos - begin();
             if (__size + n > __capacity)
             {
-                size_type   capacity = (!__capacity) ? n : __capacity * 2;;
+                size_type   capacity = (__capacity * 2 < n + __size) ? __size + n : __capacity * 2;;
                 T   *data = __allocator.allocate(capacity);
 
 
-                __construct_at_end(p, p + n, val, data);
+                __construct_at_end(0, n, val, data + p);
                 __reverse_copy_construct(p, data);
                 __copy_construct(p, __size, data + n);
                 __destruct(0);
@@ -165,7 +165,10 @@ class vector
             {
                 if (pos + n > end())
                 {
-                    std::cout << "under construction!" << std::endl;
+                    size_type   __n = end() - pos;
+                    __construct_at_end(0, n - __n, val, __data + __size);
+                    __copy_construct(__size - __n, __size, __data + n);
+                    __assign(p, __size, val);
                 }
                 else
                 {
@@ -179,7 +182,43 @@ class vector
         }
         
         // template <class InputIterator>
-        // void insert (iterator pos, InputIterator first, InputIterator last);
+        // void insert (iterator pos, InputIterator first, InputIterator last)
+        // {
+        //     size_type   p = pos - begin();
+        //     if (__size + n > __capacity)
+        //     {
+        //         size_type   capacity = (!__capacity) ? n : __capacity * 2;;
+        //         T   *data = __allocator.allocate(capacity);
+
+
+        //         __construct_at_end(p, p + n, val, data);
+        //         __reverse_copy_construct(p, data);
+        //         __copy_construct(p, __size, data + n);
+        //         __destruct(0);
+        //         __allocator.deallocate(__data, __capacity);
+        //         __data = data;
+        //         __capacity = capacity;
+        //     }
+        //     else
+        //     {
+        //         if (pos + n > end())
+        //         {
+        //             size_type   __n = end() - pos;
+        //             __construct_at_end(0, n - __n, val, __data + __size);
+        //             __copy_construct(__size - __n, __size, __data + n);
+        //             __assign(p, __size, val);
+        //         }
+        //         else
+        //         {
+        //             __copy_construct(__size - n, __size, __data + n);
+        //             __shift_right(pos + n - 1, end() - 1, n);
+        //             __assign(p, p + n, val);
+        //         }
+                
+        //     }
+        //     __size += n;
+            
+        // }
         
 
 
@@ -519,10 +558,13 @@ template <class T>
 bool    operator== (const vector<T>& lhs, const vector<T>& rhs)
 {
     if (lhs.size() != rhs.size())
-        for (size_t i = 0; i < lhs.size(); i++)
+        return false;
+
+    if (lhs.size() == rhs.size())
+        for (size_t i = 0; i < lhs.size(); ++i)
             if (lhs[i] != rhs[i])
                 return false;
-    return false;
+    return true;
 }
 
 template <class T>
@@ -542,9 +584,10 @@ template <class T>
 bool operator<  (const vector<T>& lhs, const vector<T>& rhs)
 {
     size_t    minSize = std::min(lhs.size(), rhs.size());
-    for (size_t i = 0; i < minSize; i++)
-        if (!(lhs[i] < rhs[i]))
-            return false;
+
+    for (size_t i = 0; i < minSize; ++i)
+        if (lhs[i] < rhs[i])
+            return true;
     if (lhs.size() < rhs.size())
         return true;
     return false;
@@ -553,13 +596,11 @@ bool operator<  (const vector<T>& lhs, const vector<T>& rhs)
 template <class T>
 bool operator<= (const vector<T>& lhs, const vector<T>& rhs)
 {
-    size_t    minSize = std::min(lhs.size(), rhs.size());
-    for (size_t i = 0; i < minSize; i++)
-        if (!(lhs[i] <= rhs[i]))
+
+    for (size_t i = 0; i < lhs.size(); ++i)
+        if (!(lhs[i] < rhs[i]))
             return false;
-    if (lhs.size() <= rhs.size())
-        return true;
-    return false;
+    return true;
 }
 
 template <class T>
