@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/26 23:47:53 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/27 18:28:47 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,82 +144,9 @@ class vector
             ++__size;
             return __data + p;
         }
-        void                    insert (iterator pos, size_type n, const value_type& val)
-        {
-            size_type   p = pos - begin();
-            if (__size + n > __capacity)
-            {
-                size_type   capacity = (__capacity * 2 < n + __size) ? __size + n : __capacity * 2;;
-                T   *data = __allocator.allocate(capacity);
-
-
-                __construct_at_end(0, n, val, data + p);
-                __reverse_copy_construct(p, data);
-                __copy_construct(p, __size, data + n);
-                __destruct(0);
-                __allocator.deallocate(__data, __capacity);
-                __data = data;
-                __capacity = capacity;
-            }
-            else
-            {
-                if (pos + n > end())
-                {
-                    size_type   __n = end() - pos;
-                    __construct_at_end(0, n - __n, val, __data + __size);
-                    __copy_construct(__size - __n, __size, __data + n);
-                    __assign(p, __size, val);
-                }
-                else
-                {
-                    __copy_construct(__size - n, __size, __data + n);
-                    __shift_right(pos + n - 1, end() - 1, n);
-                    __assign(p, p + n, val);
-                }
-                
-            }
-            __size += n;
-        }
-        
-        // template <class InputIterator>
-        // void insert (iterator pos, InputIterator first, InputIterator last)
-        // {
-        //     size_type   p = pos - begin();
-        //     if (__size + n > __capacity)
-        //     {
-        //         size_type   capacity = (!__capacity) ? n : __capacity * 2;;
-        //         T   *data = __allocator.allocate(capacity);
-
-
-        //         __construct_at_end(p, p + n, val, data);
-        //         __reverse_copy_construct(p, data);
-        //         __copy_construct(p, __size, data + n);
-        //         __destruct(0);
-        //         __allocator.deallocate(__data, __capacity);
-        //         __data = data;
-        //         __capacity = capacity;
-        //     }
-        //     else
-        //     {
-        //         if (pos + n > end())
-        //         {
-        //             size_type   __n = end() - pos;
-        //             __construct_at_end(0, n - __n, val, __data + __size);
-        //             __copy_construct(__size - __n, __size, __data + n);
-        //             __assign(p, __size, val);
-        //         }
-        //         else
-        //         {
-        //             __copy_construct(__size - n, __size, __data + n);
-        //             __shift_right(pos + n - 1, end() - 1, n);
-        //             __assign(p, p + n, val);
-        //         }
-                
-        //     }
-        //     __size += n;
-            
-        // }
-        
+        void                    insert (iterator pos, size_type n, const value_type& val);
+        template <class InputIterator>
+        void                    insert (iterator pos, InputIterator first, InputIterator last);
 
 
         
@@ -233,7 +160,7 @@ class vector
         void    __resize(size_type n);
         void    __assign (size_type __start, size_type __end, const value_type &val);
         template <class InputIterator>
-        void    __assign_range (size_type __start, size_type __end, const InputIterator range);
+        void    __assign_range (size_type __start, size_type __end, InputIterator range);
         void    __destruct (size_type __n);
         void    __destruct_at_end (size_type __n);
         void    __construct_at_end (size_type __first, size_type __last, const value_type &val, value_type *data);
@@ -242,8 +169,14 @@ class vector
         void    __shift_right (iterator first, iterator last, size_type n);
         void    __copy_construct (size_type __start, size_type __end, value_type *data);
         void    __reverse_copy_construct (size_type i, value_type *data);
+        template <class InputIterator>
+        void    __range_construct (InputIterator range, value_type *data, size_type n);
     
 };
+
+
+
+
 /* *************************************************************************** */
 /*                                 constructors                                */
 /* *************************************************************************** */
@@ -413,19 +346,11 @@ void    vector<T>::clear ()
 template <class T>
 void            vector<T>::swap (vector<T>& x)
 {
-    allocator_type  allocator = x.__allocator;
-    value_type      *data = x.__data;
-    size_type      size = x.__size;
-    size_type      capacity = x.__capacity;
 
-    x.__allocator = __allocator;
-    x.__data = __data;
-    x.__size = __size;
-    x.__capacity = __capacity;
-    __allocator = allocator;
-    __data = data;
-    __size = size;
-    __capacity = capacity;
+    std::swap(x.__allocator, __allocator);
+    std::swap(x.__data, __data);
+    std::swap(x.__size, __size);
+    std::swap(x.__capacity, __capacity);
 }
    
 template <class T>
@@ -532,6 +457,84 @@ void    vector<T>::resize (size_type n)
 }
 
 
+template <class T>
+void    vector<T>::insert (iterator pos, size_type n, const value_type& val)
+{
+    size_type   p = pos - begin();
+    if (__size + n > __capacity)
+    {
+        size_type   capacity = (__capacity * 2 < n + __size) ? __size + n : __capacity * 2;;
+        T   *data = __allocator.allocate(capacity);
+
+
+        __construct_at_end(0, n, val, data + p);
+        __reverse_copy_construct(p, data);
+        __copy_construct(p, __size, data + n);
+        __destruct(0);
+        __allocator.deallocate(__data, __capacity);
+        __data = data;
+        __capacity = capacity;
+    }
+    else
+    {
+        if (pos + n > end())
+        {
+            size_type   __n = end() - pos;
+            __construct_at_end(0, n - __n, val, __data + __size);
+            __copy_construct(__size - __n, __size, __data + n);
+            __assign(p, __size, val);
+        }
+        else
+        {
+            __copy_construct(__size - n, __size, __data + n);
+            __shift_right(pos + n - 1, end() - 1, n);
+            __assign(p, p + n, val);
+        }
+        
+    }
+    __size += n;
+}
+
+template <class T>
+template <class InputIterator>
+void    vector<T>::insert (iterator pos, InputIterator first, InputIterator last)
+{
+    size_type   p = pos - begin();
+    size_type   n = last - first;
+
+    if (__size + n > __capacity)
+    {
+        size_type   capacity = (__capacity * 2 < n + __size) ? __size + n : __capacity * 2;;
+        T   *data = __allocator.allocate(capacity);
+
+
+        __range_construct(first, data + p, n);
+        __reverse_copy_construct(p, data);
+        __copy_construct(p, __size, data + n);
+        __destruct(0);
+        __allocator.deallocate(__data, __capacity);
+        __data = data;
+        __capacity = capacity;
+    }
+    else
+    {
+        if (pos + n > end())
+        {
+            size_type   __n = end() - pos;
+            
+            __range_construct(first + __n, __data + __size, n - __n);
+            __copy_construct(__size - __n, __size, __data + n);
+            __assign_range(p, __size, first);
+        }
+        else
+        {
+            __copy_construct(__size - n, __size, __data + n);
+            __shift_right(pos + n - 1, end() - 1, n);
+            __assign_range(p, p + n, first);
+        }
+    }
+    __size += n;
+}
 
 
 
@@ -586,21 +589,32 @@ bool operator<  (const vector<T>& lhs, const vector<T>& rhs)
     size_t    minSize = std::min(lhs.size(), rhs.size());
 
     for (size_t i = 0; i < minSize; ++i)
+    {
         if (lhs[i] < rhs[i])
             return true;
+        else if (lhs[i] > rhs[i])
+            return false;
+    }
     if (lhs.size() < rhs.size())
         return true;
     return false;
 }
 
 template <class T>
-bool operator<= (const vector<T>& lhs, const vector<T>& rhs)
+bool operator<=  (const vector<T>& lhs, const vector<T>& rhs)
 {
+    size_t    minSize = std::min(lhs.size(), rhs.size());
 
-    for (size_t i = 0; i < lhs.size(); ++i)
-        if (!(lhs[i] < rhs[i]))
+    for (size_t i = 0; i < minSize; ++i)
+    {
+        if (lhs[i] <= rhs[i])
+            return true;
+        else if (lhs[i] > rhs[i])
             return false;
-    return true;
+    }
+    if (lhs.size() <= rhs.size())
+        return true;
+    return false;
 }
 
 template <class T>
@@ -628,8 +642,16 @@ bool operator>= (const vector<T>& lhs, const vector<T>& rhs)
     return false;
 }
 
+template <class InputIterator>
+InputIterator   operator+ (InputIterator inputit, size_t n)
+{
+    InputIterator   it = inputit;
 
+    for (size_t i = 0; i < n; ++i)
+        ++it;
 
+    return it;
+}
 
 
 
@@ -669,10 +691,10 @@ void    vector<T>::__assign (size_type __start, size_type __end, const value_typ
 
 template <class T>
 template <class InputIterator>
-void    vector<T>::__assign_range (size_type __start, size_type __end, const InputIterator range)
+void    vector<T>::__assign_range (size_type __start, size_type __end, InputIterator range)
 {
     for (size_type i = __start; i < __end; ++i)
-        __data[i] = *(range + i);
+        __data[i] = *(range++);
 }
 
 template <class T>
@@ -703,6 +725,14 @@ void    vector<T>::__copy_construct (size_type __start, size_type __end, value_t
 {
     for (size_type i = __start; i < __end; ++i)
         __allocator.construct(data + i, __data[i]);
+}
+
+template <class T>
+template <class InputIterator>
+void    vector<T>::__range_construct (InputIterator range, value_type *data, size_type n)
+{
+    for (size_type i = 0; i < n; ++i)
+        __allocator.construct(data + i, *(range++));
 }
 
 template <class T>
