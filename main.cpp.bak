@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 11:27:34 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/27 18:32:23 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/28 18:36:15 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -573,75 +573,75 @@ int main()
             
         }
     }
-//     {
-//         // std::cout << "\n\nnon member overloads\n" << std::endl;
-//         {
-//             std::vector<std::string> foo (3, "abc");
-//             std::vector<std::string> bar (4, "abc");
+    {
+        std::cout << "\n\nnon member overloads\n" << std::endl;
+        {
+            std::vector<std::string> foo (3, "abc");
+            std::vector<std::string> bar (4, "abc");
 
-//             if (foo==bar) std::cout << "foo and bar are equal\n";
-//             if (foo!=bar) std::cout << "foo and bar are not equal\n";
-//             if (foo< bar) std::cout << "foo is less than bar\n";
-//             // if (foo> bar) std::cout << "foo is greater than bar\n";
-//             if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
-//             // if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
-//         }
-//         {
-//             std::vector<std::string> foo (4, "abc");
-//             std::vector<std::string> bar (4, "abc");
+            if (foo==bar) std::cout << "foo and bar are equal\n";
+            if (foo!=bar) std::cout << "foo and bar are not equal\n";
+            if (foo< bar) std::cout << "foo is less than bar\n";
+            if (foo> bar) std::cout << "foo is greater than bar\n";
+            if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+            if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+        }
+        {
+            std::vector<std::string> foo (4, "abc");
+            std::vector<std::string> bar (4, "abc");
 
-//             if (foo==bar) std::cout << "foo and bar are equal\n";
-//             if (foo!=bar) std::cout << "foo and bar are not equal\n";
-//             if (foo< bar) std::cout << "foo is less than bar\n";
-//         //     if (foo> bar) std::cout << "foo is greater than bar\n";
-//             if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
-//         //     if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
-//         }
-//         {
-//             std::vector<std::string> foo (4, "abc");
-//             std::vector<std::string> bar (3, "abc");
+            if (foo==bar) std::cout << "foo and bar are equal\n";
+            if (foo!=bar) std::cout << "foo and bar are not equal\n";
+            if (foo< bar) std::cout << "foo is less than bar\n";
+            if (foo> bar) std::cout << "foo is greater than bar\n";
+            if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+            if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+        }
+        {
+            std::vector<std::string> foo (4, "abc");
+            std::vector<std::string> bar (3, "abc");
 
-//             if (foo==bar) std::cout << "foo and bar are equal\n";
-//             if (foo!=bar) std::cout << "foo and bar are not equal\n";
-//             if (foo< bar) std::cout << "foo is less than bar\n";
-//         //     if (foo> bar) std::cout << "foo is greater than bar\n";
-//             if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
-//         //     if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
-//         }
-//         {
-//             std::vector<std::string> foo (3, "abd");
-//             std::vector<std::string> bar (4, "abc");
+            if (foo==bar) std::cout << "foo and bar are equal\n";
+            if (foo!=bar) std::cout << "foo and bar are not equal\n";
+            if (foo< bar) std::cout << "foo is less than bar\n";
+            if (foo> bar) std::cout << "foo is greater than bar\n";
+            if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+            if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+        }
+        {
+            std::vector<std::string> foo (3, "abd");
+            std::vector<std::string> bar (4, "abc");
 
-//             if (foo==bar) std::cout << "foo and bar are equal\n";
-//             if (foo!=bar) std::cout << "foo and bar are not equal\n";
-//             if (foo< bar) std::cout << "foo is less than bar\n";
-//         //     if (foo> bar) std::cout << "foo is greater than bar\n";
-//             // if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
-//         //     if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
-//         }
-//         {
-//             std::vector<std::string> foo (4, "abd");
-//             std::vector<std::string> bar (4, "abc");
+            if (foo==bar) std::cout << "foo and bar are equal\n";
+            if (foo!=bar) std::cout << "foo and bar are not equal\n";
+            if (foo< bar) std::cout << "foo is less than bar\n";
+            if (foo> bar) std::cout << "foo is greater than bar\n";
+            if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+            if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+        }
+        {
+            std::vector<std::string> foo (4, "abd");
+            std::vector<std::string> bar (4, "abc");
 
-//             if (foo==bar) std::cout << "foo and bar are equal\n";
-//             if (foo!=bar) std::cout << "foo and bar are not equal\n";
-//             if (foo< bar) std::cout << "foo is less than bar\n";
-// //             if (foo> bar) std::cout << "foo is greater than bar\n";
-//             // if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
-// //             if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
-//         }
-//         {
-//             std::vector<std::string> foo (4, "abd");
-//             std::vector<std::string> bar (3, "abc");
+            if (foo==bar) std::cout << "foo and bar are equal\n";
+            if (foo!=bar) std::cout << "foo and bar are not equal\n";
+            if (foo< bar) std::cout << "foo is less than bar\n";
+            if (foo> bar) std::cout << "foo is greater than bar\n";
+            if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+            if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+        }
+        {
+            std::vector<std::string> foo (4, "abd");
+            std::vector<std::string> bar (3, "abc");
 
-//             if (foo==bar) std::cout << "foo and bar are equal\n";
-//             if (foo!=bar) std::cout << "foo and bar are not equal\n";
-//             if (foo< bar) std::cout << "foo is less than bar\n";
-// //             if (foo> bar) std::cout << "foo is greater than bar\n";
-//             // if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
-// //             if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
-//         }
-//     }
+            if (foo==bar) std::cout << "foo and bar are equal\n";
+            if (foo!=bar) std::cout << "foo and bar are not equal\n";
+            if (foo< bar) std::cout << "foo is less than bar\n";
+            if (foo> bar) std::cout << "foo is greater than bar\n";
+            if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+            if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+        }
+    }
     return 0;
 }
 

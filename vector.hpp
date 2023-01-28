@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/27 18:28:47 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/01/27 22:00:54 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -550,6 +550,9 @@ void    vector<T>::insert (iterator pos, InputIterator first, InputIterator last
 /* *************************************************************************** */
 /*                             non-member overloads                            */
 /* *************************************************************************** */
+
+template <class T>
+bool    is_integral(const T &type);
 
 template <class T>
 void             swap (vector<T>& x, vector<T>& y)
