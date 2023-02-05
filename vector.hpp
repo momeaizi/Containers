@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/27 22:00:54 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/05 16:40:19 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,9 @@
 #include <memory>
 #include <stdexcept>
 #include <iostream>
-#include "iterator.hpp"
+#include "enable_if.hpp"
+#include "is_integral.hpp"
+#include "iterators.hpp"
 #include "iterator_traits.hpp"
 
 template <class T>
@@ -41,8 +43,10 @@ class vector
         explicit vector ();
         explicit vector (size_type n);
         explicit vector (size_type n, const value_type& val);
-        template <class InputIterator>
-        vector (InputIterator first, InputIterator last);
+        template <class InIte>
+        vector (InIte first, typename enable_if<!is_integral<InIte>::value && is_same<typename iterator_traits<InIte *>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last);
+        template <class InIte>
+        vector (InIte first, typename enable_if<!is_integral<InIte>::value && !is_same<typename iterator_traits<InIte *>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last);
         vector (const vector& x);
         vector& operator= (const vector& x);
         ~vector ();
@@ -204,8 +208,8 @@ vector<T>::vector (size_type n, const value_type& val) : __data(nullptr), __size
 
 
 template <class T>
-template <class InputIterator>
-vector<T>::vector (InputIterator first, InputIterator last) : __data(nullptr), __size(last - first), __capacity (__size)
+template <class InIte>
+vector<T>::vector (InIte first, typename enable_if<!is_integral<InIte>::value && is_same<typename iterator_traits<InIte *>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last) : __data(nullptr), __size(last - first), __capacity (__size)
 {
     if (first > last)
         throw std::length_error("vector");
@@ -213,6 +217,14 @@ vector<T>::vector (InputIterator first, InputIterator last) : __data(nullptr), _
     __data = __allocator.allocate(__capacity);
     for (size_type i = 0; i < __size; ++i)
         __allocator.construct(__data + i, *(first++));
+}
+
+template <class T>
+template <class InIte>
+vector<T>::vector (InIte first, typename enable_if<!is_integral<InIte>::value && !is_same<typename iterator_traits<InIte *>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last) : __data(nullptr), __size(last - first), __capacity (__size)
+{
+    for (; first != last; ++first)
+        push_back(*first);
 }
 
 
@@ -551,8 +563,6 @@ void    vector<T>::insert (iterator pos, InputIterator first, InputIterator last
 /*                             non-member overloads                            */
 /* *************************************************************************** */
 
-template <class T>
-bool    is_integral(const T &type);
 
 template <class T>
 void             swap (vector<T>& x, vector<T>& y)
@@ -566,10 +576,9 @@ bool    operator== (const vector<T>& lhs, const vector<T>& rhs)
     if (lhs.size() != rhs.size())
         return false;
 
-    if (lhs.size() == rhs.size())
-        for (size_t i = 0; i < lhs.size(); ++i)
-            if (lhs[i] != rhs[i])
-                return false;
+    for (size_t i = 0; i < lhs.size(); ++i)
+        if (lhs[i] != rhs[i])
+            return false;
     return true;
 }
 
@@ -589,59 +598,68 @@ bool operator!= (const vector<T>& lhs, const vector<T>& rhs)
 template <class T>
 bool operator<  (const vector<T>& lhs, const vector<T>& rhs)
 {
-    size_t    minSize = std::min(lhs.size(), rhs.size());
+    size_t  i = 0;
 
-    for (size_t i = 0; i < minSize; ++i)
-    {
-        if (lhs[i] < rhs[i])
-            return true;
-        else if (lhs[i] > rhs[i])
-            return false;
-    }
-    if (lhs.size() < rhs.size())
+    while (i < lhs.size() && i < rhs.size() && lhs[i] == rhs[i])
+        ++i;
+    
+    if (i == rhs.size())
+        return false;
+
+    if (i == lhs.size() || lhs[i] < rhs[i])
         return true;
+
     return false;
 }
 
 template <class T>
 bool operator<=  (const vector<T>& lhs, const vector<T>& rhs)
 {
-    size_t    minSize = std::min(lhs.size(), rhs.size());
+    size_t  i = 0;
 
-    for (size_t i = 0; i < minSize; ++i)
-    {
-        if (lhs[i] <= rhs[i])
-            return true;
-        else if (lhs[i] > rhs[i])
-            return false;
-    }
-    if (lhs.size() <= rhs.size())
+    while (i < lhs.size() && i < rhs.size() && lhs[i] == rhs[i])
+        ++i;
+    
+    if (i == rhs.size() && i != lhs.size())
+        return false;
+
+    if (i == lhs.size() || lhs[i] <= rhs[i])
         return true;
+
     return false;
 }
 
 template <class T>
 bool operator>  (const vector<T>& lhs, const vector<T>& rhs)
 {
-    size_t    minSize = std::min(lhs.size(), rhs.size());
-    for (size_t i = 0; i < minSize; i++)
-        if (!(lhs[i] > rhs[i]))
-            return false;
-    if (lhs.size() > rhs.size())
-        return true;
-    return false;
+    size_t  i = 0;
+
+    while (i < lhs.size() && i < rhs.size() && lhs[i] == rhs[i])
+        ++i;
     
+    if (i == lhs.size())
+        return false;
+
+    if (i == rhs.size() || lhs[i] > rhs[i])
+        return true;
+
+    return false;
 }
 
 template <class T>
 bool operator>= (const vector<T>& lhs, const vector<T>& rhs)
 {
-    size_t    minSize = std::min(lhs.size(), rhs.size());
-    for (size_t i = 0; i < minSize; i++)
-        if (!(lhs[i] >= rhs[i]))
-            return false;
-    if (lhs.size() >= rhs.size())
+    size_t  i = 0;
+
+    while (i < lhs.size() && i < rhs.size() && lhs[i] == rhs[i])
+        ++i;
+    
+    if (i == lhs.size() && i != rhs.size())
+        return false;
+
+    if (i == rhs.size() || lhs[i] >= rhs[i])
         return true;
+
     return false;
 }
 

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   iterator.hpp                                       :+:      :+:    :+:   */
+/*   iterators.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 11:01:43 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/01/22 23:06:01 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/05 15:38:13 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ class Iterator
 
         Iterator() : m_ptr(NULL) {}
         Iterator(T *ptr) : m_ptr(ptr) {}
-        Iterator(const Iterator &it) : m_ptr(it.m_ptr) {}
+        template <class _T>
+        Iterator(const _T &it) : m_ptr(&(*it)) {}
         template <class _Tp>
         T   &operator=(const _Tp &it) const { m_ptr = it.m_ptr; return *this; }
 
@@ -112,5 +113,34 @@ Reverse_iterator<T>    operator+(std::ptrdiff_t n, const Reverse_iterator<T> &it
 template <class T>
 Reverse_iterator<T>    operator-(std::ptrdiff_t n, const Reverse_iterator<T> &it) { return it - n; }
 
+
+
+
+template <class T>
+class input_iterator
+{
+    private:
+        T           *m_ptr;
+    public:
+        typedef  T                                  value_type;
+        typedef  T&                                 reference;
+        typedef  T*                                 pointer;
+        typedef  std::ptrdiff_t                     difference_type;
+        typedef  std::input_iterator_tag            iterator_category;
+
+        input_iterator() : m_ptr(NULL) {}
+        input_iterator(T *ptr) : m_ptr(ptr) {}
+        template <class _T>
+        input_iterator(const _T &it) : m_ptr(&(*it)) {}
+        template <class _Tp>
+        T   &operator=(const _Tp &it) const { m_ptr = it.m_ptr; return *this; }
+
+        input_iterator&                                   operator++() { ++m_ptr; return *this; }
+        input_iterator                                    operator++(int) { input_iterator temp = *this; ++*this; return temp; }
+        bool                                        operator==(const input_iterator& it) const { return m_ptr == it.m_ptr; }
+        bool                                        operator!=(const input_iterator& it) const { return !(*this == it); }
+        T&                                          operator*() const { return *m_ptr; }
+        T*                                          operator->() const { return m_ptr; }
+};
 
 #endif
