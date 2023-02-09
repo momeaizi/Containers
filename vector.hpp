@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/05 16:40:19 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/09 17:06:21 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,15 @@
 #include "iterators.hpp"
 #include "iterator_traits.hpp"
 
+namespace   ft
+{
+    template <class T>
+    class vector;
+}
+
+
 template <class T>
-class vector
+class ft::vector
 {
     public:
         typedef T                                           value_type;
@@ -44,9 +51,9 @@ class vector
         explicit vector (size_type n);
         explicit vector (size_type n, const value_type& val);
         template <class InIte>
-        vector (InIte first, typename enable_if<!is_integral<InIte>::value && is_same<typename iterator_traits<InIte *>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last);
+        vector (InIte first, typename enable_if<!is_integral<InIte>::value && is_same<typename std::iterator_traits<InIte>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last);
         template <class InIte>
-        vector (InIte first, typename enable_if<!is_integral<InIte>::value && !is_same<typename iterator_traits<InIte *>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last);
+        vector (InIte first, typename enable_if<!is_integral<InIte>::value && !is_same<typename std::iterator_traits<InIte>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last);
         vector (const vector& x);
         vector& operator= (const vector& x);
         ~vector ();
@@ -186,11 +193,11 @@ class vector
 /* *************************************************************************** */
 
 template <class T>
-vector<T>::vector () : __data(nullptr), __size(0), __capacity (0) {}
+ft::vector<T>::vector () : __data(nullptr), __size(0), __capacity (0) {}
 
 
 template <class T>
-vector<T>::vector (size_type n) : __data(nullptr), __size(n), __capacity (n)
+ft::vector<T>::vector (size_type n) : __data(nullptr), __size(n), __capacity (n)
 {
     __data = __allocator.allocate(__capacity);
     for (size_type i = 0; i < __size; i++)
@@ -199,7 +206,7 @@ vector<T>::vector (size_type n) : __data(nullptr), __size(n), __capacity (n)
 
 
 template <class T>
-vector<T>::vector (size_type n, const value_type& val) : __data(nullptr), __size(n), __capacity (n)
+ft::vector<T>::vector (size_type n, const value_type& val) : __data(nullptr), __size(n), __capacity (n)
 {
     __data = __allocator.allocate(__capacity);
     for (size_type i = 0; i < __size; i++)
@@ -209,7 +216,7 @@ vector<T>::vector (size_type n, const value_type& val) : __data(nullptr), __size
 
 template <class T>
 template <class InIte>
-vector<T>::vector (InIte first, typename enable_if<!is_integral<InIte>::value && is_same<typename iterator_traits<InIte *>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last) : __data(nullptr), __size(last - first), __capacity (__size)
+ft::vector<T>::vector (InIte first, typename enable_if<!is_integral<InIte>::value && is_same<typename std::iterator_traits<InIte>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last) : __data(nullptr), __size(last - first), __capacity (__size)
 {
     if (first > last)
         throw std::length_error("vector");
@@ -221,7 +228,7 @@ vector<T>::vector (InIte first, typename enable_if<!is_integral<InIte>::value &&
 
 template <class T>
 template <class InIte>
-vector<T>::vector (InIte first, typename enable_if<!is_integral<InIte>::value && !is_same<typename iterator_traits<InIte *>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last) : __data(nullptr), __size(last - first), __capacity (__size)
+ft::vector<T>::vector (InIte first, typename enable_if<!is_integral<InIte>::value && !is_same<typename std::iterator_traits<InIte>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last) : __data(nullptr), __size(0), __capacity (__size)
 {
     for (; first != last; ++first)
         push_back(*first);
@@ -229,7 +236,7 @@ vector<T>::vector (InIte first, typename enable_if<!is_integral<InIte>::value &&
 
 
 template <class T>
-vector<T>::vector (const vector& x) : __data(nullptr), __size(x.__size), __capacity (x.__capacity)
+ft::vector<T>::vector (const vector& x) : __data(nullptr), __size(x.__size), __capacity (x.__capacity)
 {
     __data = __allocator.allocate(__capacity);
     for (size_type i = 0; i < __size; i++)
@@ -237,7 +244,7 @@ vector<T>::vector (const vector& x) : __data(nullptr), __size(x.__size), __capac
 }
 
 template <class T>
-vector<T>   &vector<T>::operator= (const vector<T> &x)
+ft::vector<T>   &ft::vector<T>::operator= (const ft::vector<T> &x)
 {
     size_type   n = x.size();
 
@@ -271,7 +278,7 @@ vector<T>   &vector<T>::operator= (const vector<T> &x)
 /* *************************************************************************** */
 
 template <class T>
-vector<T>::~vector ()
+ft::vector<T>::~vector ()
 {
     clear();
     if (__capacity)
@@ -290,7 +297,7 @@ vector<T>::~vector ()
 /* *************************************************************************** */
 
 template <class T>
-void    vector<T>::assign (size_type n, const value_type &val)
+void    ft::vector<T>::assign (size_type n, const value_type &val)
 {
     if (n <= __capacity)
     {
@@ -314,7 +321,7 @@ void    vector<T>::assign (size_type n, const value_type &val)
 
 template <class T>
 template <class InputIterator>
-void vector<T>::assign (InputIterator first, InputIterator last)
+void ft::vector<T>::assign (InputIterator first, InputIterator last)
 {
     if (first > last)
     {
@@ -349,14 +356,14 @@ void vector<T>::assign (InputIterator first, InputIterator last)
 }
 
 template <class T>
-void    vector<T>::clear ()
+void    ft::vector<T>::clear ()
 {
     __destruct(0);
     __size = 0;
 }
 
 template <class T>
-void            vector<T>::swap (vector<T>& x)
+void            ft::vector<T>::swap (vector<T>& x)
 {
 
     std::swap(x.__allocator, __allocator);
@@ -366,7 +373,7 @@ void            vector<T>::swap (vector<T>& x)
 }
    
 template <class T>
-void    vector<T>::push_back (const value_type& val)
+void    ft::vector<T>::push_back (const value_type& val)
 {
     if (__size < __capacity)
     {
@@ -390,14 +397,14 @@ void    vector<T>::push_back (const value_type& val)
 }
 
 template <class T>
-void    vector<T>::pop_back()
+void    ft::vector<T>::pop_back()
 {
     __allocator.destroy(__data + __size - 1);
     __size--;
 }
 
 template <class T>
-void    vector<T>::reserve (size_type n)
+void    ft::vector<T>::reserve (size_type n)
 {
     if (n <= __capacity)
         return ;
@@ -413,7 +420,7 @@ void    vector<T>::reserve (size_type n)
 }
 
 template <class T>
-void    vector<T>::resize (size_type n, value_type val)
+void    ft::vector<T>::resize (size_type n, value_type val)
 {
     if (n <= __size)
     {
@@ -422,6 +429,13 @@ void    vector<T>::resize (size_type n, value_type val)
         return ;
     }
     
+    if (n <= __capacity)
+    {
+        for (size_type i = __size; i < n; ++i)
+            __allocator.construct(__data + i, val);
+        __size = n;
+        return ;
+    }
     size_type   capacity = (n > __capacity * 2) ? n : __capacity * 2;
 
     T   *data = __allocator.allocate(capacity);
@@ -441,7 +455,7 @@ void    vector<T>::resize (size_type n, value_type val)
 }
 
 template <class T>
-void    vector<T>::resize (size_type n)
+void    ft::vector<T>::resize (size_type n)
 {
     if (n <= __size)
     {
@@ -450,6 +464,13 @@ void    vector<T>::resize (size_type n)
         return ;
     }
     
+    if (n <= __capacity)
+    {
+        for (size_type i = __size; i < n; ++i)
+            __allocator.construct(__data + i);
+        __size = n;
+        return ;
+    }
     size_type   capacity = (n > __capacity * 2) ? n : __capacity * 2;
 
     T   *data = __allocator.allocate(capacity);
@@ -470,7 +491,7 @@ void    vector<T>::resize (size_type n)
 
 
 template <class T>
-void    vector<T>::insert (iterator pos, size_type n, const value_type& val)
+void    ft::vector<T>::insert (iterator pos, size_type n, const value_type& val)
 {
     size_type   p = pos - begin();
     if (__size + n > __capacity)
@@ -509,7 +530,7 @@ void    vector<T>::insert (iterator pos, size_type n, const value_type& val)
 
 template <class T>
 template <class InputIterator>
-void    vector<T>::insert (iterator pos, InputIterator first, InputIterator last)
+void    ft::vector<T>::insert (iterator pos, InputIterator first, InputIterator last)
 {
     size_type   p = pos - begin();
     size_type   n = last - first;
@@ -565,13 +586,13 @@ void    vector<T>::insert (iterator pos, InputIterator first, InputIterator last
 
 
 template <class T>
-void             swap (vector<T>& x, vector<T>& y)
+void             swap (ft::vector<T>& x, ft::vector<T>& y)
 {
     x.swap(y);
 }
 
 template <class T>
-bool    operator== (const vector<T>& lhs, const vector<T>& rhs)
+bool    operator== (const ft::vector<T>& lhs, const ft::vector<T>& rhs)
 {
     if (lhs.size() != rhs.size())
         return false;
@@ -583,7 +604,7 @@ bool    operator== (const vector<T>& lhs, const vector<T>& rhs)
 }
 
 template <class T>
-bool operator!= (const vector<T>& lhs, const vector<T>& rhs)
+bool operator!= (const ft::vector<T>& lhs, const ft::vector<T>& rhs)
 {
     if (lhs.size() != rhs.size())
         return true;
@@ -596,7 +617,7 @@ bool operator!= (const vector<T>& lhs, const vector<T>& rhs)
 
 
 template <class T>
-bool operator<  (const vector<T>& lhs, const vector<T>& rhs)
+bool operator<  (const ft::vector<T>& lhs, const ft::vector<T>& rhs)
 {
     size_t  i = 0;
 
@@ -613,7 +634,7 @@ bool operator<  (const vector<T>& lhs, const vector<T>& rhs)
 }
 
 template <class T>
-bool operator<=  (const vector<T>& lhs, const vector<T>& rhs)
+bool operator<=  (const ft::vector<T>& lhs, const ft::vector<T>& rhs)
 {
     size_t  i = 0;
 
@@ -630,7 +651,7 @@ bool operator<=  (const vector<T>& lhs, const vector<T>& rhs)
 }
 
 template <class T>
-bool operator>  (const vector<T>& lhs, const vector<T>& rhs)
+bool operator>  (const ft::vector<T>& lhs, const ft::vector<T>& rhs)
 {
     size_t  i = 0;
 
@@ -647,7 +668,7 @@ bool operator>  (const vector<T>& lhs, const vector<T>& rhs)
 }
 
 template <class T>
-bool operator>= (const vector<T>& lhs, const vector<T>& rhs)
+bool operator>= (const ft::vector<T>& lhs, const ft::vector<T>& rhs)
 {
     size_t  i = 0;
 
@@ -687,7 +708,7 @@ InputIterator   operator+ (InputIterator inputit, size_t n)
 /* *************************************************************************** */
 
 template <class T>
-void    vector<T>::__resize(size_type n)
+void    ft::vector<T>::__resize(size_type n)
 {
     T   *data = __allocator.allocate(n);
     
@@ -704,7 +725,7 @@ void    vector<T>::__resize(size_type n)
 }
 
 template <class T>
-void    vector<T>::__assign (size_type __start, size_type __end, const value_type &val)
+void    ft::vector<T>::__assign (size_type __start, size_type __end, const value_type &val)
 {
     for (size_type i = __start; i < __end; ++i)
         __data[i] = val;
@@ -712,14 +733,14 @@ void    vector<T>::__assign (size_type __start, size_type __end, const value_typ
 
 template <class T>
 template <class InputIterator>
-void    vector<T>::__assign_range (size_type __start, size_type __end, InputIterator range)
+void    ft::vector<T>::__assign_range (size_type __start, size_type __end, InputIterator range)
 {
     for (size_type i = __start; i < __end; ++i)
         __data[i] = *(range++);
 }
 
 template <class T>
-void    vector<T>::__destruct (size_type __n)
+void    ft::vector<T>::__destruct (size_type __n)
 {
     reverse_iterator    it = rbegin();
 
@@ -728,21 +749,21 @@ void    vector<T>::__destruct (size_type __n)
 }
 
 template <class T>
-void    vector<T>::__destruct_at_end (size_type __n)
+void    ft::vector<T>::__destruct_at_end (size_type __n)
 {
     for (size_type i = 1; i <= __n; ++i)
         __allocator.destroy(__data + __size - i);
 }
 
 template <class T>
-void    vector<T>::__construct_at_end (size_type __first, size_type __last, const value_type &val, value_type *data)
+void    ft::vector<T>::__construct_at_end (size_type __first, size_type __last, const value_type &val, value_type *data)
 {
     for (size_type i = __first; i < __last; i++)
         __allocator.construct(data + i, val);
 }
 
 template <class T>
-void    vector<T>::__copy_construct (size_type __start, size_type __end, value_type *data)
+void    ft::vector<T>::__copy_construct (size_type __start, size_type __end, value_type *data)
 {
     for (size_type i = __start; i < __end; ++i)
         __allocator.construct(data + i, __data[i]);
@@ -750,14 +771,14 @@ void    vector<T>::__copy_construct (size_type __start, size_type __end, value_t
 
 template <class T>
 template <class InputIterator>
-void    vector<T>::__range_construct (InputIterator range, value_type *data, size_type n)
+void    ft::vector<T>::__range_construct (InputIterator range, value_type *data, size_type n)
 {
     for (size_type i = 0; i < n; ++i)
         __allocator.construct(data + i, *(range++));
 }
 
 template <class T>
-void    vector<T>::__reverse_copy_construct (size_type i, value_type *data)
+void    ft::vector<T>::__reverse_copy_construct (size_type i, value_type *data)
 {
     while (i > 0)
     {
@@ -767,21 +788,21 @@ void    vector<T>::__reverse_copy_construct (size_type i, value_type *data)
 }
 
 template <class T>
-void    vector<T>::__shift_left (iterator first, iterator last, size_type n)
+void    ft::vector<T>::__shift_left (iterator first, iterator last, size_type n)
 {
     while (++first != last)
         *(first - n) = *first;
 }
 
 template <class T>
-void    vector<T>::__range_shift_left (iterator first, iterator last)
+void    ft::vector<T>::__range_shift_left (iterator first, iterator last)
 {
     while (last != end())
         *(first++) = *(last++);
 }
 
 template <class T>
-void    vector<T>::__shift_right (iterator first, iterator last, size_type n)
+void    ft::vector<T>::__shift_right (iterator first, iterator last, size_type n)
 {
     for (iterator it = last; it > first; --it)
         *it = *(it - n);
