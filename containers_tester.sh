@@ -3,19 +3,19 @@ GREEN="\033[32m"
 NORMAL=$(tput sgr0)
 
 
-sed -i.bak 's/ vector/ std::vector/g' main.cpp
+sed -i.bak 's/ft::vector/std::vector/g' main.cpp
 make re> /dev/null
 ./Containers > std
 
-echo "your container tooks " 
+echo "STL container tooks " 
 time ./Containers > /dev/null
 echo 
 
-sed -i.bak 's/ std::vector/ vector/g' main.cpp
+sed -i.bak 's/std::vector/ft::vector/g' main.cpp
 make re > /dev/null
 ./Containers > ft
 
-echo "STL container tooks " 
+echo "your container tooks " 
 time ./Containers > /dev/null
 
 SUCCESS=$(diff std ft | wc -c)

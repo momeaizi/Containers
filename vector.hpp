@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/09 17:06:21 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/10 16:21:33 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,10 @@ class ft::vector
         typedef const T&                                    const_reference;
         typedef T*                                          pointer;
         typedef const T*                                    const_pointer;
-        typedef Iterator<T>                                 iterator;
-        typedef Iterator<const T>                           const_iterator;
-        typedef Reverse_iterator<T>                         reverse_iterator;
-        typedef Reverse_iterator<const T>                   const_reverse_iterator;
+        typedef ft::iterator<T>                             iterator;
+        typedef ft::iterator<const T>                       const_iterator;
+        typedef ft::reverse_iterator<T>                     reverse_iterator;
+        typedef ft::reverse_iterator<const T>               const_reverse_iterator;
         typedef std::ptrdiff_t                              difference_type;
         typedef std::size_t                                 size_type;
 

@@ -62,6 +62,14 @@
         "utility": "cpp",
         "memory_resource": "cpp",
         "__functional_03": "cpp",
-        "__nullptr": "cpp"
+        "__nullptr": "cpp",
+        "__tree": "cpp",
+        "deque": "cpp",
+        "iomanip": "cpp",
+        "map": "cpp",
+        "numeric": "cpp",
+        "random": "cpp",
+        "set": "cpp",
+        "stack": "cpp"
     }
 }

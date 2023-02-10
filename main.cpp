@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 11:27:34 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/09 16:55:33 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/10 16:33:57 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,35 +44,36 @@ class   A
 
 int A::i = 0;
 
-int main()
-{
-    A arr[] = {A(), A(), A(), A(), A()};
 
-    A   *p = arr;
+int main() {
+  int arr[] = {1, 2, 3, 4, 5};
+  ft::vector<int> v (arr, arr + 5);
 
-    std::cout << "_____________" << std::endl;
-    vector<A> vec(input_iterator<A>(p), input_iterator<A>(p + 5));
-    std::cout << "_____________" << std::endl;
+  ft::vector<int>::reverse_iterator rit = v.rbegin();
 
-    return 0;
+  ft::vector<int>::iterator it = v.end() - 1;
+
+  if( *rit == *it  )
+    std::cout <<  *it << *rit  << std::endl;  // Outputs: 1
+  return 0;
 }
 
 // int main1()
 // {
 //     {
 //         std::cout << "\n\nfill constructor without a value\n" << std::endl;
-//         vector<A> vec(10);
+//         ft::vector<A> vec(10);
 //         std::cout << "\n\ncopy constructor\n" << std::endl;
-//         vector<A> vec_copy(vec);
+//         ft::vector<A> vec_copy(vec);
 //         std::cout << "capacity -> " << vec.capacity() << std::endl;
 //         std::cout << "size     -> " << vec.size()  << std::endl;
 //     }
 //     std::cout << "********************" << std::endl;
 //     {
 //         std::cout << "\n\nfill constructor with a value\n" << std::endl;
-//         vector<A> vec(100, A());
+//         ft::vector<A> vec(100, A());
 //         std::cout << "\n\ncopy constructor\n" << std::endl;
-//         vector<A> vec_copy(vec);
+//         ft::vector<A> vec_copy(vec);
 //         std::cout << "capacity -> " << vec.capacity() << std::endl;
 //         std::cout << "size     -> " << vec.size()  << std::endl;
 //     }
@@ -82,15 +83,15 @@ int main()
 //         std::cout << "\n\nfill range constructor\n" << std::endl;
 //         try
 //         {
-//             vector<A> vec(range, range - 8);
+//             ft::vector<A> vec(range, range - 8);
 //         }
 //         catch (const std::length_error &e)
 //         {
 //             std::cout << e.what() << std::endl;
 //         }
-//         vector<A> vec(range, range + 8);
+//         ft::vector<A> vec(range, range + 8);
 //         std::cout << "\n\ncopy constructor\n" << std::endl;
-//         vector<A> vec_copy(vec);
+//         ft::vector<A> vec_copy(vec);
 //         std::cout << "capacity -> " << vec.capacity() << std::endl;
 //         std::cout << "size     -> " << vec.size()  << std::endl;
 //     }
@@ -98,21 +99,21 @@ int main()
 //     {
 //         {
 //             std::cout << "\n\nassign capacity >= n\n" << std::endl;
-//             vector<A> vec(10);
+//             ft::vector<A> vec(10);
 //             vec.assign(5, A());
 //             std::cout << "capacity -> " << vec.capacity() << std::endl;
 //             std::cout << "size     -> " << vec.size()  << std::endl;
 //         }
 //         {
 //             std::cout << "\n\nassign capacity < n\n" << std::endl;
-//             vector<A> vec(5);
+//             ft::vector<A> vec(5);
 //             vec.assign(10, A());
 //             std::cout << "capacity -> " << vec.capacity() << std::endl;
 //             std::cout << "size     -> " << vec.size()  << std::endl;
 //         }
 //         {
 //             std::cout << "\n\nassign  n = 0\n" << std::endl;
-//             vector<A> vec(5);
+//             ft::vector<A> vec(5);
 //             std::cout << "capacity -> " << vec.capacity() << std::endl;
 //             std::cout << "size     -> " << vec.size()  << std::endl;
 //             vec.assign(0, A());
@@ -123,7 +124,7 @@ int main()
 //     std::cout << "********************" << std::endl;
 //     {
 //         {
-//                 vector<A> vec(8);
+//                 ft::vector<A> vec(8);
 //                 A   range[] = {A(), A(), A(), A()};
 //                 std::cout << "\n\nassign capacity >= n\n" << std::endl;
 
@@ -132,7 +133,7 @@ int main()
 //                 std::cout << "size     -> " << vec.size()  << std::endl;
 //         }
 //         {
-//                 vector<A> vec(2);
+//                 ft::vector<A> vec(2);
 //                 A   range[] = {A(), A(), A(), A()};
 //                 std::cout << "\n\nassign capacity < n\n" << std::endl;
 //                 vec.assign(range, range + 4);
@@ -141,7 +142,7 @@ int main()
 //         }
                 
 //         {
-//                 vector<A> vec(1);
+//                 ft::vector<A> vec(1);
 //                 A   range[] = {A(), A(), A(), A()};
 //                 std::cout << "\n\nassign 1\n" << std::endl;
 //                 vec.assign(range, range);
@@ -149,7 +150,7 @@ int main()
 //                 std::cout << "size     -> " << vec.size()  << std::endl;
 //         }
 //         {
-//                 vector<A> vec(2);
+//                 ft::vector<A> vec(2);
 //                 A   range[] = {A(), A(), A(), A()};
 //                 std::cout << "\n\nassign exception\n" << std::endl;
 //                 try
@@ -165,7 +166,7 @@ int main()
 //         }
 //         {
 //             int arr[] = {3, 6};
-//                 vector<int> vec(arr, arr + 2);
+//                 ft::vector<int> vec(arr, arr + 2);
 //                 std::cout << "\n\nat function\n" << std::endl;
 //                 try
 //                 {
@@ -181,7 +182,7 @@ int main()
 //                 std::cout << "size     -> " << vec.size()  << std::endl;
 //         }
 //         {
-//                 vector<A> vec(4);
+//                 ft::vector<A> vec(4);
 //                 std::cout << "\n\nat function\n" << std::endl;
 //                 try
 //                 {
@@ -196,7 +197,7 @@ int main()
 //                 std::cout << "size     -> " << vec.size()  << std::endl;
 //         }
 //         {
-//                 vector<int> vec(4);
+//                 ft::vector<int> vec(4);
 //                 std::cout << "\n\nback function\n" << std::endl;
                 
 //                 std::cout << vec.back() << std::endl;
@@ -205,7 +206,7 @@ int main()
 //                 std::cout << "size     -> " << vec.size()  << std::endl;
 //         }
 //         {
-//                 vector<int> vec;
+//                 ft::vector<int> vec;
 //                 std::cout << "\n\nback function\n" << std::endl;
                 
 //                 // std::cout << vec.back() << std::endl;
@@ -217,20 +218,20 @@ int main()
 //             std::cout << "\n\begin and end  functions\n" << std::endl;
 //             {
 //                 int arr[] = {1, 2, 3, 4, 5};
-//                 vector<int>    myvector(arr, arr + 5);
+//                 ft::vector<int>    myvector(arr, arr + 5);
 
 //                 std::cout << "myvector contains:";
-//                 for ( vector<int>::iterator it = myvector.begin() ; it != myvector.end(); ++it)
+//                 for ( ft::vector<int>::iterator it = myvector.begin() ; it != myvector.end(); ++it)
 //                 std::cout << ' ' << *it;
 //                 std::cout << std::endl;
 //                 std::cout << "capacity -> " << myvector.capacity() << std::endl;
 //                 std::cout << "size     -> " << myvector.size()  << std::endl;
 //             }
 //             {
-//                 vector<int>    myvector;
+//                 ft::vector<int>    myvector;
 
 //                 std::cout << "myvector contains:";
-//                 for ( vector<int>::iterator it = myvector.begin() ; it != myvector.end(); ++it)
+//                 for ( ft::vector<int>::iterator it = myvector.begin() ; it != myvector.end(); ++it)
 //                 std::cout << ' ' << *it;
 //                 std::cout << std::endl;
 //                 std::cout << "capacity -> " << myvector.capacity() << std::endl;
@@ -239,10 +240,10 @@ int main()
 //         }
 //         {
 //             std::cout << "\n\nempty  functions\n" << std::endl;
-//             vector<int> vec;
+//             ft::vector<int> vec;
 //             std::cout << vec.empty() << std::endl;
             
-//             vector<int> vec1(2);
+//             ft::vector<int> vec1(2);
 //             std::cout << vec1.empty() << std::endl;
 //             std::cout << "capacity -> " << vec.capacity() << std::endl;
 //                 std::cout << "size     -> " << vec.size()  << std::endl;
@@ -250,7 +251,7 @@ int main()
 //         {
 //             std::cout << "\n\nfront  functions\n" << std::endl;
 //             int arr[] = {78, 16};
-//             vector<int> myvector(arr, arr + 2);
+//             ft::vector<int> myvector(arr, arr + 2);
 
 //             myvector.front() -= myvector.back();
 
@@ -260,14 +261,14 @@ int main()
 //         }
 //         {
 //             std::cout << "\n\n[]  functions\n" << std::endl;
-//             vector<int> myvector (10);   // 10 zero-initialized elements
+//             ft::vector<int> myvector (10);   // 10 zero-initialized elements
 
-//             vector<int>::size_type sz = myvector.size();
+//             ft::vector<int>::size_type sz = myvector.size();
 
 //             // assign some values:
 //             for (unsigned i=0; i<sz; i++) myvector[i]=i;
 
-//             // reverse vector using operator[]:
+//             // reverse ft::vector using operator[]:
 //             for (unsigned i=0; i<sz/2; i++)
 //             {
 //                 int temp;
@@ -286,32 +287,32 @@ int main()
 //         {
 //             std::cout << "\n\n= operator \n" << std::endl;
 //             {
-//                 vector<A>  vec(4);
-//                 vector<A>  vec1(2);
+//                 ft::vector<A>  vec(4);
+//                 ft::vector<A>  vec1(2);
 
 //                 vec = vec1;
 //                 std::cout << "capacity -> " << vec.capacity() << std::endl;
 //                 std::cout << "size     -> " << vec.size()  << std::endl;
 //             }
 //             {
-//                 vector<A>  vec(2);
-//                 vector<A>  vec1(4);
+//                 ft::vector<A>  vec(2);
+//                 ft::vector<A>  vec1(4);
 
 //                 vec = vec1;
 //                 std::cout << "capacity -> " << vec.capacity() << std::endl;
 //                 std::cout << "size     -> " << vec.size()  << std::endl;
 //             }
 //             {
-//                 vector<A>  vec;
-//                 vector<A>  vec1(4);
+//                 ft::vector<A>  vec;
+//                 ft::vector<A>  vec1(4);
 
 //                 vec = vec1;
 //                 std::cout << "capacity -> " << vec.capacity() << std::endl;
 //                 std::cout << "size     -> " << vec.size()  << std::endl;
 //             }
 //             {
-//                 vector<A>  vec(4);
-//                 vector<A>  vec1;
+//                 ft::vector<A>  vec(4);
+//                 ft::vector<A>  vec1;
 
 //                 vec = vec1;
 //                 std::cout << "capacity -> " << vec.capacity() << std::endl;
@@ -322,8 +323,8 @@ int main()
 //         {
 //             std::cout << "\n\nswap function \n" << std::endl;
 //             {
-//                 vector<A>  vec(4);
-//                 vector<A>  vec1(2);
+//                 ft::vector<A>  vec(4);
+//                 ft::vector<A>  vec1(2);
             
 //                 std::cout << "capacity -> " << vec.capacity() << std::endl;
 //                 std::cout << "size     -> " << vec.size()  << std::endl;
@@ -338,8 +339,8 @@ int main()
 //                 std::cout << "size     -> " << vec1.size()  << std::endl;
 //             }
 //             {
-//                 vector<std::string> foo (3,"foo");   // three std::strings with a value of foo
-//                 vector<std::string> bar (5,"bar");
+//                 ft::vector<std::string> foo (3,"foo");   // three std::strings with a value of foo
+//                 ft::vector<std::string> bar (5,"bar");
                 
 //                 foo.swap(bar);
 //                 for (unsigned i=0; i<foo.size(); i++)
@@ -356,30 +357,30 @@ int main()
 //             std::cout << "\n\nrbegin & rend functions \n" << std::endl;
             
 //             {
-//                 vector<int> myvector (5);  // 5 default-constructed ints
+//                 ft::vector<int> myvector (5);  // 5 default-constructed ints
     
 //                 int i=0;
     
-//                 vector<int>::reverse_iterator rit = myvector.rbegin();
+//                 ft::vector<int>::reverse_iterator rit = myvector.rbegin();
 //                 for (; rit!= myvector.rend(); ++rit)
 //                     *rit = ++i;
     
 //                 std::cout << "myvector contains:";
-//                 for ( vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
+//                 for ( ft::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
 //                     std::cout << ' ' << *it;
 //                 std::cout << std::endl;
 //             }
 //             {
-//                 vector<int> myvector (5);  // 5 default-constructed ints
+//                 ft::vector<int> myvector (5);  // 5 default-constructed ints
 
-//                 vector<int>::reverse_iterator rit = myvector.rbegin();
+//                 ft::vector<int>::reverse_iterator rit = myvector.rbegin();
 
 //                 int i=0;
 //                 for (rit = myvector.rbegin(); rit!= myvector.rend(); ++rit)
 //                     *rit = ++i;
 
 //                 std::cout << "myvector contains:";
-//                 for ( vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
+//                 for ( ft::vector<int>::iterator it = myvector.begin(); it != myvector.end(); ++it)
 //                     std::cout << ' ' << *it;
 //                 std::cout << std::endl;
 //             }
@@ -387,14 +388,14 @@ int main()
 //         {
 //             std::cout << "\n\npush bach & pop back functions\n" << std::endl;
 //             {
-//                 vector<A> myvector;
+//                 ft::vector<A> myvector;
     
 //                 for (int i = 0; i < 3; i++)
 //                     myvector.push_back (A());
 //             }
 //             {
 //                 A   range[] = {A(),A(),A(),A(),A()};
-//                 vector<A> myvector(range, range + 5);
+//                 ft::vector<A> myvector(range, range + 5);
     
 //                 for (int i = 0; i < 5; i++)
 //                     myvector.push_back (A());
@@ -407,41 +408,41 @@ int main()
 //     {
 //         std::cout << "\n\nresize function\n" << std::endl;
 //         {
-//             vector<A>  vec(7);
+//             ft::vector<A>  vec(7);
     
 //             vec.resize(2);
 //             std::cout << "capacity -> " << vec.capacity() << std::endl;
 //             std::cout << "size     -> " << vec.size()  << std::endl;
 //         }
 //         {
-//             vector<A>  vec(7);
+//             ft::vector<A>  vec(7);
     
 //             vec.resize(2, A());
 //             std::cout << "capacity -> " << vec.capacity() << std::endl;
 //             std::cout << "size     -> " << vec.size()  << std::endl;
 //         }
 //         {
-//             vector<A>  vec(2);
+//             ft::vector<A>  vec(2);
 //             vec.resize(7);
 //             std::cout << "capacity -> " << vec.capacity() << std::endl;
 //             std::cout << "size     -> " << vec.size()  << std::endl;
 //         }
 //         {
         
-//             vector<A>  vec(2);
+//             ft::vector<A>  vec(2);
 //             vec.resize(7, A());
 //             std::cout << "capacity -> " << vec.capacity() << std::endl;
 //             std::cout << "size     -> " << vec.size()  << std::endl;
 //         }
 //         {
-//             vector<A>  vec(2);
+//             ft::vector<A>  vec(2);
 //             vec.resize(2);
 //             std::cout << "capacity -> " << vec.capacity() << std::endl;
 //             std::cout << "size     -> " << vec.size()  << std::endl;
 //         }
 //         {
         
-//             vector<A>  vec(2);
+//             ft::vector<A>  vec(2);
 //             vec.resize(2, A());
 //             std::cout << "capacity -> " << vec.capacity() << std::endl;
 //             std::cout << "size     -> " << vec.size()  << std::endl;
@@ -450,7 +451,7 @@ int main()
 //     {
 //         std::cout << "\n\nerase function\n" << std::endl;
 //         {
-//             vector<A> myvector(6);
+//             ft::vector<A> myvector(6);
         
 //             myvector.erase (myvector.begin());
 //             myvector.erase (myvector.begin() + 2);
@@ -458,7 +459,7 @@ int main()
 //             // myvector.erase (myvector.begin() - 1);
 //         }
 //         {
-//             vector<A> myvector(6);
+//             ft::vector<A> myvector(6);
     
 //             std::cout << "::::::::::::::::::::::" << std::endl;
         
@@ -470,7 +471,7 @@ int main()
 //     {
 //         std::cout << "\n\nINSERT function\n" << std::endl;
 //         {
-//             vector<A> vec (4);
+//             ft::vector<A> vec (4);
 //             vec.reserve(6);
 
 //             A a;
@@ -480,7 +481,7 @@ int main()
 //                 std::cout << vec.capacity() << std::endl;
 //         }
 //         {
-//             vector<A> vec (4);
+//             ft::vector<A> vec (4);
 //             vec.reserve(6);
 
 //             A a;
@@ -490,7 +491,7 @@ int main()
 //                 std::cout << vec.capacity() << std::endl;
 //         }
 //         {
-//             vector<A> vec (4);
+//             ft::vector<A> vec (4);
 //             vec.reserve(6);
 
 //             A a;
@@ -504,7 +505,7 @@ int main()
 //         std::cout << "\n\ninsert n function\n" << std::endl;
 //         {
 //             std::cout << "\nsize + n > capacity\n" << std::endl;
-//             vector<A>  vec(4);
+//             ft::vector<A>  vec(4);
 //             A   a;
 
 //             vec.insert(vec.end(), 4, a);
@@ -519,7 +520,7 @@ int main()
 //         }
 //         {
 //             std::cout << "\nsize + n <= capacity\n" << std::endl;
-//             vector<A>  vec(10);
+//             ft::vector<A>  vec(10);
 //             vec.reserve(300);
 //             A   a;
 
@@ -541,7 +542,7 @@ int main()
 //         std::cout << "\n\ninsert range function\n" << std::endl;
 //         A   a[] = {A(), A(), A(), A(), A(), A(), A(), A(), A(), A(), A(), A(), A(), A(), A(), A()};
 //         {
-//             vector<A>  vec(4);
+//             ft::vector<A>  vec(4);
 //             std::cout << "\nsize + n > capacity\n" << std::endl;
 
 //             std::cout << "capacity -> " << vec.capacity() << std::endl;
@@ -562,7 +563,7 @@ int main()
 //         }
 //         {
 //             std::cout << "\nsize + n <= capacity\n" << std::endl;
-//             vector<A>  vec(10);
+//             ft::vector<A>  vec(10);
 //             vec.reserve(300);
 
 //             vec.insert(vec.begin(), a, a + 4);
@@ -586,8 +587,8 @@ int main()
 //     {
 //         std::cout << "\n\nnon member overloads\n" << std::endl;
 //         {
-//             vector<std::string> foo (3, "abc");
-//             vector<std::string> bar (4, "abc");
+//             ft::vector<std::string> foo (3, "abc");
+//             ft::vector<std::string> bar (4, "abc");
 
 //             if (foo==bar) std::cout << "foo and bar are equal\n";
 //             if (foo!=bar) std::cout << "foo and bar are not equal\n";
@@ -597,8 +598,8 @@ int main()
 //             if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
 //         }
 //         {
-//             vector<std::string> foo (4, "abc");
-//             vector<std::string> bar (4, "abc");
+//             ft::vector<std::string> foo (4, "abc");
+//             ft::vector<std::string> bar (4, "abc");
 
 //             if (foo==bar) std::cout << "foo and bar are equal\n";
 //             if (foo!=bar) std::cout << "foo and bar are not equal\n";
@@ -608,8 +609,8 @@ int main()
 //             if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
 //         }
 //         {
-//             vector<std::string> foo (4, "abc");
-//             vector<std::string> bar (3, "abc");
+//             ft::vector<std::string> foo (4, "abc");
+//             ft::vector<std::string> bar (3, "abc");
 
 //             if (foo==bar) std::cout << "foo and bar are equal\n";
 //             if (foo!=bar) std::cout << "foo and bar are not equal\n";
@@ -619,8 +620,8 @@ int main()
 //             if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
 //         }
 //         {
-//             vector<std::string> foo (3, "abd");
-//             vector<std::string> bar (4, "abc");
+//             ft::vector<std::string> foo (3, "abd");
+//             ft::vector<std::string> bar (4, "abc");
 
 //             if (foo==bar) std::cout << "foo and bar are equal\n";
 //             if (foo!=bar) std::cout << "foo and bar are not equal\n";
@@ -630,8 +631,8 @@ int main()
 //             if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
 //         }
 //         {
-//             vector<std::string> foo (4, "abd");
-//             vector<std::string> bar (4, "abc");
+//             ft::vector<std::string> foo (4, "abd");
+//             ft::vector<std::string> bar (4, "abc");
 
 //             if (foo==bar) std::cout << "foo and bar are equal\n";
 //             if (foo!=bar) std::cout << "foo and bar are not equal\n";
@@ -641,8 +642,8 @@ int main()
 //             if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
 //         }
 //         {
-//             vector<std::string> foo (4, "abd");
-//             vector<std::string> bar (3, "abc");
+//             ft::vector<std::string> foo (4, "abd");
+//             ft::vector<std::string> bar (3, "abc");
 
 //             if (foo==bar) std::cout << "foo and bar are equal\n";
 //             if (foo!=bar) std::cout << "foo and bar are not equal\n";
