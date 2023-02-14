@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 11:27:34 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/10 16:33:57 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/14 18:17:25 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,9 @@ int A::i = 0;
 
 
 int main() {
-  int arr[] = {1, 2, 3, 4, 5};
-  ft::vector<int> v (arr, arr + 5);
+    ft::vector<int> v(3, 4);
 
-  ft::vector<int>::reverse_iterator rit = v.rbegin();
-
-  ft::vector<int>::iterator it = v.end() - 1;
-
-  if( *rit == *it  )
-    std::cout <<  *it << *rit  << std::endl;  // Outputs: 1
+    ft::reverse_iterator<ft::vector<int>::iterator> my_rit(v.end()), my_rit1(v.end() - 1);
   return 0;
 }
 

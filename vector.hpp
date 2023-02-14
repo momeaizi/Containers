@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/10 16:21:33 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/14 19:16:52 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,10 @@ class ft::vector
         typedef const T&                                    const_reference;
         typedef T*                                          pointer;
         typedef const T*                                    const_pointer;
-        typedef ft::iterator<T>                             iterator;
-        typedef ft::iterator<const T>                       const_iterator;
-        typedef ft::reverse_iterator<T>                     reverse_iterator;
-        typedef ft::reverse_iterator<const T>               const_reverse_iterator;
+        typedef Iterator<T>                                 iterator;
+        typedef Iterator<const T>                           const_iterator;
+        typedef ft::reverse_iterator<iterator>              reverse_iterator;
+        typedef ft::reverse_iterator<const_iterator>               const_reverse_iterator;
         typedef std::ptrdiff_t                              difference_type;
         typedef std::size_t                                 size_type;
 
@@ -82,23 +82,40 @@ class ft::vector
         {
             return __data[__size - 1];
         }
-        iterator                begin() { return iterator(__data); }
-        const_iterator          begin() const { return const_iterator(__data); }
-        reverse_iterator        rbegin() { return reverse_iterator(__data + __size - 1); }
-        const_reverse_iterator  rbegin() const { return const_reverse_iterator(__data + __size - 1); }
-        iterator                end() { return iterator(__data + __size); }
-        const_iterator          end() const { return const_iterator(__data + __size); }
-        reverse_iterator        rend() { return reverse_iterator(__data - 1); }
-        const_reverse_iterator  rend() const { return const_reverse_iterator(__data - 1); }
+        iterator                begin() { return __data; }
+        
+        const_iterator          begin() const { return __data; }
+       
+        iterator                end() { return __data + __size; }
+        
+        const_iterator          end() const { return __data + __size; }
+        
+        reverse_iterator        rbegin() { return end(); }
+        
+        const_reverse_iterator  rbegin() const { return end(); }
+        
+        reverse_iterator        rend() { return begin(); }
+        
+        const_reverse_iterator  rend() const { return begin(); }
+        
         size_type               capacity () const { return __capacity; }
+        
         void                    clear ();
+        
         bool                    empty() const { return __size == 0; }
+        
         reference               front() { return __data[0]; }
+        
         const_reference         front() const { return __data[0]; }
+        
         size_type               size () const { return __size; }
+        
         allocator_type          get_allocator() const { return __allocator; };
+        
         size_type               max_size() const { return __allocator.max_size(); };
+        
         reference               operator[] (size_type n) { return __data[n]; }
+        
         const_reference         operator[] (size_type n) const { return __data[n]; }
         void                    swap (vector& x);
         void                    push_back (const value_type& val);
