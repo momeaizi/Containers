@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/14 19:16:52 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/15 10:22:31 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,13 +90,13 @@ class ft::vector
         
         const_iterator          end() const { return __data + __size; }
         
-        reverse_iterator        rbegin() { return end(); }
+        reverse_iterator        rbegin() { return reverse_iterator(end()); }
         
-        const_reverse_iterator  rbegin() const { return end(); }
+        const_reverse_iterator  rbegin() const { return const_reverse_iterator(end()); }
         
-        reverse_iterator        rend() { return begin(); }
+        reverse_iterator        rend() { return reverse_iterator(begin()); }
         
-        const_reverse_iterator  rend() const { return begin(); }
+        const_reverse_iterator  rend() const { return const_reverse_iterator(begin()); }
         
         size_type               capacity () const { return __capacity; }
         
@@ -235,8 +235,8 @@ template <class T>
 template <class InIte>
 ft::vector<T>::vector (InIte first, typename enable_if<!is_integral<InIte>::value && is_same<typename std::iterator_traits<InIte>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last) : __data(nullptr), __size(last - first), __capacity (__size)
 {
-    if (first > last)
-        throw std::length_error("vector");
+    // if (first > last)
+    //     throw std::length_error("vector");
 
     __data = __allocator.allocate(__capacity);
     for (size_type i = 0; i < __size; ++i)
@@ -759,10 +759,8 @@ void    ft::vector<T>::__assign_range (size_type __start, size_type __end, Input
 template <class T>
 void    ft::vector<T>::__destruct (size_type __n)
 {
-    reverse_iterator    it = rbegin();
-
-    for (; it != rend() && ++__n <= __size; ++it)
-        __allocator.destroy(&(*it));
+    for (reverse_iterator rit = rbegin(); rit != rend() && ++__n <= __size; ++rit)
+        __allocator.destroy(&(*rit));
 }
 
 template <class T>
