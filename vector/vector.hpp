@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/15 13:53:41 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/15 18:50:35 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,12 @@
 #include <memory>
 #include <stdexcept>
 #include <iostream>
-#include "enable_if.hpp"
-#include "is_integral.hpp"
-#include "iterators.hpp"
-#include "iterator_traits.hpp"
+#include "../utils/is_same.hpp"
+#include "../utils/enable_if.hpp"
+#include "../utils/is_integral.hpp"
+#include "../iterator/iterator.hpp"
+#include "../iterator/reverse_iterator.hpp"
+#include "../iterator/iterator_traits.hpp"
 
 namespace   ft
 {
@@ -50,9 +52,8 @@ class ft::vector
 
 
     public:
-        explicit vector ();
-        explicit vector (size_type n);
-        explicit vector (size_type n, const value_type& val);
+        explicit vector (const allocator_type& alloc = allocator_type());
+        explicit vector (size_type n, const value_type &val = value_type(), const allocator_type& alloc = allocator_type());
         template <class InIte>
         vector (InIte first, typename ft::enable_if<!is_integral<InIte>::value && ft::is_same<typename std::iterator_traits<InIte>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last);
         template <class InIte>
@@ -115,7 +116,7 @@ class ft::vector
         
         allocator_type          get_allocator() const { return __allocator; };
         
-        size_type               max_size() const { return __allocator.max_size(); };
+        size_type               max_size() const;
         
         reference               operator[] (size_type n) { return __data[n]; }
         
@@ -212,21 +213,16 @@ class ft::vector
 /* *************************************************************************** */
 
 template < class T, class Alloc>
-ft::vector<T, Alloc>::vector () : __data(nullptr), __size(0), __capacity (0) {}
+ft::vector<T, Alloc>::vector (const allocator_type& alloc) : __data(nullptr), __size(0), __capacity (0), __allocator(alloc) {}
 
 
 template < class T, class Alloc>
-ft::vector<T, Alloc>::vector (size_type n) : __data(nullptr), __size(n), __capacity (n)
+ft::vector<T, Alloc>::vector (size_type n, const value_type &val, const allocator_type& alloc) : __data(nullptr), __size(n), __capacity (n), __allocator(alloc)
 {
-    __data = __allocator.allocate(__capacity);
-    for (size_type i = 0; i < __size; i++)
-        __allocator.construct(__data + i);
-}
-
-
-template < class T, class Alloc>
-ft::vector<T, Alloc>::vector (size_type n, const value_type& val) : __data(nullptr), __size(n), __capacity (n)
-{
+    if (!n)
+        return ;
+    if (n > __allocator.max_size())
+        throw std::length_error("vector");
     __data = __allocator.allocate(__capacity);
     for (size_type i = 0; i < __size; i++)
         __allocator.construct(__data + i, val);
@@ -281,7 +277,8 @@ ft::vector<T, Alloc>   &ft::vector<T, Alloc>::operator= (const ft::vector<T, All
     else
     {
         __destruct(0);
-        __allocator.deallocate(__data, __capacity);
+        if (__capacity)
+            __allocator.deallocate(__data, __capacity);
         __data = __allocator.allocate(n);
         for (size_type i = 0; i < n; i++)
             __allocator.construct(__data + i, x[i]);       
@@ -316,6 +313,14 @@ ft::vector<T, Alloc>::~vector ()
 /* *************************************************************************** */
 
 template < class T, class Alloc>
+typename ft::vector<T, Alloc>::size_type   ft::vector<T, Alloc>::max_size() const 
+{
+    if (sizeof(value_type) == 1)
+        return __allocator.max_size() / 2;
+    return __allocator.max_size();
+};
+
+template < class T, class Alloc>
 void    ft::vector<T, Alloc>::assign (size_type n, const value_type &val)
 {
     if (n <= __capacity)
@@ -329,7 +334,9 @@ void    ft::vector<T, Alloc>::assign (size_type n, const value_type &val)
     else
     {
         clear();
-        __allocator.deallocate(__data, __capacity);
+        if (__data)
+        if (__capacity)
+            __allocator.deallocate(__data, __capacity);
         __data = __allocator.allocate(n);
         __construct_at_end(0, n, val, __data);
     }
@@ -345,7 +352,8 @@ void ft::vector<T, Alloc>::assign (InputIterator first, InputIterator last)
     if (first > last)
     {
         clear();
-        __allocator.deallocate(__data, __capacity);
+        if (__capacity)
+            __allocator.deallocate(__data, __capacity);
         __capacity = 0;
         throw std::length_error("vector");
     }
@@ -365,7 +373,8 @@ void ft::vector<T, Alloc>::assign (InputIterator first, InputIterator last)
     else
     {
         __destruct(0);
-        __allocator.deallocate(__data, __capacity);
+        if (__capacity)
+            __allocator.deallocate(__data, __capacity);
         __data = __allocator.allocate(n);
         for (size_type i = 0; i < n; i++)
             __allocator.construct(__data + i, *(first++));       
@@ -409,7 +418,8 @@ void    ft::vector<T, Alloc>::push_back (const value_type& val)
     __reverse_copy_construct(__size, data);
 
     __destruct(0);
-    __allocator.deallocate(__data, __capacity);
+    if (__capacity)
+        __allocator.deallocate(__data, __capacity);
     __data = data;
     __capacity = n;
     ++__size;
@@ -433,7 +443,7 @@ void    ft::vector<T, Alloc>::reserve (size_type n)
         __allocator.construct(data + (__size - i - 1), __data[(__size - i - 1)]);
 
     __destruct(0);
-    if (__data)
+    if (__capacity)
         __allocator.deallocate(__data, __capacity);
     __data = data;
     __capacity = n;
@@ -468,7 +478,7 @@ void    ft::vector<T, Alloc>::resize (size_type n, value_type val)
         __allocator.construct(data + (__size -i - 1), __data[(__size - i - 1)]);
 
     __destruct(0);
-    if (__data)
+    if (__capacity)
         __allocator.deallocate(__data, __capacity);
     __data = data;
     __capacity = capacity;
@@ -490,7 +500,8 @@ void    ft::vector<T, Alloc>::insert (iterator pos, size_type n, const value_typ
         __reverse_copy_construct(p, data);
         __copy_construct(p, __size, data + n);
         __destruct(0);
-        __allocator.deallocate(__data, __capacity);
+        if (__capacity)
+            __allocator.deallocate(__data, __capacity);
         __data = data;
         __capacity = capacity;
     }
@@ -531,7 +542,8 @@ void    ft::vector<T, Alloc>::insert (iterator pos, InputIterator first, InputIt
         __reverse_copy_construct(p, data);
         __copy_construct(p, __size, data + n);
         __destruct(0);
-        __allocator.deallocate(__data, __capacity);
+        if (__capacity)
+            __allocator.deallocate(__data, __capacity);
         __data = data;
         __capacity = capacity;
     }
@@ -700,7 +712,8 @@ void    ft::vector<T, Alloc>::__resize(size_type n)
     for (size_type i = 0; i < __size; i++)
         __allocator.construct(data + i, __data[i]);
     __destruct(0);
-    __allocator.deallocate(__data, __capacity);
+    if (__capacity)
+        __allocator.deallocate(__data, __capacity);
     __data = data;
     __size = n;
     __capacity = n;

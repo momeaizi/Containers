@@ -6,14 +6,14 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 15:39:42 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/15 15:39:03 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/15 18:02:21 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STACK_HPP
 #define STACK_HPP
 
-#include "vector.hpp"
+#include "../vector/vector.hpp"
 
 namespace ft
 {

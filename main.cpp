@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 11:27:34 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/15 09:43:05 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/15 18:49:30 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,8 @@
 #include <type_traits>
 #include <vector>
 #include <unistd.h>
-#include "vector.hpp"
-#include "iterator_traits.hpp"
-#include "iterators.hpp"
+#include "vector/vector.hpp"
+#include "stack/stack.hpp"
 
 
 class   A
@@ -45,11 +44,16 @@ class   A
 int A::i = 0;
 
 
-int main() {
-    ft::vector<int> v(3, 4);
+struct big_struct {
+    long data[2000];
+};
 
-    ft::reverse_iterator<ft::vector<int>::iterator> my_rit(v.end()), my_rit1(v.end() - 1);
-  return 0;
+int main() {
+    std::cout <<  std::vector<char>().max_size() << std::endl;
+    std::cout <<  ft::vector<char>().max_size() << std::endl;
+    
+    size_t max_size = ft::vector<big_struct>().max_size();
+    ft::vector<big_struct> v(max_size + 1);
 }
 
 // int main1()
