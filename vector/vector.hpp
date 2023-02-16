@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/15 18:50:35 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/16 11:56:01 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,17 +54,19 @@ class ft::vector
     public:
         explicit vector (const allocator_type& alloc = allocator_type());
         explicit vector (size_type n, const value_type &val = value_type(), const allocator_type& alloc = allocator_type());
-        template <class InIte>
-        vector (InIte first, typename ft::enable_if<!is_integral<InIte>::value && ft::is_same<typename std::iterator_traits<InIte>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last);
-        template <class InIte>
-        vector (InIte first, typename ft::enable_if<!is_integral<InIte>::value && !ft::is_same<typename std::iterator_traits<InIte>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last);
+        template <class InputIterator>
+        vector (InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value && ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last);
+        template <class InputIterator>
+        vector (InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value && !ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last);
         vector (const vector& x);
         vector& operator= (const vector& x);
         ~vector ();
 
 
         template <class InputIterator>
-        void                    assign (InputIterator first, InputIterator last);
+        void                    assign (InputIterator first, typename ft::enable_if<ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last);
+        template <class InputIterator>
+        void                    assign (InputIterator first, typename ft::enable_if<!ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last);
         void                    assign (size_type n, const value_type &val);
         reference               at (size_type n)
         {
@@ -230,11 +232,15 @@ ft::vector<T, Alloc>::vector (size_type n, const value_type &val, const allocato
 
 
 template < class T, class Alloc>
-template <class InIte>
-ft::vector<T, Alloc>::vector (InIte first, typename ft::enable_if<!is_integral<InIte>::value && ft::is_same<typename std::iterator_traits<InIte>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last) : __data(nullptr), __size(last - first), __capacity (__size)
+template <class InputIterator>
+ft::vector<T, Alloc>::vector (InputIterator first, \
+                                typename ft::enable_if< \
+                                    !is_integral<InputIterator>::value && ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator
+                                    >::type last)
+                    : __data(nullptr), __size(last - first), __capacity (__size)
 {
-    // if (first > last)
-    //     throw std::length_error("vector");
+    if (first > last)
+        throw std::length_error("vector");
 
     __data = __allocator.allocate(__capacity);
     for (size_type i = 0; i < __size; ++i)
@@ -242,8 +248,8 @@ ft::vector<T, Alloc>::vector (InIte first, typename ft::enable_if<!is_integral<I
 }
 
 template < class T, class Alloc>
-template <class InIte>
-ft::vector<T, Alloc>::vector (InIte first, typename ft::enable_if<!is_integral<InIte>::value && !ft::is_same<typename std::iterator_traits<InIte>::iterator_category, std::random_access_iterator_tag>::value, InIte>::type last) : __data(nullptr), __size(0), __capacity (__size)
+template <class InputIterator>
+ft::vector<T, Alloc>::vector (InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value && !ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last) : __data(nullptr), __size(0), __capacity (__size)
 {
     for (; first != last; ++first)
         push_back(*first);
@@ -347,7 +353,7 @@ void    ft::vector<T, Alloc>::assign (size_type n, const value_type &val)
 
 template < class T, class Alloc>
 template <class InputIterator>
-void ft::vector<T, Alloc>::assign (InputIterator first, InputIterator last)
+void ft::vector<T, Alloc>::assign (InputIterator first, typename ft::enable_if<ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last)
 {
     if (first > last)
     {
@@ -366,7 +372,7 @@ void ft::vector<T, Alloc>::assign (InputIterator first, InputIterator last)
 
         __assign_range(0, std::min(n, __size), first);
         for (size_type i = min; i < n; i++)
-            __allocator.construct(__data + i, *(first++));
+            __allocator.construct(__data + i, *(first++ + min));
         __destruct(n);
         __size = n;
     }
@@ -381,6 +387,14 @@ void ft::vector<T, Alloc>::assign (InputIterator first, InputIterator last)
     }
     __capacity = std::max(__capacity, n);
     __size = n;
+}
+
+template < class T, class Alloc>
+template <class InputIterator>
+void ft::vector<T, Alloc>::assign (InputIterator first, typename ft::enable_if<!ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last)
+{
+    while (first != last)
+        push_back((*first++));
 }
 
 template < class T, class Alloc>

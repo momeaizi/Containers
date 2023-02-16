@@ -6,9 +6,11 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 11:27:34 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/15 18:49:30 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/16 11:56:09 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
 
 #include <iostream>
 #include <type_traits>
@@ -16,6 +18,7 @@
 #include <unistd.h>
 #include "vector/vector.hpp"
 #include "stack/stack.hpp"
+#include "iterator/iterator_traits.hpp"
 
 
 class   A
@@ -44,16 +47,25 @@ class   A
 int A::i = 0;
 
 
-struct big_struct {
-    long data[2000];
-};
 
 int main() {
-    std::cout <<  std::vector<char>().max_size() << std::endl;
-    std::cout <<  ft::vector<char>().max_size() << std::endl;
-    
-    size_t max_size = ft::vector<big_struct>().max_size();
-    ft::vector<big_struct> v(max_size + 1);
+
+    // std::vector<char> v;
+
+    // std::string str("1 2 3 4 5 6 7");
+    // std::istreambuf_iterator<char> it(str), end;
+
+
+    // for (size_t i = 0; i < v.size(); ++i)
+    //     std:: cout << v[i] << " ";
+    // std:: cout << std::endl;
+
+    // v.assign(it, end);
+
+
+    // for (size_t i = 0; i < v.size(); ++i)
+    //     std:: cout << v[i] << " ";
+    // std:: cout << std::endl;
 }
 
 // int main1()

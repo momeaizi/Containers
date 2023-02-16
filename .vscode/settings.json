@@ -70,6 +70,8 @@
         "numeric": "cpp",
         "random": "cpp",
         "set": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "__memory": "cpp",
+        "__functional_base_03": "cpp"
     }
 }
