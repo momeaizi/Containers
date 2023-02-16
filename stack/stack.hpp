@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 15:39:42 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/15 18:02:21 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/16 16:51:30 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,10 @@ namespace ft
 template <class T, class Container>
 class ft::stack
 {
-    typedef T           value_type;
-    typedef Container   container_type;
-    typedef size_t      size_type;
-    
-    protected:
-        container_type  ctnr;
+    public:
+        typedef T           value_type;
+        typedef Container   container_type;
+        typedef size_t      size_type;
 
     public:
         explicit stack (const container_type &ctnr = container_type()) : ctnr(ctnr) {}
@@ -65,6 +63,8 @@ class ft::stack
     template <class _Tp, class _Container>
     friend bool    operator>= (const ft::stack<_Tp, _Container> &lhs, const ft::stack<_Tp, _Container> &rhs) { return lhs.ctnr >= rhs.ctnr; }
 
+    protected:
+        container_type  ctnr;
 };
 
 

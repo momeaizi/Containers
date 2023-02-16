@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:43:07 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/15 15:43:55 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/16 16:29:46 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ class Iterator
         Iterator                                    operator++(int) { Iterator temp = *this; ++*this; return temp; }
         Iterator&                                   operator--() { --m_ptr; return *this; }
         Iterator                                    operator--(int) { Iterator temp = *this; --*this; return temp; }
-        bool                                        operator==(const Iterator &it) const { return m_ptr == it.m_ptr; }
-        bool                                        operator!=(const Iterator &it) const { return !(*this == it); }
         T&                                          operator*() const { return *m_ptr; }
         T*                                          operator->() const { return m_ptr; }
         
@@ -54,10 +52,19 @@ class Iterator
         T&                                          operator[](difference_type n) const { return *(m_ptr + n); }
         Iterator&                                   operator+=(difference_type n) { m_ptr += n; return *this; }
         Iterator&                                   operator-=(difference_type n) { m_ptr -= n; return *this; }
-        bool                                        operator<(const Iterator& it) const { return m_ptr < it.m_ptr; }
-        bool                                        operator>(const Iterator& it) const { return m_ptr > it.m_ptr; }
-        bool                                        operator<=(const Iterator& it) const { return m_ptr <= it.m_ptr; }
-        bool                                        operator>=(const Iterator& it) const { return m_ptr >= it.m_ptr; }
+
+        template < class _T, class _U>
+        friend bool                                        operator==(const Iterator<_T> &lhs, const Iterator<_U> &rhs) { return lhs.m_ptr == rhs.m_ptr; }
+        template < class _T, class _U>
+        friend bool                                        operator!=(const Iterator<_T> &lhs, const Iterator<_U> &rhs) { return !(lhs == rhs); }
+        template < class _T, class _U>
+        friend bool                                        operator<(const Iterator<_T> &lhs, const Iterator<_U> &rhs) { return lhs.m_ptr < rhs.m_ptr; }
+        template < class _T, class _U>
+        friend bool                                        operator<=(const Iterator<_T> &lhs, const Iterator<_U> &rhs) { return lhs.m_ptr <= rhs.m_ptr; }
+        template < class _T, class _U>
+        friend bool                                        operator>(const Iterator<_T> &lhs, const Iterator<_U> &rhs) { return !(lhs <= rhs); }
+        template < class _T, class _U>
+        friend bool                                        operator>=(const Iterator<_T> &lhs, const Iterator<_U> &rhs) { return !(lhs < rhs); }
 };
 
 template <class T>
