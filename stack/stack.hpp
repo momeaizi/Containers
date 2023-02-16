@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 15:39:42 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/16 16:51:30 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/16 18:34:55 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,11 @@ template <class T, class Container>
 class ft::stack
 {
     public:
-        typedef T           value_type;
-        typedef Container   container_type;
-        typedef size_t      size_type;
+        typedef T                   value_type;
+        typedef T&                  reference;
+        typedef const T&            const_reference;
+        typedef Container           container_type;
+        typedef size_t              size_type;
 
     public:
         explicit stack (const container_type &ctnr = container_type()) : ctnr(ctnr) {}
