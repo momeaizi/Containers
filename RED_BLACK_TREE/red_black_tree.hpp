@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 19:52:21 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/23 11:10:54 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/23 16:01:02 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,6 @@
 
 #include <iostream>
 #include <string>
-
-
-
 
 enum    Color
 {
@@ -59,17 +56,18 @@ class   redBlackTree
         {
             return new Node (key, val);
         }
+        Node        *__root;
 
 
 
         
-    private:
-        Node        *__root;
+    public:
         size_type   __size;
 
         void    leftRotate(Node *x);
         void    rightRotate(Node *y);
         void    insert_fixup(Node *z);
+        
 };
 
 template <typename T, typename U>
@@ -84,8 +82,7 @@ void    redBlackTree<T, U>::printBT(const std::string& prefix, const Node* node,
         // print the value of the node
         if (node->color == red)
             std::cout << "\033[31m";
-        std::cout << "(" << node->key << ")" ;
-        std::cout << "(" << node->color << ")" << std::endl;
+        std::cout << "(" << node->key << ")" << std::endl;
 
         // enter the next tree level - left and right branch
         std::cout << "\033[0m";
@@ -109,11 +106,17 @@ void    redBlackTree<T, U>::leftRotate(Node *x)
 //        |       / \      |      -------- >     |   / \        |
 //        |      b   c     |                     |  a   b       |
 //        |                |                     |              |
+    if (!x->right)
+        return ;
+
     Node    *y = x->right;
 
     x->right = y->left;
     if (y->left)
         y->left->p = x;
+
+    y->p = x->p;
+
     if (!x->p)
         __root = y;
     else if (x == x->p->left)
@@ -134,17 +137,23 @@ void    redBlackTree<T, U>::rightRotate(Node *y)
 //       |   / \        |       -------- >     |       / \      |
 //       |  a   b       |                      |      b   c     |
 //       |              |                      |                |
+    if (!y->left)
+        return ;
+
     Node    *x = y->left;
 
     y->left = x->right;
     if (x->right)
         x->right->p = y;
+
+    x->p = y->p;
+
     if (!y->p)
         __root = x;
-    else if (y == y->p->left)
-        y->p->left = x;
-    else
+    else if (y == y->p->right)
         y->p->right = x;
+    else
+        y->p->left = x;
 
     x->right = y;
     y->p = x;
@@ -178,6 +187,63 @@ void    redBlackTree<T, U>::insert(Node *z)
     z->color = red;
 
     insert_fixup(z);
+}
+
+template <typename T, typename U>
+void    redBlackTree<T, U>::insert_fixup(Node *z)
+{
+    Node    *y;
+
+    while (z->p && z->p->p && z->p->color == red)
+    {
+        if (z->p == z->p->p->left)
+        {
+            y = z->p->p->right;
+
+            if (y && y->color == red)
+            {
+                z->p->color = black;
+                y->color = black;
+                z->p->p->color = red;
+                z = z->p->p;
+            }
+            else
+            {
+                if (z == z->p->right)
+                {
+                    z = z->p;
+                    leftRotate(z);
+                }
+                z->p->color = black;
+                z->p->p->color = red;
+                rightRotate(z->p->p);
+            }
+        }
+        else
+        {
+            y = z->p->p->left;
+
+            if (y && y->color == red)
+            {
+                z->p->color = black;
+                y->color = black;
+                z->p->p->color = red;
+                z = z->p->p;
+            }
+            else
+            {
+                if (z == z->p->left)
+                {
+                    z = z->p;
+                    rightRotate(z);
+                }
+                z->p->color = black;
+                z->p->p->color = red;
+                leftRotate(z->p->p);
+            }
+        }
+    }
+    __root->color = black;
 }
 
 #endif
