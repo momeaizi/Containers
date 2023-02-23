@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 19:52:21 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/22 11:54:00 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/23 11:10:54 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include <string>
 
 
+
+
 enum    Color
 {
     red,
@@ -24,7 +26,7 @@ enum    Color
 };
 
 template <typename T, typename U>
-class   RB_tree
+class   redBlackTree
 {
     typedef T       key_type;
     typedef U       value_type;
@@ -34,12 +36,12 @@ class   RB_tree
     class   Node
     {
         public:
+            Color       color;
             key_type    key;
             value_type  value;
-            Color       color;
-            Node        *parent;
+            Node        *p;
             Node        *left;
-            Node        *rightt;
+            Node        *right;
 
 
             Node(key_type key, value_type value) : key (key), value (value) {}
@@ -47,9 +49,16 @@ class   RB_tree
     
 
     public:
-        RB_tree() : __root (nullptr) {}
+        redBlackTree() : __root (nullptr) {}
 
         void    insert(Node *z);
+        void    printBT(const std::string& prefix, const Node* node, bool isLeft);
+        void    printBT();
+
+        Node    *createNode(key_type key, value_type val)
+        {
+            return new Node (key, val);
+        }
 
 
 
@@ -63,10 +72,36 @@ class   RB_tree
         void    insert_fixup(Node *z);
 };
 
+template <typename T, typename U>
+void    redBlackTree<T, U>::printBT(const std::string& prefix, const Node* node, bool isLeft)
+{
+    if( node != nullptr )
+    {
+        std::cout << prefix;
 
+        std::cout << (isLeft ? "├──" : "└──" );
+
+        // print the value of the node
+        if (node->color == red)
+            std::cout << "\033[31m";
+        std::cout << "(" << node->key << ")" ;
+        std::cout << "(" << node->color << ")" << std::endl;
+
+        // enter the next tree level - left and right branch
+        std::cout << "\033[0m";
+        printBT( prefix + (isLeft ? "│   " : "    "), node->left, true);
+        printBT( prefix + (isLeft ? "│   " : "    "), node->right, false);
+    }
+}
 
 template <typename T, typename U>
-void    RB_tree<T, U>::leftRotate(Node *x)
+void    redBlackTree<T, U>::printBT()
+{
+    printBT("", __root, false);    
+}
+
+template <typename T, typename U>
+void    redBlackTree<T, U>::leftRotate(Node *x)
 {
 //        |      x         |                     |      y       |
 //        |     / \        |                     |     / \      |
@@ -91,7 +126,7 @@ void    RB_tree<T, U>::leftRotate(Node *x)
 }
 
 template <typename T, typename U>
-void    RB_tree<T, U>::rightRotate(Node *y)
+void    redBlackTree<T, U>::rightRotate(Node *y)
 {
 //       |      y       |                      |      x         |
 //       |     / \      |                      |     / \        |
@@ -117,7 +152,7 @@ void    RB_tree<T, U>::rightRotate(Node *y)
 
 
 template <typename T, typename U>
-void    RB_tree<T, U>::insert(Node *z)
+void    redBlackTree<T, U>::insert(Node *z)
 {
     Node    *y = nullptr;
     Node    *x = __root;
@@ -142,7 +177,7 @@ void    RB_tree<T, U>::insert(Node *z)
     z->right = nullptr;
     z->color = red;
 
-    // insert_fixup(z);
+    insert_fixup(z);
 }
 
 #endif
