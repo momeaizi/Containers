@@ -16,7 +16,34 @@
 #include <iostream>
 #include <string>
 
+//
 
+
+void printBT(const std::string& prefix, const BSTNode* node, bool isLeft)
+{
+    if( node != nullptr )
+    {
+        std::cout << prefix;
+
+        std::cout << (isLeft ? "├──" : "└──" );
+
+        // print the value of the node
+        std::cout << node->m_val << std::endl;
+
+        // enter the next tree level - left and right branch
+        printBT( prefix + (isLeft ? "│   " : "    "), node->m_left, true);
+        printBT( prefix + (isLeft ? "│   " : "    "), node->m_right, false);
+    }
+}
+
+void printBT(const BSTNode* node)
+{
+    printBT("", node, false);    
+}
+
+
+
+//
 enum    Color
 {
     red,
@@ -54,13 +81,14 @@ class   RB_tree
 
 
         
-    private:
+    public:
         Node        *__root;
         size_type   __size;
 
         void    leftRotate(Node *x);
         void    rightRotate(Node *y);
         void    insert_fixup(Node *z);
+        
 };
 
 
@@ -142,7 +170,47 @@ void    RB_tree<T, U>::insert(Node *z)
     z->right = nullptr;
     z->color = red;
 
-    // insert_fixup(z);
+    insert_fixup(z);
+}
+
+template <typename T, typename U>
+void    RB_tree<T, U>::insert_fixup(Node *z)
+{
+    Node    *y;
+
+    while (z.p.color == red)
+    {
+        if (z.p = z.p.p.left)
+        {
+            y = z.p.p.right;
+
+            if (y.color == red)
+            {
+                z.p.color = black;
+                y.color = black;
+                z.p.p.color = red;
+                z = z.p.p;
+            }
+            else if (z == z.p.right)
+            {
+                z = z.p;
+                leftRotate(z);
+                z.p.color = black;
+                z.p.p.color = red;
+                rightRotate(z.p.p);
+            }
+            else
+            {
+                z = z.p;
+                rightRotate(z);
+                z.p.color = black;
+                z.p.p.color = red;
+                leftRotate(z.p.p);
+            }
+        }
+        else
+        {}
+    }
 }
 
 #endif
