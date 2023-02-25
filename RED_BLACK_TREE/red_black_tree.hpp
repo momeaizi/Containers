@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 19:52:21 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/25 15:47:29 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/25 23:10:36 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,10 @@ class   redBlackTree
         typedef typename allocator_type::const_reference        const_reference;
         typedef typename allocator_type::pointer                pointer;
         typedef typename allocator_type::const_pointer          const_pointer;
-        typedef IteratorTree<Node>                              iterator;
-        typedef IteratorTree<const Node>                        const_iterator;
-        typedef ft::reverse_iterator<Node>                      reverse_iterator;
-        typedef ft::reverse_iterator<const Node>                const_reverse_iterator;
+        typedef IteratorTree<Node, value_type>                  iterator;
+        typedef IteratorTree<const Node, value_type>            const_iterator;
+        typedef ft::reverse_iterator<iterator>                  reverse_iterator;
+        typedef ft::reverse_iterator<const_iterator>            const_reverse_iterator;
         typedef std::ptrdiff_t                                  difference_type;
         typedef std::size_t                                     size_type;
     
@@ -63,12 +63,12 @@ class   redBlackTree
         redBlackTree() : __root (nullptr), __size (0) {}
         redBlackTree(const redBlackTree &x) : __root (nullptr), __size (x.__size)
         {
-            __root = cloneBinaryTree(x.__root);
+            __root = cloneBinaryTree(x.__root, nullptr);
         }
         redBlackTree    &operator= (const redBlackTree &x)
         {
             clear(__root);
-            __root = cloneBinaryTree(x.__root);
+            __root = cloneBinaryTree(x.__root, nullptr);
             __size = x.__size;
             return *this;
         }
@@ -76,32 +76,32 @@ class   redBlackTree
         {
             clear(__root);
         }
-        void    insert(value_type val);
-        size_type   size()
+        void            insert(value_type val);
+        size_type       size() const
         {
             return __size;
         }
-        Node    *findMin(Node *root)
+        Node            *findMin(Node *root)
         {
             if (!root)
                 return nullptr;
             while (root->left) root = root->left;
             return root;
         }
-        Node    *findMax(Node *root)
+        Node            *findMax(Node *root)
         {
             if (!root)
                 return nullptr;
             while (root->right) root = root->right;
             return root;
         }
-        Node    *findKey(key_type   key)
+        Node            *find(key_type   key)
         {
             Node    *p = __root;
 
             while (p)
             {
-                if (p->key == key)
+                if (p->value.first == key)
                     return p;
                 else if (cmp(key, p->value.first))
                     p = p->left;
@@ -110,10 +110,25 @@ class   redBlackTree
             }
             return nullptr;
         }
-        void    clear() { clear(__root); }
-        bool    empty() const { return !__size; }
-        void    printBT();
-        
+        void            clear() { clear(__root); }
+        bool            empty() const { return !__size; }
+        void            printBT();
+        iterator        begin()
+        {
+            return iterator(findMin(__root));
+        }
+        const_iterator  begin() const
+        {
+            return const_iterator(findMin(__root));
+        }
+        iterator end()
+        {
+            return iterator(nullptr);
+        }
+        const_iterator end() const
+        {
+            return iterator(nullptr);
+        }
 
     private:
         Node            *__root;
@@ -143,16 +158,17 @@ class   redBlackTree
             __allocator.destroy(root);
             __allocator.deallocate(root, 1);
         }
-        Node    *cloneBinaryTree(Node *root)
+        Node    *cloneBinaryTree(Node *root, Node *p)
         {
             if (!root)
                 return nullptr;
         
             Node* root_copy = createNode(root->value);
             root_copy->color = root->color;
+            root_copy->p = p;
         
-            root_copy->left = cloneBinaryTree(root->left);
-            root_copy->right = cloneBinaryTree(root->right);
+            root_copy->left = cloneBinaryTree(root->left, root);
+            root_copy->right = cloneBinaryTree(root->right, root);
 
             return root_copy;
         } 

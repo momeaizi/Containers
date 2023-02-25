@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 20:07:35 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/25 15:35:43 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/25 23:17:33 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ void    f()
         redBlackTree <int, int, std::greater<int> >    t;
 
 
-        t.insert(make_pair(1, 1));
-        t.insert(make_pair(2, 2));
-        t.insert(make_pair(3, 3));
-        t.insert(make_pair(4, 20));
-        t.insert(make_pair(5, 5));
-        t.insert(make_pair(6, 6));
-        t.insert(make_pair(7, 7));
-        t.insert(make_pair(8, 8));
+        t.insert(ft::make_pair(1, 1));
+        t.insert(ft::make_pair(2, 2));
+        t.insert(ft::make_pair(3, 3));
+        t.insert(ft::make_pair(4, 20));
+        t.insert(ft::make_pair(5, 5));
+        t.insert(ft::make_pair(6, 6));
+        t.insert(ft::make_pair(7, 7));
+        t.insert(ft::make_pair(8, 8));
 
         t.printBT();
 
@@ -42,8 +42,23 @@ void    f()
 
 int main()
 {
-    f();
-    system("leaks a.out");
+    ft::map<int, int>   mp;
+
+
+    mp.insert(ft::make_pair(19, 2022));
+
+
+    mp[18] = 2023;
+    mp[17] = 2024;
+    
+    ft::map<int, int>::iterator it = mp.begin();
+
+    for (; it != mp.end(); ++it)
+        std::cout << it->first << " " << it->second << std::endl;
+
+    
+    // f();
+    // system("leaks a.out");
     // // IteratorTree<redBlackTree <int, int> >    it(t.__root);
     // // std::cout << "--------------------------------------" << std::endl;
 

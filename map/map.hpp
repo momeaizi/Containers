@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 11:22:14 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/25 15:48:33 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/25 23:17:18 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,18 @@
 #include "../utils/pair.hpp"
 #include "../red_black_tree/red_black_tree.hpp"
 
+namespace ft
+{
+    template < class Key, class T, class Compare, class Alloc>
+    class map;
+}
+
 
 template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
-class map
+class ft::map
 {
-
+    private:
+        typedef typename redBlackTree<Key, T, Compare, Alloc>::Node                     node;
     public:
         typedef Key                                                                     key_type;
         typedef T                                                                       mapped_type;
@@ -66,24 +73,73 @@ class map
 
         ~map() { }
 
-        void clear() { tree.clear(); }
-        size_type   count (const key_type &k) const
+        void                    clear() { tree.clear(); }
+        size_type               count (const key_type &k) const
         {
             if (tree.findKey(k))
                 return 1;
             return 0;
         }
-        bool    empty() const
+        bool                    empty() const
         {
             return tree.empty();
         }
-        allocator_type  get_allocator() const
+        allocator_type          get_allocator() const
         {
             return allocator_type();
         }
+        mapped_type             &operator[] (const key_type &k)
+        {
+            node    *n = tree.find(k);
+            if (n)
+                return  n->value.second;
+            tree.insert(ft::make_pair(k, mapped_type()));
+            return tree.find(k)->value.second;
+        }
+        size_type               size() const
+        {
+            return tree.size();
+        }
+        iterator                begin()
+        {
+            return tree.begin();
+        }
+        const_iterator          begin() const
+        {
+            return tree.begin();
+        }
+        ft::pair<iterator,bool> insert(const value_type &val)
+        {
+            node    *p = tree.find(val.first);
+
+            if (p)
+                return ft::make_pair(iterator(p), false);
+            tree.insert(val);
+            p = tree.find(val.first);
+            
+            return ft::make_pair(iterator(p), true);
+        }
+
+        iterator end()
+        {
+            return tree.end();
+        }
+        const_iterator end() const
+        {
+            return tree.end();
+        }
+
+
         
+        iterator                insert (iterator position, const value_type& val);
+        template <class InputIterator>
+        void                    insert (InputIterator first, InputIterator last);
+
+
+
     private:
         redBlackTree<Key, T, Compare, Alloc>    tree;
+        
 };
 
 

@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:50:06 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/25 13:26:33 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/25 21:39:06 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,10 @@
 namespace ft
 {
     template <class T1, class T2>
-    struct pair;
+    struct  pair;
+
+    template <class T1, class T2>
+    ft::pair<T1, T2>    make_pair (T1 x, T2 y);
 }
 
 template <class T1, class T2>
@@ -68,7 +71,7 @@ template <class T1, class T2>
 
 
 template <class T1, class T2>
-    ft::pair<T1, T2> make_pair (T1 x, T2 y)
+ft::pair<T1, T2>    ft::make_pair (T1 x, T2 y)
 {
     return ( ft::pair<T1, T2>(x, y) );
 }
