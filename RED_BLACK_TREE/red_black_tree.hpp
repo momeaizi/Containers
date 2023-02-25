@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   red_bleck_tree.hpp                                 :+:      :+:    :+:   */
+/*   red_black_tree.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 19:52:21 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/23 16:01:02 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/25 15:47:29 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 #include <iostream>
 #include <string>
+#include "IteratorTree.hpp"
+#include "../iterator/reverse_iterator.hpp"
+#include "../utils/pair.hpp"
 
 enum    Color
 {
@@ -22,56 +25,141 @@ enum    Color
     black
 };
 
-template <typename T, typename U>
+template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
 class   redBlackTree
 {
-    typedef T       key_type;
-    typedef U       value_type;
-    typedef size_t  size_type;
-    
-
-    class   Node
-    {
-        public:
-            Color       color;
-            key_type    key;
-            value_type  value;
-            Node        *p;
-            Node        *left;
-            Node        *right;
-
-
-            Node(key_type key, value_type value) : key (key), value (value) {}
-    };
-    
-
     public:
-        redBlackTree() : __root (nullptr) {}
-
-        void    insert(Node *z);
-        void    printBT(const std::string& prefix, const Node* node, bool isLeft);
-        void    printBT();
-
-        Node    *createNode(key_type key, value_type val)
+        typedef Key                                             key_type;
+        typedef T                                               mapped_type;
+        typedef ft::pair<const key_type, mapped_type>           value_type;
+        struct   Node
         {
-            return new Node (key, val);
-        }
-        Node        *__root;
+            public:
+                Color               color;
+                value_type          value;
+                Node                *p;
+                Node                *left;
+                Node                *right;
+    
+    
+                Node(value_type value) : value (value), p (nullptr), left (nullptr), right (nullptr) {}
+        };
+        typedef Compare                                         key_compare;
+        typedef Compare                                         value_compare;
+        typedef typename Alloc::template rebind<Node>::other    allocator_type;
+        typedef typename allocator_type::reference              reference;
+        typedef typename allocator_type::const_reference        const_reference;
+        typedef typename allocator_type::pointer                pointer;
+        typedef typename allocator_type::const_pointer          const_pointer;
+        typedef IteratorTree<Node>                              iterator;
+        typedef IteratorTree<const Node>                        const_iterator;
+        typedef ft::reverse_iterator<Node>                      reverse_iterator;
+        typedef ft::reverse_iterator<const Node>                const_reverse_iterator;
+        typedef std::ptrdiff_t                                  difference_type;
+        typedef std::size_t                                     size_type;
+    
 
-
-
-        
     public:
-        size_type   __size;
+        redBlackTree() : __root (nullptr), __size (0) {}
+        redBlackTree(const redBlackTree &x) : __root (nullptr), __size (x.__size)
+        {
+            __root = cloneBinaryTree(x.__root);
+        }
+        redBlackTree    &operator= (const redBlackTree &x)
+        {
+            clear(__root);
+            __root = cloneBinaryTree(x.__root);
+            __size = x.__size;
+            return *this;
+        }
+        ~redBlackTree()
+        {
+            clear(__root);
+        }
+        void    insert(value_type val);
+        size_type   size()
+        {
+            return __size;
+        }
+        Node    *findMin(Node *root)
+        {
+            if (!root)
+                return nullptr;
+            while (root->left) root = root->left;
+            return root;
+        }
+        Node    *findMax(Node *root)
+        {
+            if (!root)
+                return nullptr;
+            while (root->right) root = root->right;
+            return root;
+        }
+        Node    *findKey(key_type   key)
+        {
+            Node    *p = __root;
 
+            while (p)
+            {
+                if (p->key == key)
+                    return p;
+                else if (cmp(key, p->value.first))
+                    p = p->left;
+                else
+                    p = p->right;
+            }
+            return nullptr;
+        }
+        void    clear() { clear(__root); }
+        bool    empty() const { return !__size; }
+        void    printBT();
+        
+
+    private:
+        Node            *__root;
+        allocator_type  __allocator;
+        size_type       __size;
+        key_compare     cmp;
+
+
+        void    printBT(const std::string& prefix, const Node* node, bool isLeft);
+        Node    *createNode(value_type val)
+        {
+            Node    *node = __allocator.allocate(1);
+            __allocator.construct(node, val);
+            return node;
+        }
         void    leftRotate(Node *x);
         void    rightRotate(Node *y);
         void    insert_fixup(Node *z);
+        void    clear(Node *root)
+        {
+            if(!root)
+                return ;
+
+            clear(root->left);
+            clear(root->right);
+
+            __allocator.destroy(root);
+            __allocator.deallocate(root, 1);
+        }
+        Node    *cloneBinaryTree(Node *root)
+        {
+            if (!root)
+                return nullptr;
         
+            Node* root_copy = createNode(root->value);
+            root_copy->color = root->color;
+        
+            root_copy->left = cloneBinaryTree(root->left);
+            root_copy->right = cloneBinaryTree(root->right);
+
+            return root_copy;
+        } 
 };
 
-template <typename T, typename U>
-void    redBlackTree<T, U>::printBT(const std::string& prefix, const Node* node, bool isLeft)
+template < class Key, class T, class Compare, class Alloc>
+void    redBlackTree< Key, T, Compare, Alloc>::printBT(const std::string& prefix, const Node* node, bool isLeft)
 {
     if( node != nullptr )
     {
@@ -82,7 +170,7 @@ void    redBlackTree<T, U>::printBT(const std::string& prefix, const Node* node,
         // print the value of the node
         if (node->color == red)
             std::cout << "\033[31m";
-        std::cout << "(" << node->key << ")" << std::endl;
+        std::cout << "(" << node->value.first << ")" << std::endl;
 
         // enter the next tree level - left and right branch
         std::cout << "\033[0m";
@@ -91,14 +179,14 @@ void    redBlackTree<T, U>::printBT(const std::string& prefix, const Node* node,
     }
 }
 
-template <typename T, typename U>
-void    redBlackTree<T, U>::printBT()
+template < class Key, class T, class Compare, class Alloc>
+void    redBlackTree< Key, T, Compare, Alloc>::printBT()
 {
     printBT("", __root, false);    
 }
 
-template <typename T, typename U>
-void    redBlackTree<T, U>::leftRotate(Node *x)
+template < class Key, class T, class Compare, class Alloc>
+void    redBlackTree< Key, T, Compare, Alloc>::leftRotate(Node *x)
 {
 //        |      x         |                     |      y       |
 //        |     / \        |                     |     / \      |
@@ -128,8 +216,8 @@ void    redBlackTree<T, U>::leftRotate(Node *x)
     x->p = y;
 }
 
-template <typename T, typename U>
-void    redBlackTree<T, U>::rightRotate(Node *y)
+template < class Key, class T, class Compare, class Alloc>
+void    redBlackTree< Key, T, Compare, Alloc>::rightRotate(Node *y)
 {
 //       |      y       |                      |      x         |
 //       |     / \      |                      |     / \        |
@@ -160,16 +248,17 @@ void    redBlackTree<T, U>::rightRotate(Node *y)
 }
 
 
-template <typename T, typename U>
-void    redBlackTree<T, U>::insert(Node *z)
+template < class Key, class T, class Compare, class Alloc>
+void    redBlackTree< Key, T, Compare, Alloc>::insert(value_type val)
 {
     Node    *y = nullptr;
     Node    *x = __root;
+    Node    *z = createNode(val);
 
     while (x)
     {
         y = x;
-        if (z->key < x->key)
+        if (cmp(z->value.first, x->value.first))
             x = x->left;
         else x = x->right;
     }
@@ -178,19 +267,20 @@ void    redBlackTree<T, U>::insert(Node *z)
     
     if (!y)
         __root = z;
-    else if (z->key < y->key)
+    else if (cmp(z->value.first, y->value.first))
         y->left = z;
     else y->right = z;
 
     z->left = nullptr;
     z->right = nullptr;
     z->color = red;
+    ++__size;
 
     insert_fixup(z);
 }
 
-template <typename T, typename U>
-void    redBlackTree<T, U>::insert_fixup(Node *z)
+template < class Key, class T, class Compare, class Alloc>
+void    redBlackTree< Key, T, Compare, Alloc>::insert_fixup(Node *z)
 {
     Node    *y;
 

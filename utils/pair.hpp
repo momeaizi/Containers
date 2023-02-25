@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:50:06 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/15 16:41:28 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/25 13:26:33 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ template <class T1, class T2>
     bool operator>  (const ft::pair<T1, T2>& lhs, const ft::pair<T1, T2>& rhs) { return rhs < lhs; }
 
 template <class T1, class T2>
-    bool operator>= (const ft::pair<T1, T2>& lhs, const ft::pair<T1, T2>& rhs) { return !(lhs < lhs); }
+    bool operator>= (const ft::pair<T1, T2>& lhs, const ft::pair<T1, T2>& rhs) { return !(lhs < rhs); }
 
 
 
