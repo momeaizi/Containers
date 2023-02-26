@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 11:22:14 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/25 23:17:18 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/26 18:23:09 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ class ft::map
             (void)comp;
             (void)alloc;
             for (; first != last; ++first)
-               tree.insert(first->first, first->seconst);
+               tree.insert(*first);
         }
 
         map (const map &x) : tree (x.tree) {}
@@ -76,7 +76,7 @@ class ft::map
         void                    clear() { tree.clear(); }
         size_type               count (const key_type &k) const
         {
-            if (tree.findKey(k))
+            if (tree.find(k))
                 return 1;
             return 0;
         }
@@ -92,9 +92,9 @@ class ft::map
         {
             node    *n = tree.find(k);
             if (n)
-                return  n->value.second;
+                return  n->value->second;
             tree.insert(ft::make_pair(k, mapped_type()));
-            return tree.find(k)->value.second;
+            return tree.find(k)->value->second;
         }
         size_type               size() const
         {
@@ -130,10 +130,37 @@ class ft::map
         }
 
 
+        iterator        find (const key_type &k)
+        {
+            return iterator(tree.find(k));
+        }
+        const_iterator  find (const key_type &k) const
+        {
+            return const_iterator(tree.find(k));
+        }
         
-        iterator                insert (iterator position, const value_type& val);
+        iterator                insert (iterator position, const value_type& val)
+        {
+            (void) position;
+            node    *p = tree.find(val.first);
+
+            if (p)
+                return iterator(p);
+            tree.insert(val);
+            p = tree.find(val.first);
+            
+            return iterator(p);
+        }
+
         template <class InputIterator>
-        void                    insert (InputIterator first, InputIterator last);
+        void                    insert (InputIterator first, InputIterator last)
+        {
+            for (; first != last; ++first)
+            {
+                if (!tree.find(first->first))
+                    tree.insert(*first);
+            }
+        }
 
 
 

@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 19:52:21 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/25 23:10:36 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/26 16:43:25 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,15 @@ class   redBlackTree
         {
             public:
                 Color               color;
-                value_type          value;
+                value_type          *value;
                 Node                *p;
                 Node                *left;
                 Node                *right;
     
     
-                Node(value_type value) : value (value), p (nullptr), left (nullptr), right (nullptr) {}
+                Node(value_type *val) : value (val), p (nullptr), left (nullptr), right (nullptr) {
+                    
+                }
         };
         typedef Compare                                         key_compare;
         typedef Compare                                         value_compare;
@@ -81,29 +83,29 @@ class   redBlackTree
         {
             return __size;
         }
-        Node            *findMin(Node *root)
+        Node            *findMin(Node *root) const
         {
             if (!root)
                 return nullptr;
             while (root->left) root = root->left;
             return root;
         }
-        Node            *findMax(Node *root)
+        Node            *findMax(Node *root) const
         {
             if (!root)
                 return nullptr;
             while (root->right) root = root->right;
             return root;
         }
-        Node            *find(key_type   key)
+        Node            *find(key_type   key) const
         {
             Node    *p = __root;
 
             while (p)
             {
-                if (p->value.first == key)
+                if (p->value->first == key)
                     return p;
-                else if (cmp(key, p->value.first))
+                else if (cmp(key, p->value->first))
                     p = p->left;
                 else
                     p = p->right;
@@ -133,6 +135,7 @@ class   redBlackTree
     private:
         Node            *__root;
         allocator_type  __allocator;
+        Alloc           __pair_alloc;
         size_type       __size;
         key_compare     cmp;
 
@@ -141,7 +144,11 @@ class   redBlackTree
         Node    *createNode(value_type val)
         {
             Node    *node = __allocator.allocate(1);
-            __allocator.construct(node, val);
+            value_type       *pair = __pair_alloc.allocate(1);
+
+            __pair_alloc.construct(pair, val);
+            __allocator.construct(node,pair);
+            
             return node;
         }
         void    leftRotate(Node *x);
@@ -155,6 +162,8 @@ class   redBlackTree
             clear(root->left);
             clear(root->right);
 
+            __pair_alloc.destroy(root->value);
+            __pair_alloc.deallocate(root->value, 1);
             __allocator.destroy(root);
             __allocator.deallocate(root, 1);
         }
@@ -163,7 +172,7 @@ class   redBlackTree
             if (!root)
                 return nullptr;
         
-            Node* root_copy = createNode(root->value);
+            Node* root_copy = createNode(*(root->value));
             root_copy->color = root->color;
             root_copy->p = p;
         
@@ -274,7 +283,7 @@ void    redBlackTree< Key, T, Compare, Alloc>::insert(value_type val)
     while (x)
     {
         y = x;
-        if (cmp(z->value.first, x->value.first))
+        if (cmp(z->value->first, x->value->first))
             x = x->left;
         else x = x->right;
     }
@@ -283,7 +292,7 @@ void    redBlackTree< Key, T, Compare, Alloc>::insert(value_type val)
     
     if (!y)
         __root = z;
-    else if (cmp(z->value.first, y->value.first))
+    else if (cmp(z->value->first, y->value->first))
         y->left = z;
     else y->right = z;
 

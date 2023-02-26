@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 14:50:50 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/25 23:01:39 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/26 15:40:36 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 template < class T, class Value_type>
 class IteratorTree
 {
-    private:
-        T           *m_ptr;
     public:
         typedef  std::bidirectional_iterator_tag    iterator_category;
         typedef  Value_type                         value_type;
@@ -51,13 +49,14 @@ class IteratorTree
         friend bool                                        operator!=(const IteratorTree<_T, val> &lhs, const IteratorTree<_U, val> &rhs) { return !(lhs == rhs); }
 
         private:
-            pointer findMin(pointer node);
-            pointer findMax(pointer node);
+            pointer m_ptr;
+            pointer findMin(pointer node) const;
+            pointer findMax(pointer node) const;
 };
 
 
 template < class T, class val>
-typename IteratorTree<T, val>::pointer IteratorTree<T, val>::findMin(pointer node)
+typename IteratorTree<T, val>::pointer IteratorTree<T, val>::findMin(pointer node) const
 {
     pointer current = node;
  
@@ -69,7 +68,7 @@ typename IteratorTree<T, val>::pointer IteratorTree<T, val>::findMin(pointer nod
 }
 
 template < class T, class val>
-typename IteratorTree<T, val>::pointer IteratorTree<T, val>::findMax(pointer node)
+typename IteratorTree<T, val>::pointer IteratorTree<T, val>::findMax(pointer node) const
 {
     pointer current = node;
  
@@ -136,10 +135,10 @@ template < class T, class val>
 IteratorTree<T, val>     IteratorTree<T, val>::operator--(int) { IteratorTree temp = *this; --*this; return temp; }
 
 template < class T, class val>
-typename IteratorTree<T, val>::value_type                  &IteratorTree<T, val>::operator*() const { return m_ptr->value; }
+typename IteratorTree<T, val>::value_type                  &IteratorTree<T, val>::operator*() const { return *(m_ptr->value); }
 
 template < class T, class val>
-typename IteratorTree<T, val>::value_type                  *IteratorTree<T, val>::operator->() const { return &(m_ptr->value); }
+typename IteratorTree<T, val>::value_type                  *IteratorTree<T, val>::operator->() const { return &(operator*()) ; }
 
 
 #endif
