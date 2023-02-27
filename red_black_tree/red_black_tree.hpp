@@ -81,6 +81,7 @@ class   redBlackTree
         void                    insert(value_type val);
         void                    transplant(Node *u, Node *v);
         void                    erase(Node *z);
+        void                    erase_fixup(Node *x);
         void                    deleteNode(Node *z)
         {
             __pair_alloc.destroy(z->value);
@@ -450,8 +451,79 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase(Node *z)
     }
 
     deleteNode(z);
-    // if (y_original_color == black)
-    //     delete_fixup(x);
+    if (y_original_color == black)
+        erase_fixup(x);
 }
 
+template < class Key, class T, class Compare, class Alloc>
+void    redBlackTree< Key, T, Compare, Alloc>::erase_fixup(Node *x)
+{
+    while (x != __root && x->color == black)
+    {
+        if (x == x->p->left)
+        {
+            Node    w = x->p->right;
+
+            if (w->color == red)
+            {
+                w->color = black;
+                x->p->color = red;
+                leftRotate(x->p);
+                w = x->p->right;
+            }
+            if (w->right->color == black)
+            {
+                w->color = red;
+                x = x->p;
+            }
+            else
+            {
+                if (w->right->color == black)
+                {
+                    w->left->color = black;
+                    w->color = red;
+                    rightRotate(w);
+                    w = x->p->right;
+                }
+                w->color = x->p->color;
+                x->p->color = black;
+                w->right->color = black;
+                leftRotate(x->p);
+                x = __root;
+            }
+        }
+        else
+        {
+            Node    w = x->p->left;
+
+            if (w->color == red)
+            {
+                w->color = black;
+                x->p->color = red;
+                lrightRotate(x->p);
+                w = x->p->left;
+            }
+            if (w->left->color == black)
+            {
+                w->color = red;
+                x = x->p;
+            }
+            else
+            {
+                if (w->left->color == black)
+                {
+                    w->right->color = black;
+                    w->color = red;
+                    leftRotate(w);
+                    w = x->p->left;
+                }
+                w->color = x->p->color;
+                x->p->color = black;
+                w->left->color = black;
+                rightRotate(x->p);
+                x = __root;
+            }
+        }
+    }
+}
 #endif
