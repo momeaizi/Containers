@@ -32,24 +32,10 @@ int main()
     list["mounaim"] = 21;
     list["amine"] = 19;
 
-    
-    ft::pair<std::string, int> arr[] = {ft::make_pair("ahmed", 27), ft::make_pair("taha", 20), ft::make_pair("hamid", 36)};
+    ft::map<std::string, int>::reverse_iterator rit = list.rbegin();
 
-    list.insert(arr, arr + 3);
-
-    ft::map<std::string, int>::iterator   it = list.begin();
-
-    for (; it != list.end(); ++it)
-        std::cout << it->first << " " << it->second << std::endl;
+    for (; rit != list.rend(); ++rit)
+        std::cout << rit->first << " " << rit->second << std::endl;
 
 
-    ft::map<std::string, int>   list1(list);
-
-    it = list1.begin();
-
-    std::cout << std::endl;
-
-    for (; it != list.end(); ++it)
-        std::cout << it->first << " " << it->second << std::endl;
-    
 }

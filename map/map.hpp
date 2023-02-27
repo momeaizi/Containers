@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 11:22:14 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/26 18:23:09 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/27 13:48:34 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,50 +108,63 @@ class ft::map
         {
             return tree.begin();
         }
+        reverse_iterator        rbegin()
+        {
+            return tree.rbegin();
+        }
+        const_reverse_iterator  rbegin() const
+        {
+            return tree.rbegin();
+        }
+        iterator                end()
+        {
+            return tree.end();
+        }
+        const_iterator          end() const
+        {
+            return tree.end();
+        }
+        reverse_iterator        rend()
+        {
+            return tree.rend();
+        }
+        const_reverse_iterator rend() const
+        {
+            return tree.rend();
+        }
+
+        iterator        find (const key_type &k)
+        {
+            return iterator(tree.find(k), tree.root());
+        }
+        const_iterator  find (const key_type &k) const
+        {
+            return const_iterator(tree.find(k), tree.root());
+        }
+        
         ft::pair<iterator,bool> insert(const value_type &val)
         {
             node    *p = tree.find(val.first);
 
             if (p)
-                return ft::make_pair(iterator(p), false);
+                return ft::make_pair(iterator(p, tree.root()), false);
             tree.insert(val);
             p = tree.find(val.first);
             
-            return ft::make_pair(iterator(p), true);
+            return ft::make_pair(iterator(p, tree.root()), true);
         }
-
-        iterator end()
-        {
-            return tree.end();
-        }
-        const_iterator end() const
-        {
-            return tree.end();
-        }
-
-
-        iterator        find (const key_type &k)
-        {
-            return iterator(tree.find(k));
-        }
-        const_iterator  find (const key_type &k) const
-        {
-            return const_iterator(tree.find(k));
-        }
-        
         iterator                insert (iterator position, const value_type& val)
         {
             (void) position;
             node    *p = tree.find(val.first);
 
             if (p)
-                return iterator(p);
+                return iterator(p, tree.root());
             tree.insert(val);
             p = tree.find(val.first);
             
-            return iterator(p);
+            return iterator(p, tree.root());
         }
-
         template <class InputIterator>
         void                    insert (InputIterator first, InputIterator last)
         {

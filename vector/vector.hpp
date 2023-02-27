@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/16 15:48:11 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/27 13:28:01 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,13 +96,13 @@ class ft::vector
         
         const_iterator          end() const { return __data + __size; }
         
-        reverse_iterator        rbegin() { return reverse_iterator(end()); }
+        reverse_iterator        rbegin() { return reverse_iterator(end() - 1); }
         
-        const_reverse_iterator  rbegin() const { return const_reverse_iterator(end()); }
+        const_reverse_iterator  rbegin() const { return const_reverse_iterator(end() - 1); }
         
-        reverse_iterator        rend() { return reverse_iterator(begin()); }
+        reverse_iterator        rend() { return reverse_iterator(begin() - 1); }
         
-        const_reverse_iterator  rend() const { return const_reverse_iterator(begin()); }
+        const_reverse_iterator  rend() const { return const_reverse_iterator(begin() - 1); }
         
         size_type               capacity () const { return __capacity; }
         

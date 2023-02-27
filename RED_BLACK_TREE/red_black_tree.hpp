@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 19:52:21 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/26 16:43:25 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/02/27 13:42:49 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,26 +78,30 @@ class   redBlackTree
         {
             clear(__root);
         }
-        void            insert(value_type val);
-        size_type       size() const
+        void                    insert(value_type val);
+        size_type               size() const
         {
             return __size;
         }
-        Node            *findMin(Node *root) const
+        Node                    *root() const
+        {
+            return __root;
+        }
+        Node                    *findMin(Node *root) const
         {
             if (!root)
                 return nullptr;
             while (root->left) root = root->left;
             return root;
         }
-        Node            *findMax(Node *root) const
+        Node                    *findMax(Node *root) const
         {
             if (!root)
                 return nullptr;
             while (root->right) root = root->right;
             return root;
         }
-        Node            *find(key_type   key) const
+        Node                    *find(key_type   key) const
         {
             Node    *p = __root;
 
@@ -112,26 +116,47 @@ class   redBlackTree
             }
             return nullptr;
         }
-        void            clear() { clear(__root); }
-        bool            empty() const { return !__size; }
-        void            printBT();
-        iterator        begin()
+        void                    clear()
         {
-            return iterator(findMin(__root));
+            clear(__root);
+            __size = 0;
+            __root = nullptr;
         }
-        const_iterator  begin() const
+        bool                    empty() const { return !__size; }
+        void                    printBT();
+        iterator                begin()
         {
-            return const_iterator(findMin(__root));
+            return iterator(findMin(__root), __root);
         }
-        iterator end()
+        const_iterator          begin() const
         {
-            return iterator(nullptr);
+            return const_iterator(findMin(__root), __root);
         }
-        const_iterator end() const
+        reverse_iterator        rbegin()
         {
-            return iterator(nullptr);
+            return reverse_iterator(--end());
         }
-
+        const_reverse_iterator  rbegin() const
+        {
+            return const_reverse_iterator(--end());
+        }
+        iterator                end()
+        {
+            return iterator(nullptr, __root);
+        }
+        const_iterator          end() const
+        {
+            return iterator(nullptr, __root);
+        }
+        reverse_iterator        rend()
+        {
+            return reverse_iterator(--begin());
+        }
+        const_reverse_iterator  rend() const
+        {
+            return const_reverse_iterator(--begin());
+        }
+    
     private:
         Node            *__root;
         allocator_type  __allocator;
@@ -176,8 +201,8 @@ class   redBlackTree
             root_copy->color = root->color;
             root_copy->p = p;
         
-            root_copy->left = cloneBinaryTree(root->left, root);
-            root_copy->right = cloneBinaryTree(root->right, root);
+            root_copy->left = cloneBinaryTree(root->left, root_copy);
+            root_copy->right = cloneBinaryTree(root->right, root_copy);
 
             return root_copy;
         } 
@@ -195,7 +220,7 @@ void    redBlackTree< Key, T, Compare, Alloc>::printBT(const std::string& prefix
         // print the value of the node
         if (node->color == red)
             std::cout << "\033[31m";
-        std::cout << "(" << node->value.first << ")" << std::endl;
+        std::cout << "(" << node->value->first << ")" << std::endl;
 
         // enter the next tree level - left and right branch
         std::cout << "\033[0m";
