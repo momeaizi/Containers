@@ -47,7 +47,7 @@ class   redBlackTree
                 }
         };
         typedef Compare                                         key_compare;
-        typedef Compare                                         value_compare;
+        // typedef Compare                                         value_compare;
         typedef typename Alloc::template rebind<Node>::other    allocator_type;
         typedef typename allocator_type::reference              reference;
         typedef typename allocator_type::const_reference        const_reference;
@@ -79,6 +79,15 @@ class   redBlackTree
             clear(__root);
         }
         void                    insert(value_type val);
+        void                    transplant(Node *u, Node *v);
+        void                    erase(Node *z);
+        void                    deleteNode(Node *z)
+        {
+            __pair_alloc.destroy(z->value);
+            __pair_alloc.deallocate(z->value, 1);
+            __allocator.destroy(z);
+            __allocator.deallocate(z, 1);
+        }
         size_type               size() const
         {
             return __size;
@@ -187,10 +196,7 @@ class   redBlackTree
             clear(root->left);
             clear(root->right);
 
-            __pair_alloc.destroy(root->value);
-            __pair_alloc.deallocate(root->value, 1);
-            __allocator.destroy(root);
-            __allocator.deallocate(root, 1);
+            deleteNode(root);
         }
         Node    *cloneBinaryTree(Node *root, Node *p)
         {
@@ -384,6 +390,68 @@ void    redBlackTree< Key, T, Compare, Alloc>::insert_fixup(Node *z)
         }
     }
     __root->color = black;
+}
+
+
+template < class Key, class T, class Compare, class Alloc>
+void    redBlackTree< Key, T, Compare, Alloc>::transplant(Node *u, Node *v)
+{
+    if (!u)
+        return ;
+
+
+    if (!u->p)
+        __root = v;
+    else if (u == u->p->left)
+        u->p->left = v;
+    else
+        u->p->right = v;
+
+    if (v)
+        v->p = u->p;
+}
+
+template < class Key, class T, class Compare, class Alloc>
+void    redBlackTree< Key, T, Compare, Alloc>::erase(Node *z)
+{
+    Node    *y = z;
+    Node    *x;
+    Color   y_original_color = y->color;
+
+    if (!z->left)
+    {
+        x = z->right;
+        transplant(z, z->right);
+    }
+    else if (!z->right)
+    {
+        x = z->left;
+        transplant(z, z->left);
+    }
+    else
+    {
+        y = findMin(z->right);
+        y_original_color = y->color;
+        x = y->right;
+
+        if (y->p == z)
+            x->p = y;
+        else
+        {
+            transplant(y, y->right);
+            y->right = z->right;
+            y->right->p = y;
+        }
+
+        transplant(z, y);
+        y->left = z->left;
+        y->left->p = y;
+        y->color = z->color;
+    }
+
+    deleteNode(z);
+    // if (y_original_color == black)
+    //     delete_fixup(x);
 }
 
 #endif

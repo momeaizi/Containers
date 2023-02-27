@@ -175,6 +175,27 @@ class ft::map
             }
         }
 
+        void                    erase (iterator position)
+        {
+            erase(position->first);
+        }
+        size_type               erase (const key_type &k)
+        {
+            node    *z = tree.find(k);
+
+            if (z)
+            {
+                tree.erase(z);
+                return 1;
+            }
+            return 0;
+        }
+        void                    erase (iterator first, iterator last)
+        {
+            for (; first != last; ++first)
+                erase(first->first);
+        }
+
 
 
     private:
