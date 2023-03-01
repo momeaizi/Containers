@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/01 15:09:57 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/01 18:37:30 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ class ft::vector
         }
         void                    insert (iterator pos, size_type n, const value_type& val);
         template <class InputIterator>
-        void                    insert (iterator position, InputIterator first, InputIterator last);
+        void                    insert (iterator position, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last);
 
 
         
@@ -202,7 +202,7 @@ class ft::vector
         template <class InputIterator>
         void    __range_construct (InputIterator range, value_type *data, size_type n);
         template <class InputIterator>
-        size_type   distance(InputIterator first, InputIterator last);
+        void    distance(InputIterator first, InputIterator last, vector &v);
     
 };
 
@@ -232,14 +232,12 @@ ft::vector<T, Alloc>::vector (size_type n, const value_type &val, const allocato
 
 template < class T, class Alloc>
 template <class InputIterator>
-ft::vector<T, Alloc>::vector (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last) : __data(nullptr), __size(0), __capacity (__size)
+ft::vector<T, Alloc>::vector (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last) : __data(nullptr), __size(0), __capacity (0)
 {
-    size_type   n = distance(first, last);
+    vector      v;
+    distance(first, last, v);
 
-    resize(n);
-
-    for (size_type i = 0; i < __size; ++i, ++first)
-        __data[i] = *first;
+    *this = v;
 }
 
 
@@ -494,11 +492,13 @@ void    ft::vector<T, Alloc>::insert (iterator pos, size_type n, const value_typ
 
 template < class T, class Alloc>
 template <class InputIterator>
-void    ft::vector<T, Alloc>::insert (iterator position, InputIterator first, InputIterator last)
+void    ft::vector<T, Alloc>::insert (iterator position, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last)
 {
     size_type			pos;
     iterator			it;
-    size_type	        n = distance(first, last);
+    vector              v;
+    distance(first, last, v);
+    size_type			n = v.size();
 
     if (!n)
         return ;
@@ -509,8 +509,8 @@ void    ft::vector<T, Alloc>::insert (iterator position, InputIterator first, In
     for (size_type i = __size; i > pos + n; --i)
         __data[i - 1] = __data[i - n - 1];
 
-    for (size_type i = pos; i < pos + n; ++i, ++first)
-        __data[i] = *first;
+    for (size_type i = pos, j = 0; i < pos + n; ++i, ++j)
+        __data[i] = v[j];
 }
 
 
@@ -704,12 +704,11 @@ void    ft::vector<T, Alloc>::__shift_right (iterator first, iterator last, size
 
 template < class T, class Alloc>
 template <class InputIterator>
-typename ft::vector<T, Alloc>::size_type   ft::vector<T, Alloc>::distance(InputIterator first, InputIterator last)
+void    ft::vector<T, Alloc>::distance(InputIterator first, InputIterator last, vector &v)
 {
-    size_type   n = 0;
 
-    for (; first != last; ++first, ++n);
+    for (; first != last; ++first)
+        v.push_back(*first);
 
-    return n;
 }
 #endif
