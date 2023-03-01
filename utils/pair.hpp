@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:50:06 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/26 13:27:39 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/01 05:10:45 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ struct ft::pair
     second_type     second;
 
 
-    pair() {}
+    pair() : first (), second () {}
 
     template<class U, class V>
     pair (const ft::pair<U, V> &pr) : first(pr.first), second(pr.second) {}

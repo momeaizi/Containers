@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:44:17 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/27 13:28:34 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/01 06:34:39 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,11 @@ class ft::reverse_iterator
     
         iterator_type                               base() const { return __base_it; };
         
-        reference                                   operator*() const { return *__base_it; }
+        reference                                   operator*() const
+        {
+            iterator_type   it = __base_it;
+            return *(--it);
+        }
 
         reverse_iterator                            operator+(difference_type n) const { return reverse_iterator(__base_it - n); }
 
@@ -63,9 +67,13 @@ class ft::reverse_iterator
 
         reverse_iterator&                           operator-=(difference_type n) { __base_it += n; return *this; }
 
-        pointer                                     operator->() const { return &(*__base_it); }
+        pointer                                     operator->() const
+        {
+            iterator_type   it = __base_it;
+            return &(*(--it));
+        }
 
-        reference                                   operator[] (difference_type n) const { return *(__base_it - n); }
+        reference                                   operator[] (difference_type n) const { return *(__base_it - n - 1); }
 
         private:
             iterator_type   __base_it;

@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 19:52:21 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/27 13:42:49 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/01 09:50:42 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ class   redBlackTree
                 }
         };
         typedef Compare                                         key_compare;
-        // typedef Compare                                         value_compare;
         typedef typename Alloc::template rebind<Node>::other    allocator_type;
         typedef typename allocator_type::reference              reference;
         typedef typename allocator_type::const_reference        const_reference;
@@ -144,11 +143,11 @@ class   redBlackTree
         }
         reverse_iterator        rbegin()
         {
-            return reverse_iterator(--end());
+            return reverse_iterator(end());
         }
         const_reverse_iterator  rbegin() const
         {
-            return const_reverse_iterator(--end());
+            return const_reverse_iterator(end());
         }
         iterator                end()
         {
@@ -160,13 +159,57 @@ class   redBlackTree
         }
         reverse_iterator        rend()
         {
-            return reverse_iterator(--begin());
+            return reverse_iterator(begin());
         }
         const_reverse_iterator  rend() const
         {
-            return const_reverse_iterator(--begin());
+            return const_reverse_iterator(begin());
         }
-    
+        size_type               max_size() const
+        {
+            return __allocator.max_size();
+        }
+        Node                    *lower_bound (const key_type &key) const
+        {
+            Node    *p = __root;
+            Node    *result = nullptr;
+
+            while (p)
+            {
+                if (key == p->value->first)
+                    return p;
+                else if (cmp(key, p->value->first))
+                {
+                    result = p;
+                    p = p->left;
+                }
+                else
+                    p = p->right;
+            }
+            return result;
+        }
+        Node                    *upper_bound (const key_type &key) const
+        {
+            Node    *p = __root;
+            Node    *result = nullptr;
+
+            while (p)
+            {
+                if (cmp(key, p->value->first))
+                {
+                    result = p;
+                    p = p->left;
+                }
+                else
+                    p = p->right;
+            }
+            return result;
+        }
+        void                    swap (redBlackTree &x)
+        {
+            std::swap(__root, x.__root);
+            std::swap(__size, x.__size);
+        }
     private:
         Node            *__root;
         allocator_type  __allocator;
@@ -451,8 +494,9 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase(Node *z)
     }
 
     deleteNode(z);
-    if (y_original_color == black)
-        erase_fixup(x);
+    --__size;
+    // if (y_original_color == black)
+    //     erase_fixup(x);
 }
 
 template < class Key, class T, class Compare, class Alloc>
@@ -462,7 +506,7 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase_fixup(Node *x)
     {
         if (x == x->p->left)
         {
-            Node    w = x->p->right;
+            Node    *w = x->p->right;
 
             if (w->color == red)
             {
@@ -494,13 +538,13 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase_fixup(Node *x)
         }
         else
         {
-            Node    w = x->p->left;
+            Node    *w = x->p->left;
 
             if (w->color == red)
             {
                 w->color = black;
                 x->p->color = red;
-                lrightRotate(x->p);
+                rightRotate(x->p);
                 w = x->p->left;
             }
             if (w->left->color == black)
@@ -525,5 +569,6 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase_fixup(Node *x)
             }
         }
     }
+    __root->color = black;
 }
 #endif

@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 11:22:14 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/27 13:48:34 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/01 10:28:57 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@ namespace ft
 {
     template < class Key, class T, class Compare, class Alloc>
     class map;
+
+    template <class Key, class T, class Compare, class Alloc>
+    void    swap (ft::map<Key, T, Compare, Alloc> &x, ft::map<Key, T, Compare, Alloc> &y);
 }
 
 
@@ -33,22 +36,40 @@ class ft::map
     private:
         typedef typename redBlackTree<Key, T, Compare, Alloc>::Node                     node;
     public:
-        typedef Key                                                                     key_type;
-        typedef T                                                                       mapped_type;
-        typedef ft::pair<const key_type, mapped_type>                                   value_type;
-        typedef Compare                                                                 key_compare;
-        // typedef Compare                                 value_compare; // need to be done soon
-        typedef Alloc                                                                   allocator_type;
-        typedef typename allocator_type::reference                                      reference;
-        typedef typename allocator_type::const_reference                                const_reference;
-        typedef typename allocator_type::pointer                                        pointer;
-        typedef typename allocator_type::const_pointer                                  const_pointer;
-        typedef typename redBlackTree<Key, T, Compare, Alloc>::iterator                 iterator;
-        typedef typename redBlackTree<Key, T, Compare, Alloc>::const_iterator           const_iterator;
-        typedef typename redBlackTree<Key, T, Compare, Alloc>::reverse_iterator         reverse_iterator;
-        typedef typename redBlackTree<Key, T, Compare, Alloc>::const_reverse_iterator   const_reverse_iterator;
-        typedef std::ptrdiff_t                                                          difference_type;
-        typedef std::size_t                                                             size_type;
+        typedef Key                                                                             key_type;
+        typedef T                                                                               mapped_type;
+        typedef ft::pair<const key_type, mapped_type>                                           value_type;
+        typedef Compare                                                                         key_compare;
+        typedef Alloc                                                                           allocator_type;
+        typedef typename allocator_type::reference                                              reference;
+        typedef typename allocator_type::const_reference                                        const_reference;
+        typedef typename allocator_type::pointer                                                pointer;
+        typedef typename allocator_type::const_pointer                                          const_pointer;
+        typedef typename redBlackTree<Key, T, Compare, Alloc>::iterator                         iterator;
+        typedef typename redBlackTree<Key, T, Compare, Alloc>::const_iterator                   const_iterator;
+        typedef typename redBlackTree<Key, T, Compare, Alloc>::reverse_iterator                 reverse_iterator;
+        typedef typename redBlackTree<Key, T, Compare, Alloc>::const_reverse_iterator           const_reverse_iterator;
+        typedef std::ptrdiff_t                                                                  difference_type;
+        typedef std::size_t                                                                     size_type;
+
+        class value_compare
+        {
+            friend class map;
+            protected:
+                Compare comp;
+                value_compare (Compare c) : comp(c) {}
+            public:
+                typedef bool            result_type;
+                typedef value_type      first_argument_type;
+                typedef value_type      second_argument_type;
+
+                bool operator() (const value_type& x, const value_type& y) const
+                {
+                  return comp(x.first, y.first);
+                }
+        };
+
+
 
 
         explicit map (const key_compare& comp = key_compare(), 
@@ -65,6 +86,7 @@ class ft::map
         {
             (void)comp;
             (void)alloc;
+
             for (; first != last; ++first)
                tree.insert(*first);
         }
@@ -128,20 +150,18 @@ class ft::map
         {
             return tree.rend();
         }
-        const_reverse_iterator rend() const
+        const_reverse_iterator  rend() const
         {
             return tree.rend();
         }
-
-        iterator        find (const key_type &k)
+        iterator                find (const key_type &k)
         {
             return iterator(tree.find(k), tree.root());
         }
-        const_iterator  find (const key_type &k) const
+        const_iterator          find (const key_type &k) const
         {
             return const_iterator(tree.find(k), tree.root());
         }
-        
         ft::pair<iterator,bool> insert(const value_type &val)
         {
             node    *p = tree.find(val.first);
@@ -174,10 +194,10 @@ class ft::map
                     tree.insert(*first);
             }
         }
-
         void                    erase (iterator position)
         {
-            erase(position->first);
+            (void)position;
+            // erase(position->first);
         }
         size_type               erase (const key_type &k)
         {
@@ -185,7 +205,7 @@ class ft::map
 
             if (z)
             {
-                tree.erase(z);
+                // tree.erase(z);
                 return 1;
             }
             return 0;
@@ -193,15 +213,143 @@ class ft::map
         void                    erase (iterator first, iterator last)
         {
             for (; first != last; ++first)
-                erase(first->first);
+            {
+                // tree.printBT();
+                // std::cout << "|" << first->first << " "<< first->second << std::endl;
+                // sleep(1);
+                // erase(first->first);
+            }
         }
-
-
-
+        key_compare             key_comp() const
+        {
+            return key_compare();
+        }
+        value_compare           value_comp() const
+        {
+            return value_compare(key_comp());
+        }
+        void                    swap (map &x)
+        {
+            tree.swap(x.tree);
+        }
+        size_type               max_size() const
+        {
+            return tree.max_size();
+        }
+        iterator                lower_bound (const key_type& k)
+        {
+            node    *p = tree.lower_bound(k);
+            return iterator(p, tree.root());
+        }
+        const_iterator          lower_bound (const key_type& k) const
+        {
+            node    *p = tree.lower_bound(k);
+            return const_iterator(p, tree.root());
+        }
+        iterator                upper_bound (const key_type& k)
+        {
+            node    *p = tree.upper_bound(k);
+            return iterator(p, tree.root());
+        }
+        const_iterator          upper_bound (const key_type& k) const
+        {
+            node    *p = tree.upper_bound(k);
+            return const_iterator(p, tree.root());
+        }
+        ft::pair<const_iterator, const_iterator> equal_range (const key_type &k) const
+        {
+            return ft::make_pair(lower_bound(k), upper_bound(k));
+        }
+        ft::pair<iterator, iterator>             equal_range (const key_type &k)
+        {
+            return ft::make_pair(lower_bound(k), upper_bound(k));
+        }
     private:
         redBlackTree<Key, T, Compare, Alloc>    tree;
         
 };
+
+
+
+
+template <class Key, class T, class Compare, class Alloc>
+void    ft::swap (ft::map<Key, T, Compare, Alloc> &x, ft::map<Key, T, Compare, Alloc> &y)
+{
+    x.swap(y);
+}
+
+template <class Key, class T, class Compare, class Alloc>
+    bool    operator== ( const ft::map<Key, T, Compare, Alloc>& lhs,
+                        const ft::map<Key, T, Compare, Alloc>& rhs )
+{
+    if (lhs.size() != rhs.size())
+        return false;
+
+    typename ft::map<Key, T, Compare, Alloc>::const_iterator   it = lhs.begin();
+    typename ft::map<Key, T, Compare, Alloc>::const_iterator   it1 = rhs.begin();
+    
+    while (it != lhs.end())
+    {
+        if (*it != *it1)
+            return false;
+        ++it;
+        ++it1;
+    }
+    return true;
+}
+
+template <class Key, class T, class Compare, class Alloc>
+    bool    operator!= ( const ft::map<Key, T, Compare, Alloc>& lhs,
+                        const ft::map<Key, T, Compare, Alloc>& rhs )
+{
+    return !(lhs == rhs);
+}
+
+template <class Key, class T, class Compare, class Alloc>
+    bool    operator<  ( const ft::map<Key, T, Compare, Alloc>& lhs,
+                        const ft::map<Key, T, Compare, Alloc>& rhs )
+{
+    typename ft::map<Key, T, Compare, Alloc>::const_iterator   it = lhs.begin();
+    typename ft::map<Key, T, Compare, Alloc>::const_iterator   it1 = rhs.begin();
+
+    while (it != lhs.end() && it1 != rhs.end())
+    {
+        if (*it < *it1) return true;
+        if (*it > *it1) return false;
+        ++it;
+        ++it1;
+    }
+    if (lhs.size() < rhs.size())
+        return true;
+    return false;
+}
+
+template <class Key, class T, class Compare, class Alloc>
+    bool    operator<= ( const ft::map<Key, T, Compare, Alloc>& lhs,
+                        const ft::map<Key, T, Compare, Alloc>& rhs )
+{
+    return !(rhs < lhs);
+}
+
+template <class Key, class T, class Compare, class Alloc>
+    bool    operator>  ( const ft::map<Key, T, Compare, Alloc>& lhs,
+                        const ft::map<Key, T, Compare, Alloc>& rhs )
+{
+    return rhs < lhs;
+}
+
+template <class Key, class T, class Compare, class Alloc>
+    bool operator>= ( const ft::map<Key,T,Compare,Alloc>& lhs,
+                        const ft::map<Key,T,Compare,Alloc>& rhs )
+{
+    return !(lhs < rhs);
+}
+
+
+
+
+
+
 
 
 

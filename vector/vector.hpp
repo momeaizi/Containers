@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/27 13:28:01 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/01 12:07:44 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <memory>
 #include <stdexcept>
 #include <iostream>
-#include "../utils/is_same.hpp"
 #include "../utils/enable_if.hpp"
 #include "../utils/is_integral.hpp"
 #include "../iterator/iterator.hpp"
@@ -55,18 +54,16 @@ class ft::vector
         explicit vector (const allocator_type& alloc = allocator_type());
         explicit vector (size_type n, const value_type &val = value_type(), const allocator_type& alloc = allocator_type());
         template <class InputIterator>
-        vector (InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value && ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last);
-        template <class InputIterator>
-        vector (InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value && !ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last);
+        vector (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last);
         vector (const vector& x);
         vector& operator= (const vector& x);
         ~vector ();
 
 
         template <class InputIterator>
-        void                    assign (InputIterator first, typename ft::enable_if<ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last);
-        template <class InputIterator>
-        void                    assign (InputIterator first, typename ft::enable_if<!ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last);
+        void                    assign (InputIterator first, InputIterator last);
+        // template <class InputIterator>
+        // void                    assign (InputIterator first, typename ft::enable_if<!ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last);
         void                    assign (size_type n, const value_type &val);
         reference               at (size_type n)
         {
@@ -96,13 +93,13 @@ class ft::vector
         
         const_iterator          end() const { return __data + __size; }
         
-        reverse_iterator        rbegin() { return reverse_iterator(end() - 1); }
+        reverse_iterator        rbegin() { return reverse_iterator(end()); }
         
-        const_reverse_iterator  rbegin() const { return const_reverse_iterator(end() - 1); }
+        const_reverse_iterator  rbegin() const { return const_reverse_iterator(end()); }
         
-        reverse_iterator        rend() { return reverse_iterator(begin() - 1); }
+        reverse_iterator        rend() { return reverse_iterator(begin()); }
         
-        const_reverse_iterator  rend() const { return const_reverse_iterator(begin() - 1); }
+        const_reverse_iterator  rend() const { return const_reverse_iterator(begin()); }
         
         size_type               capacity () const { return __capacity; }
         
@@ -181,11 +178,7 @@ class ft::vector
         }
         void                    insert (iterator pos, size_type n, const value_type& val);
         template <class InputIterator>
-        void                    insert (iterator pos, InputIterator first, 
-                                            typename ft::enable_if<!is_integral<InputIterator>::value && ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last);
-        template <class InputIterator>
-        void                    insert (iterator pos, InputIterator first, 
-                                            typename ft::enable_if<!is_integral<InputIterator>::value && !ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last);
+        void                    insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type = InputIterator());
 
 
         
@@ -210,6 +203,8 @@ class ft::vector
         void    __reverse_copy_construct (size_type i, value_type *data);
         template <class InputIterator>
         void    __range_construct (InputIterator range, value_type *data, size_type n);
+        template <class InputIterator>
+        size_type   distance(InputIterator first, InputIterator last);
     
 };
 
@@ -239,26 +234,13 @@ ft::vector<T, Alloc>::vector (size_type n, const value_type &val, const allocato
 
 template < class T, class Alloc>
 template <class InputIterator>
-ft::vector<T, Alloc>::vector (InputIterator first, \
-                                typename ft::enable_if< \
-                                    !is_integral<InputIterator>::value && ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator
-                                    >::type last)
-                    : __data(nullptr), __size(last - first), __capacity (__size)
+ft::vector<T, Alloc>::vector (InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value, InputIterator>::type last) : __data(nullptr), __size(0), __capacity (__size)
 {
-    if (first > last)
-        throw std::length_error("vector");
-
-    __data = __allocator.allocate(__capacity);
-    for (size_type i = 0; i < __size; ++i)
-        __allocator.construct(__data + i, *(first++));
-}
-
-template < class T, class Alloc>
-template <class InputIterator>
-ft::vector<T, Alloc>::vector (InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value && !ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last) : __data(nullptr), __size(0), __capacity (__size)
-{
+    vector  v;
     for (; first != last; ++first)
-        push_back(*first);
+        v.push_back(*first);
+
+    *this = v;
 }
 
 
@@ -357,50 +339,16 @@ void    ft::vector<T, Alloc>::assign (size_type n, const value_type &val)
     __size = n;
 }
 
-template < class T, class Alloc>
-template <class InputIterator>
-void ft::vector<T, Alloc>::assign (InputIterator first, typename ft::enable_if<ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last)
-{
-    if (first > last)
-    {
-        clear();
-        if (__capacity)
-            __allocator.deallocate(__data, __capacity);
-        __capacity = 0;
-        throw std::length_error("vector");
-    }
-
-    size_type n = last - first;
-
-    if (n <= __capacity)
-    {
-        size_type   min = std::min(n, __size);
-
-        __assign_range(0, std::min(n, __size), first);
-        for (size_type i = min; i < n; i++)
-            __allocator.construct(__data + i, *(first++ + min));
-        __destruct(n);
-        __size = n;
-    }
-    else
-    {
-        __destruct(0);
-        if (__capacity)
-            __allocator.deallocate(__data, __capacity);
-        __data = __allocator.allocate(n);
-        for (size_type i = 0; i < n; i++)
-            __allocator.construct(__data + i, *(first++));       
-    }
-    __capacity = std::max(__capacity, n);
-    __size = n;
-}
 
 template < class T, class Alloc>
 template <class InputIterator>
-void ft::vector<T, Alloc>::assign (InputIterator first, typename ft::enable_if<!ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last)
+void ft::vector<T, Alloc>::assign (InputIterator first, InputIterator last)
 {
+    vector  v;
     while (first != last)
-        push_back((*first++));
+        v.push_back((*first++));
+
+    *this = v;
 }
 
 template < class T, class Alloc>
@@ -547,61 +495,42 @@ void    ft::vector<T, Alloc>::insert (iterator pos, size_type n, const value_typ
 
 template < class T, class Alloc>
 template <class InputIterator>
-void    ft::vector<T, Alloc>::insert (iterator pos, InputIterator first, 
-                                typename ft::enable_if<!is_integral<InputIterator>::value && ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last)
+void    ft::vector<T, Alloc>::insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type)
 {
-    size_type   p = pos - begin();
-    size_type   n = last - first;
+    size_type			pos;
+    iterator			it;
+    vector              v;
+    size_type	        n = distance(first, last);
 
-    if (__size + n > __capacity)
+    if (!n)
+        return ;
+
+    pos = position - begin();
+    resize(__size + n, value_type());
+
+    for (size_type i = __size - 1; i >= pos + n; --i)
+        __data[i] = __data[i - n];
+    for (size_type i = pos, j = 0; i < pos + n; ++i, ++j)
     {
-        size_type   capacity = (__capacity * 2 < n + __size) ? __size + n : __capacity * 2;;
-        T   *data = __allocator.allocate(capacity);
-
-
-        __range_construct(first, data + p, n);
-        __reverse_copy_construct(p, data);
-        __copy_construct(p, __size, data + n);
-        __destruct(0);
-        if (__capacity)
-            __allocator.deallocate(__data, __capacity);
-        __data = data;
-        __capacity = capacity;
-    }
-    else
-    {
-        if (pos + n > end())
-        {
-            size_type   __n = end() - pos;
-            
-            __range_construct(first + __n, __data + __size, n - __n);
-            __copy_construct(__size - __n, __size, __data + n);
-            __assign_range(p, __size, first);
-        }
-        else
-        {
-            __copy_construct(__size - n, __size, __data + n);
-            __shift_right(pos + n - 1, end() - 1, n);
-            __assign_range(p, p + n, first);
-        }
-    }
-    __size += n;
-}
-
-
-template < class T, class Alloc>
-template <class InputIterator>
-void                    ft::vector<T, Alloc>::insert (iterator pos, InputIterator first, 
-                                typename ft::enable_if<!is_integral<InputIterator>::value && !ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last)
-{
-
-    while (first != last)
-    {
-        pos = insert(pos, *first);
-        ++pos;
+        __data[i] = v[j];
         ++first;
     }
 }
+
+
+// template < class T, class Alloc>
+// template <class InputIterator>
+// void                    ft::vector<T, Alloc>::insert (iterator pos, InputIterator first, 
+//                                 typename ft::enable_if<!is_integral<InputIterator>::value && !ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last)
+// {
+
+//     while (first != last)
+//     {
+//         pos = insert(pos, *first);
+//         ++pos;
+//         ++first;
+//     }
+// }
 
 
 
@@ -637,13 +566,7 @@ bool    operator== (const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>&
 template < class T, class Alloc>
 bool operator!= (const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>& rhs)
 {
-    if (lhs.size() != rhs.size())
-        return true;
-        
-    for (size_t i = 0; i < lhs.size(); i++)
-        if (lhs[i] != rhs[i])
-            return true;
-    return false;
+    return !(lhs == rhs);
 }
 
 
@@ -666,49 +589,19 @@ bool operator<  (const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>& rh
 template < class T, class Alloc>
 bool operator<=  (const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>& rhs)
 {
-    size_t  i = 0;
-
-    while (i < lhs.size() && i < rhs.size())
-    {
-        if (lhs[i] < rhs[i]) return true;
-        if (lhs[i] > rhs[i]) return false;
-        ++i;
-    }
-        if (lhs.size() <= rhs.size())
-            return true;
-    return false;
+    return !(rhs < lhs);
 }
 
 template < class T, class Alloc>
 bool operator>  (const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>& rhs)
 {
-    size_t  i = 0;
-
-    while (i < lhs.size() && i < rhs.size())
-    {
-        if (lhs[i] > rhs[i]) return true;
-        if (lhs[i] < rhs[i]) return false;
-        ++i;
-    }
-        if (lhs.size() > rhs.size())
-            return true;
-    return false;
+    return rhs < lhs;
 }
 
 template < class T, class Alloc>
 bool operator>= (const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>& rhs)
 {
-    size_t  i = 0;
-
-    while (i < lhs.size() && i < rhs.size())
-    {
-        if (lhs[i] > rhs[i]) return true;
-        if (lhs[i] < rhs[i]) return false;
-        ++i;
-    }
-    if (lhs.size() >= rhs.size())
-        return true;
-    return false;
+    return !(lhs < rhs);
 }
 
 template <class InputIterator>
@@ -834,5 +727,14 @@ void    ft::vector<T, Alloc>::__shift_right (iterator first, iterator last, size
         *it = *(it - n);
 }
 
+template < class T, class Alloc>
+template <class InputIterator>
+typename ft::vector<T, Alloc>::size_type   ft::vector<T, Alloc>::distance(InputIterator first, InputIterator last)
+{
+    size_type   n = 0;
 
+    for (; first != last; ++first, ++n);
+
+    return n;
+}
 #endif

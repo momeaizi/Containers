@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 14:50:50 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/27 12:58:54 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/01 05:21:00 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class IteratorTree
 
 
         IteratorTree() : m_ptr(NULL), root (nullptr) {}
-        IteratorTree(T *ptr, T *root) : m_ptr(ptr), root (root) {}
+        IteratorTree(T *ptr, T *root = nullptr) : m_ptr(ptr), root (root) {}
         
         template < class U, class val>
         friend class IteratorTree;
