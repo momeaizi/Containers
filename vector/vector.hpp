@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/01 12:07:44 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/01 15:09:57 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ class ft::vector
         explicit vector (const allocator_type& alloc = allocator_type());
         explicit vector (size_type n, const value_type &val = value_type(), const allocator_type& alloc = allocator_type());
         template <class InputIterator>
-        vector (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last);
+        vector (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last);
         vector (const vector& x);
         vector& operator= (const vector& x);
         ~vector ();
@@ -62,8 +62,6 @@ class ft::vector
 
         template <class InputIterator>
         void                    assign (InputIterator first, InputIterator last);
-        // template <class InputIterator>
-        // void                    assign (InputIterator first, typename ft::enable_if<!ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last);
         void                    assign (size_type n, const value_type &val);
         reference               at (size_type n)
         {
@@ -178,7 +176,7 @@ class ft::vector
         }
         void                    insert (iterator pos, size_type n, const value_type& val);
         template <class InputIterator>
-        void                    insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type = InputIterator());
+        void                    insert (iterator position, InputIterator first, InputIterator last);
 
 
         
@@ -234,13 +232,14 @@ ft::vector<T, Alloc>::vector (size_type n, const value_type &val, const allocato
 
 template < class T, class Alloc>
 template <class InputIterator>
-ft::vector<T, Alloc>::vector (InputIterator first, typename ft::enable_if<!is_integral<InputIterator>::value, InputIterator>::type last) : __data(nullptr), __size(0), __capacity (__size)
+ft::vector<T, Alloc>::vector (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last) : __data(nullptr), __size(0), __capacity (__size)
 {
-    vector  v;
-    for (; first != last; ++first)
-        v.push_back(*first);
+    size_type   n = distance(first, last);
 
-    *this = v;
+    resize(n);
+
+    for (size_type i = 0; i < __size; ++i, ++first)
+        __data[i] = *first;
 }
 
 
@@ -495,48 +494,24 @@ void    ft::vector<T, Alloc>::insert (iterator pos, size_type n, const value_typ
 
 template < class T, class Alloc>
 template <class InputIterator>
-void    ft::vector<T, Alloc>::insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type)
+void    ft::vector<T, Alloc>::insert (iterator position, InputIterator first, InputIterator last)
 {
     size_type			pos;
     iterator			it;
-    vector              v;
     size_type	        n = distance(first, last);
 
     if (!n)
         return ;
 
     pos = position - begin();
-    resize(__size + n, value_type());
+    resize(__size + n);
 
-    for (size_type i = __size - 1; i >= pos + n; --i)
-        __data[i] = __data[i - n];
-    for (size_type i = pos, j = 0; i < pos + n; ++i, ++j)
-    {
-        __data[i] = v[j];
-        ++first;
-    }
+    for (size_type i = __size; i > pos + n; --i)
+        __data[i - 1] = __data[i - n - 1];
+
+    for (size_type i = pos; i < pos + n; ++i, ++first)
+        __data[i] = *first;
 }
-
-
-// template < class T, class Alloc>
-// template <class InputIterator>
-// void                    ft::vector<T, Alloc>::insert (iterator pos, InputIterator first, 
-//                                 typename ft::enable_if<!is_integral<InputIterator>::value && !ft::is_same<typename std::iterator_traits<InputIterator>::iterator_category, std::random_access_iterator_tag>::value, InputIterator>::type last)
-// {
-
-//     while (first != last)
-//     {
-//         pos = insert(pos, *first);
-//         ++pos;
-//         ++first;
-//     }
-// }
-
-
-
-
-
-
 
 
 
