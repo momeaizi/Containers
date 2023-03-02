@@ -51,18 +51,16 @@ time_t get_time(void)
 
 int main ()
 {
+    ft::map<int, std::string> m1;
 
+    for (size_t i = 0; i < 100; i++)
+    {
+        m1.insert(ft::make_pair(i, "string2"));
+    }
 
-    std::istringstream str("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    std::istreambuf_iterator<char> it(str), end;
+    m1.erase(m1.begin(), m1.end());
 
-    ft::vector<char>  v(it, end);
-
-    ft::vector<char>::iterator it1 = v.begin();
-
-    for (; it1 != v.end(); ++it1)
-        std::cout << *it1 << " ";
-    std::cout << std::endl;
+    system("leaks a.out");
 
     return 0;
 }
