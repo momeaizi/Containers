@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 19:52:21 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/02 19:06:48 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/03 11:58:15 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,19 @@ class   redBlackTree
                 Node                *p;
                 Node                *left;
                 Node                *right;
+                Alloc               __pair_alloc;
     
     
-                Node(value_type *val) : value (val), p (nullptr), left (nullptr), right (nullptr) {
-                    
+                Node(value_type val, Node *nil) : color (red), p (nil), left (nil), right (nil)
+                {
+                    value = __pair_alloc.allocate(1);
+
+                    __pair_alloc.construct(value, val);
+                }
+                ~Node ()
+                {
+                    __pair_alloc.destroy(value);
+                    __pair_alloc.deallocate(value, 1);
                 }
         };
         typedef Compare                                         key_compare;
@@ -61,21 +70,32 @@ class   redBlackTree
     
 
     public:
-        redBlackTree() : __root (nullptr), __size (0) {}
-        redBlackTree(const redBlackTree &x) : __root (nullptr), __size (x.__size)
+        redBlackTree() : __size (0)
         {
-            __root = cloneBinaryTree(x.__root, nullptr);
+            nil = __allocator.allocate(1);
+            __allocator.construct(nil, value_type(), nullptr);
+            nil->color = black;
+            __root = nil;
+        }
+        redBlackTree(const redBlackTree &x) : __size (x.__size)
+        {
+            nil = __allocator.allocate(1);
+            __allocator.construct(nil, value_type(), nullptr);
+            nil->color = black;
+            __root = nil;
+            __root = cloneBinaryTree(x, x.__root, nil);
         }
         redBlackTree    &operator= (const redBlackTree &x)
         {
             clear(__root);
-            __root = cloneBinaryTree(x.__root, nullptr);
+            __root = cloneBinaryTree(x, x.__root, nil);
             __size = x.__size;
             return *this;
         }
         ~redBlackTree()
         {
             clear(__root);
+            deleteNode(nil);
         }
         void                    insert(value_type val);
         void                    transplant(Node *u, Node *v);
@@ -83,9 +103,6 @@ class   redBlackTree
         void                    erase_fixup(Node *x);
         void                    deleteNode(Node *z)
         {
-            // std::cout << "| " << z->value->first << " |" << std::endl;
-            __pair_alloc.destroy(z->value);
-            __pair_alloc.deallocate(z->value, 1);
             __allocator.destroy(z);
             __allocator.deallocate(z, 1);
         }
@@ -99,23 +116,23 @@ class   redBlackTree
         }
         Node                    *findMin(Node *root) const
         {
-            if (!root)
-                return nullptr;
-            while (root->left) root = root->left;
+            if (root == nil)
+                return nil;
+            while (root->left != nil) root = root->left;
             return root;
         }
         Node                    *findMax(Node *root) const
         {
-            if (!root)
-                return nullptr;
-            while (root->right) root = root->right;
+            if (root == nil)
+                return nil;
+            while (root->right != nil) root = root->right;
             return root;
         }
         Node                    *find(key_type   key) const
         {
             Node    *p = __root;
 
-            while (p)
+            while (p != nil)
             {
                 if (p->value->first == key)
                     return p;
@@ -124,23 +141,23 @@ class   redBlackTree
                 else
                     p = p->right;
             }
-            return nullptr;
+            return nil;
         }
         void                    clear()
         {
             clear(__root);
             __size = 0;
-            __root = nullptr;
+            __root = nil;
         }
         bool                    empty() const { return !__size; }
         void                    print();
         iterator                begin()
         {
-            return iterator(findMin(__root), __root);
+            return iterator(findMin(__root), nil, __root);
         }
         const_iterator          begin() const
         {
-            return const_iterator(findMin(__root), __root);
+            return const_iterator(findMin(__root), nil, __root);
         }
         reverse_iterator        rbegin()
         {
@@ -152,11 +169,11 @@ class   redBlackTree
         }
         iterator                end()
         {
-            return iterator(nullptr, __root);
+            return iterator(nil, nil, __root);
         }
         const_iterator          end() const
         {
-            return iterator(nullptr, __root);
+            return iterator(nil, nil, __root);
         }
         reverse_iterator        rend()
         {
@@ -175,7 +192,7 @@ class   redBlackTree
             Node    *p = __root;
             Node    *result = nullptr;
 
-            while (p)
+            while (p != nil)
             {
                 if (key == p->value->first)
                     return p;
@@ -194,7 +211,7 @@ class   redBlackTree
             Node    *p = __root;
             Node    *result = nullptr;
 
-            while (p)
+            while (p != nil)
             {
                 if (cmp(key, p->value->first))
                 {
@@ -209,12 +226,13 @@ class   redBlackTree
         void                    swap (redBlackTree &x)
         {
             std::swap(__root, x.__root);
+            std::swap(nil, x.nil);
             std::swap(__size, x.__size);
         }
+        Node            *nil;
     private:
         Node            *__root;
         allocator_type  __allocator;
-        Alloc           __pair_alloc;
         size_type       __size;
         key_compare     cmp;
 
@@ -223,10 +241,8 @@ class   redBlackTree
         Node    *createNode(value_type val)
         {
             Node    *node = __allocator.allocate(1);
-            value_type       *pair = __pair_alloc.allocate(1);
 
-            __pair_alloc.construct(pair, val);
-            __allocator.construct(node, pair);
+            __allocator.construct(node, val, nil);
             
             return node;
         }
@@ -235,7 +251,7 @@ class   redBlackTree
         void    insert_fixup(Node *z);
         void    clear(Node *root)
         {
-            if(!root)
+            if(root == nil)
                 return ;
 
             clear(root->left);
@@ -243,17 +259,17 @@ class   redBlackTree
 
             deleteNode(root);
         }
-        Node    *cloneBinaryTree(Node *root, Node *p)
+        Node    *cloneBinaryTree(const redBlackTree &x, Node *root, Node *p)
         {
-            if (!root)
-                return nullptr;
+            if (root == x.nil)
+                return nil;
         
             Node* root_copy = createNode(*(root->value));
             root_copy->color = root->color;
             root_copy->p = p;
         
-            root_copy->left = cloneBinaryTree(root->left, root_copy);
-            root_copy->right = cloneBinaryTree(root->right, root_copy);
+            root_copy->left = cloneBinaryTree(x, root->left, root_copy);
+            root_copy->right = cloneBinaryTree(x, root->right, root_copy);
 
             return root_copy;
         } 
@@ -262,7 +278,7 @@ class   redBlackTree
 template < class Key, class T, class Compare, class Alloc>
 void    redBlackTree< Key, T, Compare, Alloc>::print(const std::string& prefix, const Node* node, bool isLeft)
 {
-    if( node != nullptr )
+    if( node != nil )
     {
         std::cout << prefix;
 
@@ -289,18 +305,18 @@ void    redBlackTree< Key, T, Compare, Alloc>::print()
 template < class Key, class T, class Compare, class Alloc>
 void    redBlackTree< Key, T, Compare, Alloc>::leftRotate(Node *x)
 {
-    if (!x->right)
+    if (x->right == nil)
         return ;
 
     Node    *y = x->right;
 
     x->right = y->left;
-    if (y->left)
+    if (y->left != nil)
         y->left->p = x;
 
     y->p = x->p;
 
-    if (!x->p)
+    if (x->p == nil)
         __root = y;
     else if (x == x->p->left)
         x->p->left = y;
@@ -314,18 +330,18 @@ void    redBlackTree< Key, T, Compare, Alloc>::leftRotate(Node *x)
 template < class Key, class T, class Compare, class Alloc>
 void    redBlackTree< Key, T, Compare, Alloc>::rightRotate(Node *y)
 {
-    if (!y->left)
+    if (y->left == nil)
         return ;
 
     Node    *x = y->left;
 
     y->left = x->right;
-    if (x->right)
+    if (x->right != nil)
         x->right->p = y;
 
     x->p = y->p;
 
-    if (!y->p)
+    if (y->p == nil)
         __root = x;
     else if (y == y->p->right)
         y->p->right = x;
@@ -340,11 +356,11 @@ void    redBlackTree< Key, T, Compare, Alloc>::rightRotate(Node *y)
 template < class Key, class T, class Compare, class Alloc>
 void    redBlackTree< Key, T, Compare, Alloc>::insert(value_type val)
 {
-    Node    *y = nullptr;
+    Node    *y = nil;
     Node    *x = __root;
     Node    *z = createNode(val);
 
-    while (x)
+    while (x != nil)
     {
         y = x;
         if (cmp(z->value->first, x->value->first))
@@ -354,15 +370,12 @@ void    redBlackTree< Key, T, Compare, Alloc>::insert(value_type val)
 
     z->p = y;
     
-    if (!y)
+    if (y == nil)
         __root = z;
     else if (cmp(z->value->first, y->value->first))
         y->left = z;
     else y->right = z;
 
-    z->left = nullptr;
-    z->right = nullptr;
-    z->color = red;
     ++__size;
 
     insert_fixup(z);
@@ -373,13 +386,13 @@ void    redBlackTree< Key, T, Compare, Alloc>::insert_fixup(Node *z)
 {
     Node    *y;
 
-    while (z->p && z->p->p && z->p->color == red)
+    while (z->p->color == red)
     {
         if (z->p == z->p->p->left)
         {
             y = z->p->p->right;
 
-            if (y && y->color == red)
+            if (y->color == red)
             {
                 z->p->color = black;
                 y->color = black;
@@ -398,11 +411,12 @@ void    redBlackTree< Key, T, Compare, Alloc>::insert_fixup(Node *z)
                 rightRotate(z->p->p);
             }
         }
+
         else
         {
             y = z->p->p->left;
 
-            if (y && y->color == red)
+            if (y->color == red)
             {
                 z->p->color = black;
                 y->color = black;
@@ -429,30 +443,29 @@ void    redBlackTree< Key, T, Compare, Alloc>::insert_fixup(Node *z)
 template < class Key, class T, class Compare, class Alloc>
 void    redBlackTree< Key, T, Compare, Alloc>::transplant(Node *u, Node *v)
 {
-    if (!u->p)
+    if (u->p == nil)
         __root = v;
     else if (u == u->p->left)
         u->p->left = v;
     else
         u->p->right = v;
 
-    if (v)
-        v->p = u->p;
+    v->p = u->p;
 }
 
 template < class Key, class T, class Compare, class Alloc>
 void    redBlackTree< Key, T, Compare, Alloc>::erase(Node *z)
 {
-    Node    *y = z;
     Node    *x;
+    Node    *y = z;
     Color   y_original_color = y->color;
 
-    if (!z->left)
+    if (z->left == nil)
     {
         x = z->right;
         transplant(z, z->right);
     }
-    else if (!z->right)
+    else if (z->right == nil)
     {
         x = z->left;
         transplant(z, z->left);
@@ -463,29 +476,27 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase(Node *z)
         y_original_color = y->color;
         x = y->right;
 
-        if (y->p == z && x)
+        if (y->p == z)
             x->p = y;
         else
         {
             transplant(y, y->right);
             y->right = z->right;
-            if (y->right)
-                y->right->p = y;
+            y->right->p = y;
         }
 
         transplant(z, y);
-        if (y->left)
-        {
-            y->left = z->left;
-            y->left->p = y;
-        }
+        y->left = z->left;
+        y->left->p = y;
         y->color = z->color;
     }
 
     deleteNode(z);
     --__size;
-    if (x && y_original_color == black)
+    if (y_original_color == black)
         erase_fixup(x);
+    print();
+    exit(1);
 }
 
 template < class Key, class T, class Compare, class Alloc>
@@ -504,7 +515,7 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase_fixup(Node *x)
                 leftRotate(x->p);
                 w = x->p->right;
             }
-            if ((!w->left || w->left->color == black) && (!w->right || w->right->color == black))
+            if (w->left->color == black && w->right->color == black)
             {
                 w->color = red;
                 x = x->p;
@@ -536,7 +547,7 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase_fixup(Node *x)
                 rightRotate(x->p);
                 w = x->p->left;
             }
-            if ((!w->left || w->left->color == black) && (!w->right || w->right->color == black))
+            if (w->left->color == black && w->right->color == black)
             {
                 w->color = red;
                 x = x->p;
@@ -561,3 +572,4 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase_fixup(Node *x)
     __root->color = black;
 }
 #endif
+

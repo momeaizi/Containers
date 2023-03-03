@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 11:22:14 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/02 16:10:15 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/03 11:38:39 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ class ft::map
         void                    clear() { tree.clear(); }
         size_type               count (const key_type &k) const
         {
-            if (tree.find(k))
+            if (tree.find(k) != tree.nil)
                 return 1;
             return 0;
         }
@@ -113,7 +113,7 @@ class ft::map
         mapped_type             &operator[] (const key_type &k)
         {
             node    *n = tree.find(k);
-            if (n)
+            if (n != tree.nil)
                 return  n->value->second;
             tree.insert(ft::make_pair(k, mapped_type()));
             return tree.find(k)->value->second;
@@ -156,41 +156,41 @@ class ft::map
         }
         iterator                find (const key_type &k)
         {
-            return iterator(tree.find(k), tree.root());
+            return iterator(tree.find(k), tree.nil, tree.root());
         }
         const_iterator          find (const key_type &k) const
         {
-            return const_iterator(tree.find(k), tree.root());
+            return const_iterator(tree.find(k), tree.nil, tree.root());
         }
         ft::pair<iterator,bool> insert(const value_type &val)
         {
             node    *p = tree.find(val.first);
 
-            if (p)
-                return ft::make_pair(iterator(p, tree.root()), false);
+            if (p != tree.nil)
+                return ft::make_pair(iterator(p, tree.nil, tree.root()), false);
             tree.insert(val);
             p = tree.find(val.first);
             
-            return ft::make_pair(iterator(p, tree.root()), true);
+            return ft::make_pair(iterator(p, tree.nil, tree.root()), true);
         }
         iterator                insert (iterator position, const value_type& val)
         {
             (void) position;
             node    *p = tree.find(val.first);
 
-            if (p)
-                return iterator(p, tree.root());
+            if (p != tree.nil)
+                return iterator(p, tree.nil, tree.root());
             tree.insert(val);
             p = tree.find(val.first);
             
-            return iterator(p, tree.root());
+            return iterator(p, tree.nil, tree.root());
         }
         template <class InputIterator>
         void                    insert (InputIterator first, InputIterator last)
         {
             for (; first != last; ++first)
             {
-                if (!tree.find(first->first))
+                if (tree.find(first->first) == tree.nil)
                     tree.insert(*first);
             }
         }
@@ -202,7 +202,7 @@ class ft::map
         {
             node    *z = tree.find(k);
 
-            if (z)
+            if (z != tree.nil)
             {
                 tree.erase(z);
                 return 1;
@@ -212,10 +212,7 @@ class ft::map
         void                    erase (iterator first, iterator last)
         {
             for (; first != last; ++first)
-            {
-                // std::cout << "key to be erased: " << first->first << std::endl << std::endl;
                 erase(first->first);
-            }
         }
         key_compare             key_comp() const
         {
@@ -236,22 +233,22 @@ class ft::map
         iterator                lower_bound (const key_type& k)
         {
             node    *p = tree.lower_bound(k);
-            return iterator(p, tree.root());
+            return iterator(p, tree.nil, tree.root());
         }
         const_iterator          lower_bound (const key_type& k) const
         {
             node    *p = tree.lower_bound(k);
-            return const_iterator(p, tree.root());
+            return const_iterator(p, tree.nil, tree.root());
         }
         iterator                upper_bound (const key_type& k)
         {
             node    *p = tree.upper_bound(k);
-            return iterator(p, tree.root());
+            return iterator(p, tree.nil, tree.root());
         }
         const_iterator          upper_bound (const key_type& k) const
         {
             node    *p = tree.upper_bound(k);
-            return const_iterator(p, tree.root());
+            return const_iterator(p, tree.nil, tree.root());
         }
         ft::pair<const_iterator, const_iterator> equal_range (const key_type &k) const
         {

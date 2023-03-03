@@ -53,14 +53,20 @@ int main ()
 {
     ft::map<int, std::string> m1;
 
-    for (size_t i = 0; i < 100; i++)
+    for (size_t i = 0; i < 1000; i++)
     {
         m1.insert(ft::make_pair(i, "string2"));
     }
 
+
     m1.erase(m1.begin(), m1.end());
 
-    system("leaks a.out");
+    ft::map<int, std::string>::iterator it = m1.begin();
+
+    for (;it != m1.end(); ++it)
+        std::cout << it->first << " " << it->second << std::endl;
+
+    // system("leaks a.out");
 
     return 0;
 }

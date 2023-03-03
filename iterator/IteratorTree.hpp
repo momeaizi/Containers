@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 14:50:50 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/01 05:21:00 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/03 10:14:54 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,18 +27,19 @@ class IteratorTree
 
 
 
-        IteratorTree() : m_ptr(NULL), root (nullptr) {}
-        IteratorTree(T *ptr, T *root = nullptr) : m_ptr(ptr), root (root) {}
+        IteratorTree() : m_ptr (NULL), nil (nullptr), root (nullptr) {}
+        IteratorTree(T *ptr, T *nil = nullptr, T *root = nullptr) : m_ptr (ptr), nil (nil), root (root) {}
         
         template < class U, class val>
         friend class IteratorTree;
         
         template <class U, class val>
-        IteratorTree(const IteratorTree<U, val> &it) : m_ptr(it.m_ptr), root (it.root) {}
+        IteratorTree(const IteratorTree<U, val> &it) : m_ptr (it.m_ptr), nil (it.nil), root (it.root) {}
         template <class U, class val>
         IteratorTree<U, val>   &operator=(const iterator_type &it) const
         {
             m_ptr = it.m_ptr;
+            nil = it.nil;
             root = it.root;
             return *this;
         }
@@ -57,6 +58,7 @@ class IteratorTree
 
         private:
             T *m_ptr;
+            T *nil;
             T *root;
             T *findMin(T *node) const;
             T *findMax(T *node) const;
@@ -66,12 +68,12 @@ class IteratorTree
 template < class T, class val>
 T   *IteratorTree<T, val>::findMin(T *node) const
 {
-    if (!node)
+    if (node == nil)
         return nullptr;
     T   *current = node;
  
 
-    while (current->left != NULL) {
+    while (current->left != nil) {
         current = current->left;
     }
     return current;
@@ -80,12 +82,12 @@ T   *IteratorTree<T, val>::findMin(T *node) const
 template < class T, class val>
 T    *IteratorTree<T, val>::findMax(T *node) const
 {
-    if (!node)
+    if (node == nil)
         return nullptr;
     T   *current = node;
  
 
-    while (current->right != NULL) {
+    while (current->right != nil) {
         current = current->right;
     }
     return current;
@@ -95,18 +97,15 @@ T    *IteratorTree<T, val>::findMax(T *node) const
 template < class T, class val>
 IteratorTree<T, val>&    IteratorTree<T, val>::operator++()
 {
-    if (!m_ptr)
-        return *this;
 
-
-    if (m_ptr->right)
+    if (m_ptr->right != nil)
     {
         m_ptr = findMin(m_ptr->right);
         return *this;
     }
 
     T   *p = m_ptr->p;
-    while (p && m_ptr == p->right)
+    while (p != nil && m_ptr == p->right)
     {
         m_ptr = p;
         p = p->p;
@@ -121,14 +120,14 @@ IteratorTree<T, val>     IteratorTree<T, val>::operator++(int) { IteratorTree te
 template < class T, class val>
 IteratorTree<T, val>&    IteratorTree<T, val>::operator--()
 {
-    if (!m_ptr)
+    if (m_ptr == nil)
     {
         m_ptr = findMax(root);
         return *this;
     }
 
 
-    if (m_ptr->left)
+    if (m_ptr->left != nil)
     {
         m_ptr = findMax(m_ptr->left);
         return *this;
@@ -136,7 +135,7 @@ IteratorTree<T, val>&    IteratorTree<T, val>::operator--()
 
 
     T   *p = m_ptr->p;
-    while (p && m_ptr == p->left)
+    while (p != nil && m_ptr == p->left)
     {
         m_ptr = p;
         p = p->p;
