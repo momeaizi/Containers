@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 11:22:14 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/03 11:38:39 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/04 05:17:14 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,7 +198,7 @@ class ft::map
         {
             erase(position->first);
         }
-        size_type               erase (const key_type &k)
+        size_type               erase (const key_type& k)
         {
             node    *z = tree.find(k);
 
@@ -211,8 +211,8 @@ class ft::map
         }
         void                    erase (iterator first, iterator last)
         {
-            for (; first != last; ++first)
-                erase(first->first);
+            while (first != last)
+				erase((first++)->first);
         }
         key_compare             key_comp() const
         {

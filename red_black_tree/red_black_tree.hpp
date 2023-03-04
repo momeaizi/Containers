@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 19:52:21 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/03 11:58:15 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/04 05:20:45 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ class   redBlackTree
             nil = __allocator.allocate(1);
             __allocator.construct(nil, value_type(), nullptr);
             nil->color = black;
-            __root = nil;
             __root = cloneBinaryTree(x, x.__root, nil);
         }
         redBlackTree    &operator= (const redBlackTree &x)
@@ -456,6 +455,11 @@ void    redBlackTree< Key, T, Compare, Alloc>::transplant(Node *u, Node *v)
 template < class Key, class T, class Compare, class Alloc>
 void    redBlackTree< Key, T, Compare, Alloc>::erase(Node *z)
 {
+    if (z == nil || !z)
+    {
+        std::cout << z << std::endl;
+        exit(1);
+    }
     Node    *x;
     Node    *y = z;
     Color   y_original_color = y->color;
@@ -490,13 +494,11 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase(Node *z)
         y->left->p = y;
         y->color = z->color;
     }
-
+    
     deleteNode(z);
     --__size;
-    if (y_original_color == black)
+    if (x && x != nil && y_original_color == black)
         erase_fixup(x);
-    print();
-    exit(1);
 }
 
 template < class Key, class T, class Compare, class Alloc>
@@ -507,7 +509,12 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase_fixup(Node *x)
         if (x == x->p->left)
         {
             Node    *w = x->p->right;
-
+            if (!w || w == nil)
+            {
+                std::cout << "WRONG!" << std::endl;
+                std::cout << w << std::endl;
+                exit(1);
+            }
             if (w->color == red)
             {
                 w->color = black;
@@ -539,7 +546,12 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase_fixup(Node *x)
         else
         {
             Node    *w = x->p->left;
-
+            if (!w || w == nil)
+            {
+                std::cout << "WRONG!" << std::endl;
+                std::cout << w << std::endl;
+                exit(1);
+            }
             if (w->color == red)
             {
                 w->color = black;
