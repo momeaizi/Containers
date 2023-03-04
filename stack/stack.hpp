@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 15:39:42 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/02/16 18:34:55 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/04 20:00:53 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class ft::stack
 
     public:
         explicit stack (const container_type &ctnr = container_type()) : ctnr(ctnr) {}
+        ~stack () {}
 
         value_type          &top() { return ctnr.back(); }
         

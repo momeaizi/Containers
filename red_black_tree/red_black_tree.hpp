@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 19:52:21 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/04 05:20:45 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/04 19:55:53 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ class   redBlackTree
         typedef Key                                             key_type;
         typedef T                                               mapped_type;
         typedef ft::pair<const key_type, mapped_type>           value_type;
-        struct   Node
+        struct  Node
         {
             public:
                 Color               color;
@@ -40,20 +40,8 @@ class   redBlackTree
                 Node                *p;
                 Node                *left;
                 Node                *right;
-                Alloc               __pair_alloc;
-    
-    
-                Node(value_type val, Node *nil) : color (red), p (nil), left (nil), right (nil)
-                {
-                    value = __pair_alloc.allocate(1);
 
-                    __pair_alloc.construct(value, val);
-                }
-                ~Node ()
-                {
-                    __pair_alloc.destroy(value);
-                    __pair_alloc.deallocate(value, 1);
-                }
+            Node (Node *nil) : p (nil), left (nil), right (nil) {}
         };
         typedef Compare                                         key_compare;
         typedef typename Alloc::template rebind<Node>::other    allocator_type;
@@ -70,25 +58,27 @@ class   redBlackTree
     
 
     public:
-        redBlackTree() : __size (0)
+        redBlackTree() : nil (nullptr), __size (0)
         {
-            nil = __allocator.allocate(1);
-            __allocator.construct(nil, value_type(), nullptr);
+            nil = createNode(value_type());
             nil->color = black;
             __root = nil;
+            max = nullptr;
+
         }
-        redBlackTree(const redBlackTree &x) : __size (x.__size)
+        redBlackTree(const redBlackTree &x) : nil (nullptr), __size (x.__size)
         {
-            nil = __allocator.allocate(1);
-            __allocator.construct(nil, value_type(), nullptr);
+            nil = createNode(value_type());
             nil->color = black;
             __root = cloneBinaryTree(x, x.__root, nil);
+            max = findMax(__root);
         }
         redBlackTree    &operator= (const redBlackTree &x)
         {
             clear(__root);
             __root = cloneBinaryTree(x, x.__root, nil);
             __size = x.__size;
+            max = findMax(__root);
             return *this;
         }
         ~redBlackTree()
@@ -102,6 +92,8 @@ class   redBlackTree
         void                    erase_fixup(Node *x);
         void                    deleteNode(Node *z)
         {
+            __val_alloc.destroy(z->value);
+            __val_alloc.deallocate(z->value, 1);
             __allocator.destroy(z);
             __allocator.deallocate(z, 1);
         }
@@ -140,23 +132,24 @@ class   redBlackTree
                 else
                     p = p->right;
             }
-            return nil;
+            return p;
         }
         void                    clear()
         {
             clear(__root);
             __size = 0;
             __root = nil;
+            max = nullptr;
         }
         bool                    empty() const { return !__size; }
         void                    print();
         iterator                begin()
         {
-            return iterator(findMin(__root), nil, __root);
+            return iterator(findMin(__root), nil, max);
         }
         const_iterator          begin() const
         {
-            return const_iterator(findMin(__root), nil, __root);
+            return const_iterator(findMin(__root), nil, max);
         }
         reverse_iterator        rbegin()
         {
@@ -168,11 +161,11 @@ class   redBlackTree
         }
         iterator                end()
         {
-            return iterator(nil, nil, __root);
+            return iterator(nil, nil, max);
         }
         const_iterator          end() const
         {
-            return iterator(nil, nil, __root);
+            return iterator(nil, nil, max);
         }
         reverse_iterator        rend()
         {
@@ -189,7 +182,7 @@ class   redBlackTree
         Node                    *lower_bound (const key_type &key) const
         {
             Node    *p = __root;
-            Node    *result = nullptr;
+            Node    *result = nil;
 
             while (p != nil)
             {
@@ -208,7 +201,7 @@ class   redBlackTree
         Node                    *upper_bound (const key_type &key) const
         {
             Node    *p = __root;
-            Node    *result = nullptr;
+            Node    *result = nil;
 
             while (p != nil)
             {
@@ -227,11 +220,15 @@ class   redBlackTree
             std::swap(__root, x.__root);
             std::swap(nil, x.nil);
             std::swap(__size, x.__size);
+            std::swap(max, x.max);
         }
         Node            *nil;
+
     private:
         Node            *__root;
+        Node            *max;
         allocator_type  __allocator;
+        Alloc           __val_alloc;
         size_type       __size;
         key_compare     cmp;
 
@@ -241,8 +238,11 @@ class   redBlackTree
         {
             Node    *node = __allocator.allocate(1);
 
-            __allocator.construct(node, val, nil);
-            
+            __allocator.construct(node, nil);
+
+            node->value = __val_alloc.allocate(1);
+            __val_alloc.construct(node->value, val);
+
             return node;
         }
         void    leftRotate(Node *x);
@@ -377,6 +377,8 @@ void    redBlackTree< Key, T, Compare, Alloc>::insert(value_type val)
 
     ++__size;
 
+    if (!max || cmp(max->value->first, z->value->first))
+        max = z;
     insert_fixup(z);
 }
 
@@ -449,17 +451,15 @@ void    redBlackTree< Key, T, Compare, Alloc>::transplant(Node *u, Node *v)
     else
         u->p->right = v;
 
+
     v->p = u->p;
 }
 
 template < class Key, class T, class Compare, class Alloc>
 void    redBlackTree< Key, T, Compare, Alloc>::erase(Node *z)
 {
-    if (z == nil || !z)
-    {
-        std::cout << z << std::endl;
-        exit(1);
-    }
+    if (z == max)
+        max = z->p;
     Node    *x;
     Node    *y = z;
     Color   y_original_color = y->color;
@@ -494,10 +494,10 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase(Node *z)
         y->left->p = y;
         y->color = z->color;
     }
-    
+
     deleteNode(z);
     --__size;
-    if (x && x != nil && y_original_color == black)
+    if (y_original_color == black)
         erase_fixup(x);
 }
 
@@ -509,18 +509,18 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase_fixup(Node *x)
         if (x == x->p->left)
         {
             Node    *w = x->p->right;
-            if (!w || w == nil)
-            {
-                std::cout << "WRONG!" << std::endl;
-                std::cout << w << std::endl;
-                exit(1);
-            }
+
             if (w->color == red)
             {
                 w->color = black;
                 x->p->color = red;
                 leftRotate(x->p);
                 w = x->p->right;
+                if (w == nil)
+                {
+                    x = x->p;
+                    break ;
+                }
             }
             if (w->left->color == black && w->right->color == black)
             {
@@ -546,18 +546,18 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase_fixup(Node *x)
         else
         {
             Node    *w = x->p->left;
-            if (!w || w == nil)
-            {
-                std::cout << "WRONG!" << std::endl;
-                std::cout << w << std::endl;
-                exit(1);
-            }
+
             if (w->color == red)
             {
                 w->color = black;
                 x->p->color = red;
                 rightRotate(x->p);
                 w = x->p->left;
+                if (w == nil)
+                {
+                    x = x->p;
+                    break ;
+                }
             }
             if (w->left->color == black && w->right->color == black)
             {
@@ -581,7 +581,8 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase_fixup(Node *x)
             }
         }
     }
-    __root->color = black;
+
+    x->color = black;
 }
 #endif
 

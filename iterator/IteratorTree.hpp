@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 14:50:50 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/03 10:14:54 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/04 18:32:19 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,20 +27,20 @@ class IteratorTree
 
 
 
-        IteratorTree() : m_ptr (NULL), nil (nullptr), root (nullptr) {}
-        IteratorTree(T *ptr, T *nil = nullptr, T *root = nullptr) : m_ptr (ptr), nil (nil), root (root) {}
+        IteratorTree() : m_ptr (NULL), nil (nullptr), max (nullptr) {}
+        IteratorTree(T *ptr, T *nil = nullptr, T *max = nullptr) : m_ptr (ptr), nil (nil), max (max) {}
         
         template < class U, class val>
         friend class IteratorTree;
         
         template <class U, class val>
-        IteratorTree(const IteratorTree<U, val> &it) : m_ptr (it.m_ptr), nil (it.nil), root (it.root) {}
+        IteratorTree(const IteratorTree<U, val> &it) : m_ptr (it.m_ptr), nil (it.nil), max (it.max) {}
         template <class U, class val>
         IteratorTree<U, val>   &operator=(const iterator_type &it) const
         {
             m_ptr = it.m_ptr;
             nil = it.nil;
-            root = it.root;
+            max = it.max;
             return *this;
         }
 
@@ -59,7 +59,7 @@ class IteratorTree
         private:
             T *m_ptr;
             T *nil;
-            T *root;
+            T *max;
             T *findMin(T *node) const;
             T *findMax(T *node) const;
 };
@@ -122,7 +122,7 @@ IteratorTree<T, val>&    IteratorTree<T, val>::operator--()
 {
     if (m_ptr == nil)
     {
-        m_ptr = findMax(root);
+        m_ptr = max;
         return *this;
     }
 

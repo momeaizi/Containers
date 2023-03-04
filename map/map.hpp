@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 11:22:14 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/04 05:17:14 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/04 18:31:58 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,7 +258,7 @@ class ft::map
         {
             return ft::make_pair(lower_bound(k), upper_bound(k));
         }
-    private:
+    public:
         redBlackTree<Key, T, Compare, Alloc>    tree;
         
 };

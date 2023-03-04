@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/01 18:37:30 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/04 18:31:49 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ class ft::vector
 
 
         template <class InputIterator>
-        void                    assign (InputIterator first, InputIterator last);
+        void                    assign (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last);
         void                    assign (size_type n, const value_type &val);
         reference               at (size_type n)
         {
@@ -309,7 +309,7 @@ typename ft::vector<T, Alloc>::size_type   ft::vector<T, Alloc>::max_size() cons
     if (sizeof(value_type) == 1)
         return __allocator.max_size() / 2;
     return __allocator.max_size();
-};
+}
 
 template < class T, class Alloc>
 void    ft::vector<T, Alloc>::assign (size_type n, const value_type &val)
@@ -339,7 +339,7 @@ void    ft::vector<T, Alloc>::assign (size_type n, const value_type &val)
 
 template < class T, class Alloc>
 template <class InputIterator>
-void ft::vector<T, Alloc>::assign (InputIterator first, InputIterator last)
+void ft::vector<T, Alloc>::assign (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last)
 {
     vector  v;
     while (first != last)

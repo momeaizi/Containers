@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 07:54:42 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/01 12:04:19 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/04 18:32:58 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,11 @@ namespace ft
     template <>
     struct is_integral<const long int> : std::true_type {};
     
-    template <>
-    struct is_integral<long long int> : std::true_type {};
+    // template <>
+    // struct is_integral<long long int> : std::true_type {};
     
-    template <>
-    struct is_integral<const long long int> : std::true_type {};
+    // template <>
+    // struct is_integral<const long long int> : std::true_type {};
     
     template <>
     struct is_integral<unsigned char> : std::true_type {};
@@ -104,10 +104,10 @@ namespace ft
     template <>
     struct is_integral<const unsigned long int> : std::true_type {};
     
-    template <>
-    struct is_integral<unsigned long long int> : std::true_type {};
+    // template <>
+    // struct is_integral<unsigned long long int> : std::true_type {};
     
-    template <>
-    struct is_integral<const unsigned long long int> : std::true_type {};
+    // template <>
+    // struct is_integral<const unsigned long long int> : std::true_type {};
 }
 #endif
