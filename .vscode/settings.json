@@ -73,6 +73,7 @@
         "stack": "cpp",
         "__memory": "cpp",
         "__functional_base_03": "cpp",
-        "csignal": "cpp"
+        "csignal": "cpp",
+        "list": "cpp"
     }
 }

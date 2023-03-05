@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/05 15:18:00 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/05 19:57:17 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ class ft::vector
         }
         void                    insert (iterator pos, size_type n, const value_type& val);
         template <class InputIterator>
-        void                    insert (iterator position, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last);
+        void                    insert (iterator pos, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last);
 
 
         
@@ -203,6 +203,24 @@ class ft::vector
         void    __range_construct (InputIterator range, value_type *data, size_type n);
         template <class InputIterator>
         void    distance(InputIterator first, InputIterator last, vector &v);
+        template <class InputIterator>
+        void    assign_range (InputIterator first, 
+            typename ft::enable_if<!is_random_access<typename ft::iterator_traits<InputIterator>::iterator_category>::value, InputIterator>::type last);
+        template <class InputIterator>
+        void    assign_range (InputIterator first, 
+            typename ft::enable_if<is_random_access<typename ft::iterator_traits<InputIterator>::iterator_category>::value, InputIterator>::type last);
+        template <class InputIterator>
+        void    ctor_range (InputIterator first, 
+            typename ft::enable_if<!is_random_access<typename ft::iterator_traits<InputIterator>::iterator_category>::value, InputIterator>::type last);
+        template <class InputIterator>
+        void    ctor_range (InputIterator first, 
+            typename ft::enable_if<is_random_access<typename ft::iterator_traits<InputIterator>::iterator_category>::value, InputIterator>::type last);
+        template <class InputIterator>
+        void    insert_range (iterator pos, InputIterator first, 
+            typename ft::enable_if<!is_random_access<typename ft::iterator_traits<InputIterator>::iterator_category>::value, InputIterator>::type last);
+        template <class InputIterator>
+        void    insert_range (iterator pos, InputIterator first, 
+            typename ft::enable_if<is_random_access<typename ft::iterator_traits<InputIterator>::iterator_category>::value, InputIterator>::type last);
     
 };
 
@@ -234,12 +252,33 @@ template < class T, class Alloc>
 template <class InputIterator>
 ft::vector<T, Alloc>::vector (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last) : __data(nullptr), __size(0), __capacity (0)
 {
-    vector      v;
-    distance(first, last, v);
-
-    *this = v;
+    ctor_range(first, last);
 }
 
+template < class T, class Alloc>
+template <class InputIterator>
+void    ft::vector<T, Alloc>::ctor_range (InputIterator first, 
+    typename ft::enable_if<!is_random_access<typename ft::iterator_traits<InputIterator>::iterator_category>::value, InputIterator>::type last)
+{
+    for (; first != last; ++first)
+        push_back(*first);
+}
+
+template < class T, class Alloc>
+template <class InputIterator>
+void    ft::vector<T, Alloc>::ctor_range (InputIterator first, 
+    typename ft::enable_if<is_random_access<typename ft::iterator_traits<InputIterator>::iterator_category>::value, InputIterator>::type last)
+{
+    if (first > last)
+        throw std::length_error("vector");
+
+    __size = last - first;
+    __capacity = __size;
+
+    __data = __allocator.allocate(__capacity);
+    for (size_type i = 0; i < __size; ++i)
+        __allocator.construct(__data + i, *(first++));
+}
 
 template < class T, class Alloc>
 ft::vector<T, Alloc>::vector (const vector& x) : __data(nullptr), __size(x.__size), __capacity (x.__capacity)
@@ -342,13 +381,60 @@ void    ft::vector<T, Alloc>::assign (size_type n, const value_type &val)
 
 template < class T, class Alloc>
 template <class InputIterator>
-void ft::vector<T, Alloc>::assign (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last)
+void    ft::vector<T, Alloc>::assign (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last)
 {
-    vector      v;
-    distance(first, last, v);
-
-    *this = v;
+    assign_range(first, last);
 }
+
+template < class T, class Alloc>
+template <class InputIterator>
+void    ft::vector<T, Alloc>::assign_range (InputIterator first, 
+            typename ft::enable_if<!is_random_access<typename ft::iterator_traits<InputIterator>::iterator_category>::value, InputIterator>::type last)
+{
+    while (first != last)
+        push_back((*first++));
+}
+
+template < class T, class Alloc>
+template <class InputIterator>
+void    ft::vector<T, Alloc>::assign_range (InputIterator first, 
+            typename ft::enable_if<is_random_access<typename ft::iterator_traits<InputIterator>::iterator_category>::value, InputIterator>::type last)
+{
+    if (first > last)
+    {
+        clear();
+        if (__capacity)
+            __allocator.deallocate(__data, __capacity);
+        __capacity = 0;
+        throw std::length_error("vector");
+    }
+
+    size_type n = last - first;
+
+    if (n <= __capacity)
+    {
+        size_type   min = std::min(n, __size);
+
+        __assign_range(0, std::min(n, __size), first);
+        for (size_type i = min; i < n; i++)
+            __allocator.construct(__data + i, *(first++ + min));
+        __destruct(n);
+        __size = n;
+    }
+    else
+    {
+        __destruct(0);
+        if (__capacity)
+            __allocator.deallocate(__data, __capacity);
+        __data = __allocator.allocate(n);
+        for (size_type i = 0; i < n; i++)
+            __allocator.construct(__data + i, *(first++));       
+    }
+    __capacity = std::max(__capacity, n);
+    __size = n;
+}
+
+
 
 template < class T, class Alloc>
 void    ft::vector<T, Alloc>::clear ()
@@ -496,26 +582,66 @@ template < class T, class Alloc>
 template <class InputIterator>
 void    ft::vector<T, Alloc>::insert (iterator position, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last)
 {
-    size_type			pos;
-    iterator			it;
-    vector              v;
-    distance(first, last, v);
-    size_type			n = v.size();
-
-    if (!n)
-        return ;
-
-    pos = position - begin();
-    resize(__size + n);
-
-    for (size_type i = __size; i > pos + n; --i)
-        __data[i - 1] = __data[i - n - 1];
-
-    for (size_type i = pos, j = 0; i < pos + n; ++i, ++j)
-        __data[i] = v[j];
+    insert_range(position, first, last);
 }
 
 
+template < class T, class Alloc>
+template <class InputIterator>
+void    ft::vector<T, Alloc>::insert_range (iterator pos, InputIterator first, 
+    typename ft::enable_if<!is_random_access<typename ft::iterator_traits<InputIterator>::iterator_category>::value, InputIterator>::type last)
+{
+    while (first != last)
+    {
+        pos = insert(pos, *first);
+        ++pos;
+        ++first;
+    }
+}
+
+
+template < class T, class Alloc>
+template <class InputIterator>
+void    ft::vector<T, Alloc>::insert_range (iterator pos, InputIterator first, 
+    typename ft::enable_if<is_random_access<typename ft::iterator_traits<InputIterator>::iterator_category>::value, InputIterator>::type last)
+{
+    size_type   p = pos - begin();
+    size_type   n = last - first;
+
+    if (__size + n > __capacity)
+    {
+        size_type   capacity = (__capacity * 2 < n + __size) ? __size + n : __capacity * 2;;
+        T   *data = __allocator.allocate(capacity);
+
+        __range_construct(first, data + p, n);
+        __reverse_copy_construct(p, data);
+        __copy_construct(p, __size, data + n);
+        __destruct(0);
+        if (__capacity)
+            __allocator.deallocate(__data, __capacity);
+        __data = data;
+        __capacity = capacity;
+    }
+    else
+    {
+        
+        if (pos + n > end())
+        {
+            size_type   __n = end() - pos;
+            
+            __range_construct(first + __n, __data + __size, n - __n);
+            __copy_construct(__size - __n, __size, __data + n);
+            __assign_range(p, __size, first);
+        }
+        else
+        {
+            __copy_construct(__size - n, __size, __data + n);
+            __shift_right(pos + n - 1, end() - 1, n);
+            __assign_range(p, p + n, first);
+        }
+    }
+    __size += n;
+}
 
 /* *************************************************************************** */
 /*                             non-member overloads                            */
@@ -603,6 +729,7 @@ InputIterator   operator+ (InputIterator inputit, size_t n)
 /* *************************************************************************** */
 /*                           private-member overloads                          */
 /* *************************************************************************** */
+
 
 template < class T, class Alloc>
 void    ft::vector<T, Alloc>::__resize(size_type n)
@@ -708,9 +835,17 @@ template < class T, class Alloc>
 template <class InputIterator>
 void    ft::vector<T, Alloc>::distance(InputIterator first, InputIterator last, vector &v)
 {
-
     for (; first != last; ++first)
         v.push_back(*first);
 
+}
+
+template< class InputIt>
+typename std::iterator_traits<InputIt>::difference_type _distance( InputIt first, InputIt last )
+{
+    typename std::iterator_traits<InputIt>::difference_type i = 0;
+
+    for (; first != last; ++first, ++i);
+    return i;
 }
 #endif

@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/14 15:33:04 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/05 09:38:00 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/05 18:51:10 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <cstddef>
+#include "../utils/is_integral.hpp"
 
 namespace ft
 {
@@ -26,7 +27,7 @@ namespace ft
     
     template <typename T>
         struct iterator_traits<const T*>;
-
+    
 }
 
 
@@ -61,10 +62,18 @@ struct ft::iterator_traits<const T*>
     typedef const T                                     value_type;
     typedef const T*                                    pointer;
     typedef const T&                                    reference;
-    typedef std::random_access_iterator_tag                  iterator_category;
+    typedef std::random_access_iterator_tag             iterator_category;
     
 };
 
+
+
+template <class Inputiterator>
+struct is_random_access : ft::false_type {};
+
+
+template <>
+struct is_random_access<std::random_access_iterator_tag> : ft::true_type {};
 
 
 #endif
