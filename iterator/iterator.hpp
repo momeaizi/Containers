@@ -6,16 +6,17 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:43:07 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/04 18:31:36 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/05 09:39:40 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ITERATOR_HPP
 #define ITERATOR_HPP
 
+#include <iostream>
 
 
-template < class T, class Category = std::random_access_iterator_tag, class Distance = ptrdiff_t, class Pointer = T*, class Reference = T&>
+template < class T, class Category = std::random_access_iterator_tag, class Distance = std::ptrdiff_t, class Pointer = T*, class Reference = T&>
 class Iterator
 {
     private:

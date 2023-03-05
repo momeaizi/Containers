@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 11:22:14 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/04 18:31:58 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/05 08:42:44 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <stdexcept>
 #include <iostream>
 #include "../utils/pair.hpp"
-#include "../red_black_tree/red_black_tree.hpp"
+#include "red_black_tree.hpp"
 
 namespace ft
 {
@@ -34,7 +34,8 @@ template < class Key, class T, class Compare = std::less<Key>, class Alloc = std
 class ft::map
 {
     private:
-        typedef typename redBlackTree<Key, T, Compare, Alloc>::Node                     node;
+        redBlackTree<Key, T, Compare, Alloc>    tree;
+        typedef typename redBlackTree<Key, T, Compare, Alloc>::Node                             node;
     public:
         typedef Key                                                                             key_type;
         typedef T                                                                               mapped_type;
@@ -88,29 +89,38 @@ class ft::map
             (void)alloc;
 
             for (; first != last; ++first)
-               tree.insert(*first);
+            {
+                if (tree.find(first->first) == tree.nil)
+                    tree.insert(*first);
+            }
         }
 
         map (const map &x) : tree (x.tree) {}
 
+        map &operator= (const map &x)
+        {
+            tree = x.tree;
+            return *this;
+        }
+
         ~map() { }
 
-        void                    clear() { tree.clear(); }
-        size_type               count (const key_type &k) const
+        void                                        clear() { tree.clear(); }
+        size_type                                   count (const key_type &k) const
         {
             if (tree.find(k) != tree.nil)
                 return 1;
             return 0;
         }
-        bool                    empty() const
+        bool                                        empty() const
         {
             return tree.empty();
         }
-        allocator_type          get_allocator() const
+        allocator_type                              get_allocator() const
         {
             return allocator_type();
         }
-        mapped_type             &operator[] (const key_type &k)
+        mapped_type                                 &operator[] (const key_type &k)
         {
             node    *n = tree.find(k);
             if (n != tree.nil)
@@ -118,75 +128,75 @@ class ft::map
             tree.insert(ft::make_pair(k, mapped_type()));
             return tree.find(k)->value->second;
         }
-        size_type               size() const
+        size_type                                   size() const
         {
             return tree.size();
         }
-        iterator                begin()
+        iterator                                    begin()
         {
             return tree.begin();
         }
-        const_iterator          begin() const
+        const_iterator                              begin() const
         {
             return tree.begin();
         }
-        reverse_iterator        rbegin()
+        reverse_iterator                            rbegin()
         {
             return tree.rbegin();
         }
-        const_reverse_iterator  rbegin() const
+        const_reverse_iterator                      rbegin() const
         {
             return tree.rbegin();
         }
-        iterator                end()
+        iterator                                    end()
         {
             return tree.end();
         }
-        const_iterator          end() const
+        const_iterator                              end() const
         {
             return tree.end();
         }
-        reverse_iterator        rend()
+        reverse_iterator                            rend()
         {
             return tree.rend();
         }
-        const_reverse_iterator  rend() const
+        const_reverse_iterator                      rend() const
         {
             return tree.rend();
         }
-        iterator                find (const key_type &k)
+        iterator                                    find (const key_type &k)
         {
-            return iterator(tree.find(k), tree.nil, tree.root());
+            return iterator(tree.find(k), tree.nil, tree.max());
         }
-        const_iterator          find (const key_type &k) const
+        const_iterator                              find (const key_type &k) const
         {
-            return const_iterator(tree.find(k), tree.nil, tree.root());
+            return const_iterator(tree.find(k), tree.nil, tree.max());
         }
-        ft::pair<iterator,bool> insert(const value_type &val)
+        ft::pair<iterator,bool>                     insert(const value_type &val)
         {
             node    *p = tree.find(val.first);
 
             if (p != tree.nil)
-                return ft::make_pair(iterator(p, tree.nil, tree.root()), false);
+                return ft::make_pair(iterator(p, tree.nil, tree.max()), false);
             tree.insert(val);
             p = tree.find(val.first);
             
-            return ft::make_pair(iterator(p, tree.nil, tree.root()), true);
+            return ft::make_pair(iterator(p, tree.nil, tree.max()), true);
         }
-        iterator                insert (iterator position, const value_type& val)
+        iterator                                    insert (iterator position, const value_type &val)
         {
             (void) position;
             node    *p = tree.find(val.first);
 
             if (p != tree.nil)
-                return iterator(p, tree.nil, tree.root());
+                return iterator(p, tree.nil, tree.max());
             tree.insert(val);
             p = tree.find(val.first);
             
-            return iterator(p, tree.nil, tree.root());
+            return iterator(p, tree.nil, tree.max());
         }
         template <class InputIterator>
-        void                    insert (InputIterator first, InputIterator last)
+        void                                        insert (InputIterator first, InputIterator last)
         {
             for (; first != last; ++first)
             {
@@ -194,11 +204,11 @@ class ft::map
                     tree.insert(*first);
             }
         }
-        void                    erase (iterator position)
+        void                                        erase (iterator position)
         {
             erase(position->first);
         }
-        size_type               erase (const key_type& k)
+        size_type                                   erase (const key_type& k)
         {
             node    *z = tree.find(k);
 
@@ -209,57 +219,55 @@ class ft::map
             }
             return 0;
         }
-        void                    erase (iterator first, iterator last)
+        void                                        erase (iterator first, iterator last)
         {
             while (first != last)
 				erase((first++)->first);
         }
-        key_compare             key_comp() const
+        key_compare                                 key_comp() const
         {
             return key_compare();
         }
-        value_compare           value_comp() const
+        value_compare                               value_comp() const
         {
-            return value_compare(key_comp());
+            return value_compare(key_compare());
         }
-        void                    swap (map &x)
+        void                                        swap (map &x)
         {
             tree.swap(x.tree);
         }
-        size_type               max_size() const
+        size_type                                   max_size() const
         {
             return tree.max_size();
         }
-        iterator                lower_bound (const key_type& k)
+        iterator                                    lower_bound (const key_type &k)
         {
             node    *p = tree.lower_bound(k);
-            return iterator(p, tree.nil, tree.root());
+            return iterator(p, tree.nil, tree.max());
         }
-        const_iterator          lower_bound (const key_type& k) const
+        const_iterator                              lower_bound (const key_type &k) const
         {
             node    *p = tree.lower_bound(k);
-            return const_iterator(p, tree.nil, tree.root());
+            return const_iterator(p, tree.nil, tree.max());
         }
-        iterator                upper_bound (const key_type& k)
+        iterator                                    upper_bound (const key_type &k)
         {
             node    *p = tree.upper_bound(k);
-            return iterator(p, tree.nil, tree.root());
+            return iterator(p, tree.nil, tree.max());
         }
-        const_iterator          upper_bound (const key_type& k) const
+        const_iterator                              upper_bound (const key_type &k) const
         {
             node    *p = tree.upper_bound(k);
-            return const_iterator(p, tree.nil, tree.root());
+            return const_iterator(p, tree.nil, tree.max());
         }
-        ft::pair<const_iterator, const_iterator> equal_range (const key_type &k) const
+        ft::pair<const_iterator, const_iterator>    equal_range (const key_type &k) const
         {
             return ft::make_pair(lower_bound(k), upper_bound(k));
         }
-        ft::pair<iterator, iterator>             equal_range (const key_type &k)
+        ft::pair<iterator, iterator>                equal_range (const key_type &k)
         {
             return ft::make_pair(lower_bound(k), upper_bound(k));
         }
-    public:
-        redBlackTree<Key, T, Compare, Alloc>    tree;
         
 };
 

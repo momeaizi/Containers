@@ -22,9 +22,9 @@
 #include "map/map.hpp"
 #include <random>
 #include <sstream>
-#include "iterator/iterators.hpp"
 #include <iostream>
 #include <map>
+#include <set>
 
 #define EQUAL(x) ((x) ? (std::cout << "\033[1;32mAC\033[0m\n") : (std::cout << "\033[1;31mWA\033[0m\n"))
 #define TIME_FAC 4 // the ft::map methods can be slower up to std::map methods * TIME_FAC (MAX 20)
@@ -53,7 +53,7 @@ time_t get_time(void)
 
 int main ()
 {
-    ft::map<int, int>  mp;
+    std::set<int>  mp;
     // ft::map<int, int>  mp1;
 
 

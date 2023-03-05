@@ -6,12 +6,14 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 14:50:50 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/04 18:32:19 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/05 09:37:50 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ITERATOR_TREE_HPP
 #define ITERATOR_TREE_HPP
+
+#include <iostream>
 
 template < class T, class Value_type>
 class IteratorTree

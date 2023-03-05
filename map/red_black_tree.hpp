@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 19:52:21 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/04 19:55:53 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/05 08:41:51 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ class   redBlackTree
                 Node                *right;
 
             Node (Node *nil) : p (nil), left (nil), right (nil) {}
+            ~Node () {}
         };
         typedef Compare                                         key_compare;
         typedef typename Alloc::template rebind<Node>::other    allocator_type;
@@ -63,7 +64,7 @@ class   redBlackTree
             nil = createNode(value_type());
             nil->color = black;
             __root = nil;
-            max = nullptr;
+            __max = nullptr;
 
         }
         redBlackTree(const redBlackTree &x) : nil (nullptr), __size (x.__size)
@@ -71,14 +72,14 @@ class   redBlackTree
             nil = createNode(value_type());
             nil->color = black;
             __root = cloneBinaryTree(x, x.__root, nil);
-            max = findMax(__root);
+            __max = findMax(__root);
         }
         redBlackTree    &operator= (const redBlackTree &x)
         {
             clear(__root);
             __root = cloneBinaryTree(x, x.__root, nil);
             __size = x.__size;
-            max = findMax(__root);
+            __max = findMax(__root);
             return *this;
         }
         ~redBlackTree()
@@ -101,9 +102,9 @@ class   redBlackTree
         {
             return __size;
         }
-        Node                    *root() const
+        Node                    *max() const
         {
-            return __root;
+            return __max;
         }
         Node                    *findMin(Node *root) const
         {
@@ -139,17 +140,17 @@ class   redBlackTree
             clear(__root);
             __size = 0;
             __root = nil;
-            max = nullptr;
+            __max = nullptr;
         }
         bool                    empty() const { return !__size; }
         void                    print();
         iterator                begin()
         {
-            return iterator(findMin(__root), nil, max);
+            return iterator(findMin(__root), nil, __max);
         }
         const_iterator          begin() const
         {
-            return const_iterator(findMin(__root), nil, max);
+            return const_iterator(findMin(__root), nil, __max);
         }
         reverse_iterator        rbegin()
         {
@@ -161,11 +162,11 @@ class   redBlackTree
         }
         iterator                end()
         {
-            return iterator(nil, nil, max);
+            return iterator(nil, nil, __max);
         }
         const_iterator          end() const
         {
-            return iterator(nil, nil, max);
+            return iterator(nil, nil, __max);
         }
         reverse_iterator        rend()
         {
@@ -220,13 +221,13 @@ class   redBlackTree
             std::swap(__root, x.__root);
             std::swap(nil, x.nil);
             std::swap(__size, x.__size);
-            std::swap(max, x.max);
+            std::swap(__max, x.__max);
         }
         Node            *nil;
 
     private:
         Node            *__root;
-        Node            *max;
+        Node            *__max;
         allocator_type  __allocator;
         Alloc           __val_alloc;
         size_type       __size;
@@ -377,8 +378,8 @@ void    redBlackTree< Key, T, Compare, Alloc>::insert(value_type val)
 
     ++__size;
 
-    if (!max || cmp(max->value->first, z->value->first))
-        max = z;
+    if (!__max || cmp(__max->value->first, z->value->first))
+        __max = z;
     insert_fixup(z);
 }
 
@@ -458,8 +459,8 @@ void    redBlackTree< Key, T, Compare, Alloc>::transplant(Node *u, Node *v)
 template < class Key, class T, class Compare, class Alloc>
 void    redBlackTree< Key, T, Compare, Alloc>::erase(Node *z)
 {
-    if (z == max)
-        max = z->p;
+    if (z == __max)
+        __max = z->p;
     Node    *x;
     Node    *y = z;
     Color   y_original_color = y->color;
