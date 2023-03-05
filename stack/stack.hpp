@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 15:39:42 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/04 20:00:53 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/05 14:40:56 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class ft::stack
         typedef Container           container_type;
         typedef size_t              size_type;
 
-    public:
+
         explicit stack (const container_type &ctnr = container_type()) : ctnr(ctnr) {}
         ~stack () {}
 

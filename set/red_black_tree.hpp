@@ -6,12 +6,12 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 19:52:21 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/05 06:41:48 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/05 14:55:31 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RED_BLACK_TREE_HPP
-#define RED_BLACK_TREE_HPP
+#ifndef S_RED__BLACK_TREE_HPP
+#define S_RED__BLACK_TREE_HPP
 
 #include <iostream>
 #include <string>
@@ -19,14 +19,14 @@
 #include "../iterator/reverse_iterator.hpp"
 #include "../utils/pair.hpp"
 
-enum    Color
+enum    _Color
 {
-    red,
-    black
+    _red,
+    _black
 };
 
 template <class T, class Compare = std::less<T>, class Alloc = std::allocator<T> >
-class   redBlackTree
+class   s_redBlackTree
 {
     public:
         typedef T                                               key_type;
@@ -34,13 +34,13 @@ class   redBlackTree
         struct  Node
         {
             public:
-                Color               color;
+                _Color               color;
                 value_type          *value;
                 Node                *p;
                 Node                *left;
                 Node                *right;
 
-            Node (Node *nil) : p (nil), left (nil), right (nil) {}
+            Node (Node *nil) : color (_red), p (nil), left (nil), right (nil) {}
             ~Node () {}
         };
         typedef Compare                                         key_compare;
@@ -58,22 +58,22 @@ class   redBlackTree
     
 
     public:
-        redBlackTree() : nil (nullptr), __size (0)
+        s_redBlackTree() : nil (nullptr), __size (0)
         {
             nil = createNode(value_type());
-            nil->color = black;
+            nil->color = _black;
             __root = nil;
             __max = nullptr;
 
         }
-        redBlackTree(const redBlackTree &x) : nil (nullptr), __size (x.__size)
+        s_redBlackTree(const s_redBlackTree &x) : nil (nullptr), __size (x.__size)
         {
             nil = createNode(value_type());
-            nil->color = black;
+            nil->color = _black;
             __root = cloneBinaryTree(x, x.__root, nil);
             __max = findMax(__root);
         }
-        redBlackTree    &operator= (const redBlackTree &x)
+        s_redBlackTree    &operator= (const s_redBlackTree &x)
         {
             clear(__root);
             __root = cloneBinaryTree(x, x.__root, nil);
@@ -81,7 +81,7 @@ class   redBlackTree
             __max = findMax(__root);
             return *this;
         }
-        ~redBlackTree()
+        ~s_redBlackTree()
         {
             clear(__root);
             deleteNode(nil);
@@ -215,7 +215,7 @@ class   redBlackTree
             }
             return result;
         }
-        void                    swap (redBlackTree &x)
+        void                    swap (s_redBlackTree &x)
         {
             std::swap(__root, x.__root);
             std::swap(nil, x.nil);
@@ -258,7 +258,7 @@ class   redBlackTree
 
             deleteNode(root);
         }
-        Node    *cloneBinaryTree(const redBlackTree &x, Node *root, Node *p)
+        Node    *cloneBinaryTree(const s_redBlackTree &x, Node *root, Node *p)
         {
             if (root == x.nil)
                 return nil;
@@ -275,7 +275,7 @@ class   redBlackTree
 };
 
 template <class T, class Compare, class Alloc>
-void    redBlackTree<T, Compare, Alloc>::print(const std::string& prefix, const Node* node, bool isLeft)
+void    s_redBlackTree<T, Compare, Alloc>::print(const std::string& prefix, const Node* node, bool isLeft)
 {
     if( node != nil )
     {
@@ -284,7 +284,7 @@ void    redBlackTree<T, Compare, Alloc>::print(const std::string& prefix, const 
         std::cout << (isLeft ? "├──" : "└──" );
 
         // print the value of the node
-        if (node->color == red)
+        if (node->color == _red)
             std::cout << "\033[31m";
         std::cout << "(" << node->value << ")" << std::endl;
 
@@ -296,13 +296,13 @@ void    redBlackTree<T, Compare, Alloc>::print(const std::string& prefix, const 
 }
 
 template <class T, class Compare, class Alloc>
-void    redBlackTree<T, Compare, Alloc>::print()
+void    s_redBlackTree<T, Compare, Alloc>::print()
 {
     print("", __root, false);    
 }
 
 template <class T, class Compare, class Alloc>
-void    redBlackTree<T, Compare, Alloc>::leftRotate(Node *x)
+void    s_redBlackTree<T, Compare, Alloc>::leftRotate(Node *x)
 {
     if (x->right == nil)
         return ;
@@ -327,7 +327,7 @@ void    redBlackTree<T, Compare, Alloc>::leftRotate(Node *x)
 }
 
 template <class T, class Compare, class Alloc>
-void    redBlackTree<T, Compare, Alloc>::rightRotate(Node *y)
+void    s_redBlackTree<T, Compare, Alloc>::rightRotate(Node *y)
 {
     if (y->left == nil)
         return ;
@@ -353,7 +353,7 @@ void    redBlackTree<T, Compare, Alloc>::rightRotate(Node *y)
 
 
 template <class T, class Compare, class Alloc>
-void    redBlackTree<T, Compare, Alloc>::insert(value_type val)
+void    s_redBlackTree<T, Compare, Alloc>::insert(value_type val)
 {
     Node    *y = nil;
     Node    *x = __root;
@@ -383,21 +383,21 @@ void    redBlackTree<T, Compare, Alloc>::insert(value_type val)
 }
 
 template <class T, class Compare, class Alloc>
-void    redBlackTree<T, Compare, Alloc>::insert_fixup(Node *z)
+void    s_redBlackTree<T, Compare, Alloc>::insert_fixup(Node *z)
 {
     Node    *y;
 
-    while (z->p->color == red)
+    while (z->p->color == _red)
     {
         if (z->p == z->p->p->left)
         {
             y = z->p->p->right;
 
-            if (y->color == red)
+            if (y->color == _red)
             {
-                z->p->color = black;
-                y->color = black;
-                z->p->p->color = red;
+                z->p->color = _black;
+                y->color = _black;
+                z->p->p->color = _red;
                 z = z->p->p;
             }
             else
@@ -407,8 +407,8 @@ void    redBlackTree<T, Compare, Alloc>::insert_fixup(Node *z)
                     z = z->p;
                     leftRotate(z);
                 }
-                z->p->color = black;
-                z->p->p->color = red;
+                z->p->color = _black;
+                z->p->p->color = _red;
                 rightRotate(z->p->p);
             }
         }
@@ -417,11 +417,11 @@ void    redBlackTree<T, Compare, Alloc>::insert_fixup(Node *z)
         {
             y = z->p->p->left;
 
-            if (y->color == red)
+            if (y->color == _red)
             {
-                z->p->color = black;
-                y->color = black;
-                z->p->p->color = red;
+                z->p->color = _black;
+                y->color = _black;
+                z->p->p->color = _red;
                 z = z->p->p;
             }
             else
@@ -431,18 +431,18 @@ void    redBlackTree<T, Compare, Alloc>::insert_fixup(Node *z)
                     z = z->p;
                     rightRotate(z);
                 }
-                z->p->color = black;
-                z->p->p->color = red;
+                z->p->color = _black;
+                z->p->p->color = _red;
                 leftRotate(z->p->p);
             }
         }
     }
-    __root->color = black;
+    __root->color = _black;
 }
 
 
 template <class T, class Compare, class Alloc>
-void    redBlackTree<T, Compare, Alloc>::transplant(Node *u, Node *v)
+void    s_redBlackTree<T, Compare, Alloc>::transplant(Node *u, Node *v)
 {
     if (u->p == nil)
         __root = v;
@@ -456,13 +456,13 @@ void    redBlackTree<T, Compare, Alloc>::transplant(Node *u, Node *v)
 }
 
 template <class T, class Compare, class Alloc>
-void    redBlackTree<T, Compare, Alloc>::erase(Node *z)
+void    s_redBlackTree<T, Compare, Alloc>::erase(Node *z)
 {
     if (z == __max)
         __max = z->p;
     Node    *x;
     Node    *y = z;
-    Color   y_original_color = y->color;
+    _Color   y_original_color = y->color;
 
     if (z->left == nil)
     {
@@ -497,23 +497,23 @@ void    redBlackTree<T, Compare, Alloc>::erase(Node *z)
 
     deleteNode(z);
     --__size;
-    if (y_original_color == black)
+    if (y_original_color == _black)
         erase_fixup(x);
 }
 
 template <class T, class Compare, class Alloc>
-void    redBlackTree<T, Compare, Alloc>::erase_fixup(Node *x)
+void    s_redBlackTree<T, Compare, Alloc>::erase_fixup(Node *x)
 {
-    while (x != __root && x->color == black)
+    while (x != __root && x->color == _black)
     {
         if (x == x->p->left)
         {
             Node    *w = x->p->right;
 
-            if (w->color == red)
+            if (w->color == _red)
             {
-                w->color = black;
-                x->p->color = red;
+                w->color = _black;
+                x->p->color = _red;
                 leftRotate(x->p);
                 w = x->p->right;
                 if (w == nil)
@@ -522,23 +522,23 @@ void    redBlackTree<T, Compare, Alloc>::erase_fixup(Node *x)
                     break ;
                 }
             }
-            if (w->left->color == black && w->right->color == black)
+            if (w->left->color == _black && w->right->color == _black)
             {
-                w->color = red;
+                w->color = _red;
                 x = x->p;
             }
             else
             {
-                if (w->right->color == black)
+                if (w->right->color == _black)
                 {
-                    w->left->color = black;
-                    w->color = red;
+                    w->left->color = _black;
+                    w->color = _red;
                     rightRotate(w);
                     w = x->p->right;
                 }
                 w->color = x->p->color;
-                x->p->color = black;
-                w->right->color = black;
+                x->p->color = _black;
+                w->right->color = _black;
                 leftRotate(x->p);
                 x = __root;
             }
@@ -547,10 +547,10 @@ void    redBlackTree<T, Compare, Alloc>::erase_fixup(Node *x)
         {
             Node    *w = x->p->left;
 
-            if (w->color == red)
+            if (w->color == _red)
             {
-                w->color = black;
-                x->p->color = red;
+                w->color = _black;
+                x->p->color = _red;
                 rightRotate(x->p);
                 w = x->p->left;
                 if (w == nil)
@@ -559,30 +559,30 @@ void    redBlackTree<T, Compare, Alloc>::erase_fixup(Node *x)
                     break ;
                 }
             }
-            if (w->left->color == black && w->right->color == black)
+            if (w->left->color == _black && w->right->color == _black)
             {
-                w->color = red;
+                w->color = _red;
                 x = x->p;
             }
             else
             {
-                if (w->left->color == black)
+                if (w->left->color == _black)
                 {
-                    w->right->color = black;
-                    w->color = red;
+                    w->right->color = _black;
+                    w->color = _red;
                     leftRotate(w);
                     w = x->p->left;
                 }
                 w->color = x->p->color;
-                x->p->color = black;
-                w->left->color = black;
+                x->p->color = _black;
+                w->left->color = _black;
                 rightRotate(x->p);
                 x = __root;
             }
         }
     }
 
-    x->color = black;
+    x->color = _black;
 }
 #endif
 

@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/04 18:31:49 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/05 15:18:00 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,6 +244,9 @@ ft::vector<T, Alloc>::vector (typename ft::enable_if<!ft::is_integral<InputItera
 template < class T, class Alloc>
 ft::vector<T, Alloc>::vector (const vector& x) : __data(nullptr), __size(x.__size), __capacity (x.__capacity)
 {
+    if (!x.__capacity)
+        return ;
+
     __data = __allocator.allocate(__capacity);
     for (size_type i = 0; i < __size; i++)
         __allocator.construct(__data + i, x.__data[i]);
@@ -341,9 +344,8 @@ template < class T, class Alloc>
 template <class InputIterator>
 void ft::vector<T, Alloc>::assign (InputIterator first, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type last)
 {
-    vector  v;
-    while (first != last)
-        v.push_back((*first++));
+    vector      v;
+    distance(first, last, v);
 
     *this = v;
 }

@@ -6,12 +6,12 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 19:52:21 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/05 08:41:51 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/05 14:53:19 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RED_BLACK_TREE_HPP
-#define RED_BLACK_TREE_HPP
+#ifndef M_RED_BLACK_TREE_HPP
+#define M_RED_BLACK_TREE_HPP
 
 #include <iostream>
 #include <string>
@@ -26,7 +26,7 @@ enum    Color
 };
 
 template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
-class   redBlackTree
+class   m_redBlackTree
 {
     public:
         typedef Key                                             key_type;
@@ -41,7 +41,7 @@ class   redBlackTree
                 Node                *left;
                 Node                *right;
 
-            Node (Node *nil) : p (nil), left (nil), right (nil) {}
+            Node (Node *nil) : color(red), p (nil), left (nil), right (nil) {}
             ~Node () {}
         };
         typedef Compare                                         key_compare;
@@ -59,7 +59,7 @@ class   redBlackTree
     
 
     public:
-        redBlackTree() : nil (nullptr), __size (0)
+        m_redBlackTree() : nil (nullptr), __size (0)
         {
             nil = createNode(value_type());
             nil->color = black;
@@ -67,14 +67,14 @@ class   redBlackTree
             __max = nullptr;
 
         }
-        redBlackTree(const redBlackTree &x) : nil (nullptr), __size (x.__size)
+        m_redBlackTree(const m_redBlackTree &x) : nil (nullptr), __size (x.__size)
         {
             nil = createNode(value_type());
             nil->color = black;
             __root = cloneBinaryTree(x, x.__root, nil);
             __max = findMax(__root);
         }
-        redBlackTree    &operator= (const redBlackTree &x)
+        m_redBlackTree    &operator= (const m_redBlackTree &x)
         {
             clear(__root);
             __root = cloneBinaryTree(x, x.__root, nil);
@@ -82,7 +82,7 @@ class   redBlackTree
             __max = findMax(__root);
             return *this;
         }
-        ~redBlackTree()
+        ~m_redBlackTree()
         {
             clear(__root);
             deleteNode(nil);
@@ -216,7 +216,7 @@ class   redBlackTree
             }
             return result;
         }
-        void                    swap (redBlackTree &x)
+        void                    swap (m_redBlackTree &x)
         {
             std::swap(__root, x.__root);
             std::swap(nil, x.nil);
@@ -259,7 +259,7 @@ class   redBlackTree
 
             deleteNode(root);
         }
-        Node    *cloneBinaryTree(const redBlackTree &x, Node *root, Node *p)
+        Node    *cloneBinaryTree(const m_redBlackTree &x, Node *root, Node *p)
         {
             if (root == x.nil)
                 return nil;
@@ -276,7 +276,7 @@ class   redBlackTree
 };
 
 template < class Key, class T, class Compare, class Alloc>
-void    redBlackTree< Key, T, Compare, Alloc>::print(const std::string& prefix, const Node* node, bool isLeft)
+void    m_redBlackTree< Key, T, Compare, Alloc>::print(const std::string& prefix, const Node* node, bool isLeft)
 {
     if( node != nil )
     {
@@ -297,13 +297,13 @@ void    redBlackTree< Key, T, Compare, Alloc>::print(const std::string& prefix, 
 }
 
 template < class Key, class T, class Compare, class Alloc>
-void    redBlackTree< Key, T, Compare, Alloc>::print()
+void    m_redBlackTree< Key, T, Compare, Alloc>::print()
 {
     print("", __root, false);    
 }
 
 template < class Key, class T, class Compare, class Alloc>
-void    redBlackTree< Key, T, Compare, Alloc>::leftRotate(Node *x)
+void    m_redBlackTree< Key, T, Compare, Alloc>::leftRotate(Node *x)
 {
     if (x->right == nil)
         return ;
@@ -328,7 +328,7 @@ void    redBlackTree< Key, T, Compare, Alloc>::leftRotate(Node *x)
 }
 
 template < class Key, class T, class Compare, class Alloc>
-void    redBlackTree< Key, T, Compare, Alloc>::rightRotate(Node *y)
+void    m_redBlackTree< Key, T, Compare, Alloc>::rightRotate(Node *y)
 {
     if (y->left == nil)
         return ;
@@ -354,7 +354,7 @@ void    redBlackTree< Key, T, Compare, Alloc>::rightRotate(Node *y)
 
 
 template < class Key, class T, class Compare, class Alloc>
-void    redBlackTree< Key, T, Compare, Alloc>::insert(value_type val)
+void    m_redBlackTree< Key, T, Compare, Alloc>::insert(value_type val)
 {
     Node    *y = nil;
     Node    *x = __root;
@@ -384,7 +384,7 @@ void    redBlackTree< Key, T, Compare, Alloc>::insert(value_type val)
 }
 
 template < class Key, class T, class Compare, class Alloc>
-void    redBlackTree< Key, T, Compare, Alloc>::insert_fixup(Node *z)
+void    m_redBlackTree< Key, T, Compare, Alloc>::insert_fixup(Node *z)
 {
     Node    *y;
 
@@ -443,7 +443,7 @@ void    redBlackTree< Key, T, Compare, Alloc>::insert_fixup(Node *z)
 
 
 template < class Key, class T, class Compare, class Alloc>
-void    redBlackTree< Key, T, Compare, Alloc>::transplant(Node *u, Node *v)
+void    m_redBlackTree< Key, T, Compare, Alloc>::transplant(Node *u, Node *v)
 {
     if (u->p == nil)
         __root = v;
@@ -457,7 +457,7 @@ void    redBlackTree< Key, T, Compare, Alloc>::transplant(Node *u, Node *v)
 }
 
 template < class Key, class T, class Compare, class Alloc>
-void    redBlackTree< Key, T, Compare, Alloc>::erase(Node *z)
+void    m_redBlackTree< Key, T, Compare, Alloc>::erase(Node *z)
 {
     if (z == __max)
         __max = z->p;
@@ -503,7 +503,7 @@ void    redBlackTree< Key, T, Compare, Alloc>::erase(Node *z)
 }
 
 template < class Key, class T, class Compare, class Alloc>
-void    redBlackTree< Key, T, Compare, Alloc>::erase_fixup(Node *x)
+void    m_redBlackTree< Key, T, Compare, Alloc>::erase_fixup(Node *x)
 {
     while (x != __root && x->color == black)
     {

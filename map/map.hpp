@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 11:22:14 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/05 08:42:44 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/05 12:47:10 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ template < class Key, class T, class Compare = std::less<Key>, class Alloc = std
 class ft::map
 {
     private:
-        redBlackTree<Key, T, Compare, Alloc>    tree;
-        typedef typename redBlackTree<Key, T, Compare, Alloc>::Node                             node;
+        m_redBlackTree<Key, T, Compare, Alloc>    tree;
+        typedef typename m_redBlackTree<Key, T, Compare, Alloc>::Node                             node;
     public:
         typedef Key                                                                             key_type;
         typedef T                                                                               mapped_type;
@@ -46,23 +46,22 @@ class ft::map
         typedef typename allocator_type::const_reference                                        const_reference;
         typedef typename allocator_type::pointer                                                pointer;
         typedef typename allocator_type::const_pointer                                          const_pointer;
-        typedef typename redBlackTree<Key, T, Compare, Alloc>::iterator                         iterator;
-        typedef typename redBlackTree<Key, T, Compare, Alloc>::const_iterator                   const_iterator;
-        typedef typename redBlackTree<Key, T, Compare, Alloc>::reverse_iterator                 reverse_iterator;
-        typedef typename redBlackTree<Key, T, Compare, Alloc>::const_reverse_iterator           const_reverse_iterator;
+        typedef typename m_redBlackTree<Key, T, Compare, Alloc>::iterator                       iterator;
+        typedef typename m_redBlackTree<Key, T, Compare, Alloc>::const_iterator                 const_iterator;
+        typedef typename m_redBlackTree<Key, T, Compare, Alloc>::reverse_iterator               reverse_iterator;
+        typedef typename m_redBlackTree<Key, T, Compare, Alloc>::const_reverse_iterator         const_reverse_iterator;
         typedef std::ptrdiff_t                                                                  difference_type;
         typedef std::size_t                                                                     size_type;
 
         class value_compare
         {
-            friend class map;
-            protected:
-                Compare comp;
-                value_compare (Compare c) : comp(c) {}
             public:
                 typedef bool            result_type;
                 typedef value_type      first_argument_type;
                 typedef value_type      second_argument_type;
+
+                Compare comp;
+                value_compare (Compare c = Compare()) : comp(c) {}
 
                 bool operator() (const value_type& x, const value_type& y) const
                 {
