@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/11 09:43:39 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/05 19:57:17 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/06 05:57:27 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,11 +232,11 @@ class ft::vector
 /* *************************************************************************** */
 
 template < class T, class Alloc>
-ft::vector<T, Alloc>::vector (const allocator_type& alloc) : __data(nullptr), __size(0), __capacity (0), __allocator(alloc) {}
+ft::vector<T, Alloc>::vector (const allocator_type& alloc) : __data(NULL), __size(0), __capacity (0), __allocator(alloc) {}
 
 
 template < class T, class Alloc>
-ft::vector<T, Alloc>::vector (size_type n, const value_type &val, const allocator_type& alloc) : __data(nullptr), __size(n), __capacity (n), __allocator(alloc)
+ft::vector<T, Alloc>::vector (size_type n, const value_type &val, const allocator_type& alloc) : __data(NULL), __size(n), __capacity (n), __allocator(alloc)
 {
     if (!n)
         return ;
@@ -250,7 +250,7 @@ ft::vector<T, Alloc>::vector (size_type n, const value_type &val, const allocato
 
 template < class T, class Alloc>
 template <class InputIterator>
-ft::vector<T, Alloc>::vector (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last) : __data(nullptr), __size(0), __capacity (0)
+ft::vector<T, Alloc>::vector (typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last) : __data(NULL), __size(0), __capacity (0)
 {
     ctor_range(first, last);
 }
@@ -281,7 +281,7 @@ void    ft::vector<T, Alloc>::ctor_range (InputIterator first,
 }
 
 template < class T, class Alloc>
-ft::vector<T, Alloc>::vector (const vector& x) : __data(nullptr), __size(x.__size), __capacity (x.__capacity)
+ft::vector<T, Alloc>::vector (const vector& x) : __data(NULL), __size(x.__size), __capacity (x.__capacity)
 {
     if (!x.__capacity)
         return ;

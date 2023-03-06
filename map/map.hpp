@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/25 11:22:14 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/05 12:47:10 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/06 11:45:43 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,25 @@ class ft::map
         }
 
         ~map() { }
+
+
+		mapped_type                                 &at (const key_type& k)
+        {
+            node    *n = tree.find(k);
+
+            if (n != tree.nil)
+                return  n->value->second;
+            throw std::out_of_range("map");
+        }
+        const mapped_type                           &at (const key_type& k) const
+        {
+            node    *n = tree.find(k);
+
+            if (n != tree.nil)
+                return  n->value->second;
+            throw std::out_of_range("map");
+
+        }
 
         void                                        clear() { tree.clear(); }
         size_type                                   count (const key_type &k) const

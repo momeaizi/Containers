@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 15:44:17 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/05 11:57:12 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/06 05:57:27 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ class ft::reverse_iterator
         
 
         reverse_iterator()
-            : __base_it (nullptr) {};
+            : __base_it (NULL) {};
 
         explicit reverse_iterator (iterator_type it)
             : __base_it (it) {};

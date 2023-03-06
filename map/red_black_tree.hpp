@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 19:52:21 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/05 14:53:19 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/06 05:57:27 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,15 +59,15 @@ class   m_redBlackTree
     
 
     public:
-        m_redBlackTree() : nil (nullptr), __size (0)
+        m_redBlackTree() : nil (NULL), __size (0)
         {
             nil = createNode(value_type());
             nil->color = black;
             __root = nil;
-            __max = nullptr;
+            __max = NULL;
 
         }
-        m_redBlackTree(const m_redBlackTree &x) : nil (nullptr), __size (x.__size)
+        m_redBlackTree(const m_redBlackTree &x) : nil (NULL), __size (x.__size)
         {
             nil = createNode(value_type());
             nil->color = black;
@@ -140,7 +140,7 @@ class   m_redBlackTree
             clear(__root);
             __size = 0;
             __root = nil;
-            __max = nullptr;
+            __max = NULL;
         }
         bool                    empty() const { return !__size; }
         void                    print();

@@ -6,7 +6,7 @@
 /*   By: momeaizi <momeaizi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 14:50:50 by momeaizi          #+#    #+#             */
-/*   Updated: 2023/03/05 09:37:50 by momeaizi         ###   ########.fr       */
+/*   Updated: 2023/03/06 05:57:27 by momeaizi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ class IteratorTree
 
 
 
-        IteratorTree() : m_ptr (NULL), nil (nullptr), max (nullptr) {}
-        IteratorTree(T *ptr, T *nil = nullptr, T *max = nullptr) : m_ptr (ptr), nil (nil), max (max) {}
+        IteratorTree() : m_ptr (NULL), nil (NULL), max (NULL) {}
+        IteratorTree(T *ptr, T *nil = NULL, T *max = NULL) : m_ptr (ptr), nil (nil), max (max) {}
         
         template < class U, class val>
         friend class IteratorTree;
@@ -71,7 +71,7 @@ template < class T, class val>
 T   *IteratorTree<T, val>::findMin(T *node) const
 {
     if (node == nil)
-        return nullptr;
+        return NULL;
     T   *current = node;
  
 
@@ -85,7 +85,7 @@ template < class T, class val>
 T    *IteratorTree<T, val>::findMax(T *node) const
 {
     if (node == nil)
-        return nullptr;
+        return NULL;
     T   *current = node;
  
 
