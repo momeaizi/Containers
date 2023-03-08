@@ -74,6 +74,7 @@
         "__memory": "cpp",
         "__functional_base_03": "cpp",
         "csignal": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "*.keep": "cpp"
     }
 }

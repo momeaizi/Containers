@@ -1,11 +1,15 @@
-NAME = TIHbank
+NAME = ft_containers
 
 
 CC = c++ 
 
 CPPFLAGS = -std=c++98  -Wall -Wextra -Werror -fsanitize=address -g
 
-SRCS =	main.cpp
+SRCS =	tests/main.cpp \
+		tests/map_tests.cpp \
+		tests/set_tests.cpp \
+		tests/stack_tests.cpp \
+		tests/vector_tests.cpp
 
 OBJS:=$(SRCS:.cpp=.o)
 
